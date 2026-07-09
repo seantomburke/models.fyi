@@ -5,10 +5,10 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // Repo is deployed to GitHub Pages at a custom domain (models.fyi),
-  // so the app is served from the root. Change to '/models.fyi/' if
-  // deploying to a project subpath instead.
-  base: '/',
+  // Deployed as a GitHub Pages project page at
+  // seantomburke.github.io/models.fyi. Change to '/' once the
+  // custom domain (models.fyi) is set up.
+  base: '/models.fyi/',
   plugins: [react(), tailwindcss()],
   test: {
     environment: 'jsdom',
