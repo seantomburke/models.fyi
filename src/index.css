@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+@theme {
+  /* Warm, friendly light foundation — stone neutrals, one teal accent. */
+  --color-surface: #fdfcfa;
+  --color-surface-raised: #ffffff;
+  --color-fg: #1c1917;
+  --color-fg-secondary: #44403c;
+  --color-fg-muted: #78716c;
+  --color-fg-faint: #a8a29e;
+  --color-accent: #0d9488;
+  --color-accent-deep: #0f766e;
+  --color-accent-soft: #f0fdfa;
+  --color-line: rgb(28 25 23 / 0.08);
+  --color-line-strong: rgb(28 25 23 / 0.16);
+
+  --shadow-subtle: 0 1px 3px rgb(0 0 0 / 0.08);
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-fg);
+  -webkit-font-smoothing: antialiased;
+}
