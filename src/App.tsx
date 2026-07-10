@@ -1,8 +1,12 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from './components/Layout.tsx'
 import { Home } from './pages/Home.tsx'
 import { Compare } from './pages/Compare.tsx'
 import { Placeholder } from './pages/Placeholder.tsx'
+
+// The graph page pulls in the charting library — keep it off the main bundle.
+const Graph = lazy(() => import('./pages/Graph.tsx').then((m) => ({ default: m.Graph })))
 
 function App() {
   return (
@@ -13,11 +17,9 @@ function App() {
         <Route
           path="graph"
           element={
-            <Placeholder
-              title="Graph"
-              metaTitle="AI models on a graph — Models.fyi"
-              description="Plot AI model performance against price on axes you choose, and spot which models punch above their weight."
-            />
+            <Suspense fallback={<p className="text-sm text-fg-muted">Loading graph…</p>}>
+              <Graph />
+            </Suspense>
           }
         />
         <Route
