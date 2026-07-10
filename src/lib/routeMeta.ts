@@ -3,7 +3,7 @@ import { topics } from '../pages/learn/topics.ts'
 /**
  * Canonical SEO metadata for every prerenderable route.
  * Single source of truth: pages read from here at runtime (via usePageMeta)
- * and scripts/prerender.mjs reads it at build time to emit static HTML —
+ * and scripts/prerender.mjs reads it at build time to emit static HTML,
  * so titles can never drift between the two.
  */
 export interface RouteMeta {
@@ -17,13 +17,13 @@ export const routeMeta: RouteMeta[] = [
     path: '/',
     title: 'Models.fyi — Which AI model should I use?',
     description:
-      'Compare flagship AI models from OpenAI, Anthropic, Google, and xAI across benchmarks, cost, and capability — explained in plain language, no PhD required.',
+      'Compare flagship AI models from OpenAI, Anthropic, Google, and xAI across benchmarks, cost, and capability. Plain language, no PhD required.',
   },
   {
     path: '/compare',
     title: 'Compare AI models — Models.fyi',
     description:
-      'Every flagship AI model side by side: benchmark scores, prices, and context windows from OpenAI, Anthropic, Google, xAI, and open source — explained in plain language.',
+      'Every flagship AI model side by side: benchmark scores, prices, and context windows from OpenAI, Anthropic, Google, xAI, and open source, explained in plain language.',
   },
   {
     path: '/graph',
@@ -35,7 +35,7 @@ export const routeMeta: RouteMeta[] = [
     path: '/quiz',
     title: 'Which AI model should I use? — Models.fyi',
     description:
-      'Answer a few plain-language questions — who you are, what you want to do, and your budget — and get an AI model recommendation with the reasoning spelled out.',
+      'Answer a few plain-language questions: who you are, what you want to do, and your budget, and get an AI model recommendation with the reasoning spelled out.',
   },
   {
     path: '/learn',
