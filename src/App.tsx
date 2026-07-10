@@ -4,6 +4,8 @@ import { Layout } from './components/Layout.tsx'
 import { Home } from './pages/Home.tsx'
 import { Compare } from './pages/Compare.tsx'
 import { Quiz } from './pages/Quiz.tsx'
+import { Learn } from './pages/learn/Learn.tsx'
+import { LearnTopic } from './pages/learn/LearnTopic.tsx'
 import { Placeholder } from './pages/Placeholder.tsx'
 
 // The graph page pulls in the charting library — keep it off the main bundle.
@@ -24,16 +26,8 @@ function App() {
           }
         />
         <Route path="quiz" element={<Quiz />} />
-        <Route
-          path="learn"
-          element={
-            <Placeholder
-              title="Learn the basics"
-              metaTitle="What is an AI model? — Models.fyi"
-              description="What is an LLM? What is GPT? What is a context window? The basics of AI models, explained like you're five."
-            />
-          }
-        />
+        <Route path="learn" element={<Learn />} />
+        <Route path="learn/:slug" element={<LearnTopic />} />
         <Route
           path="*"
           element={
