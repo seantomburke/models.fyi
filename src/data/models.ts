@@ -27,7 +27,7 @@ export const models: Model[] = [
       'terminal-bench': 88.0,
     },
     blurb:
-      "Anthropic's most capable model — built for the hardest reasoning and long autonomous work, at a premium price.",
+      "Anthropic's most capable model. Built for the hardest reasoning and long autonomous work, at a premium price.",
   },
   {
     id: 'claude-opus-4-8',
@@ -48,7 +48,7 @@ export const models: Model[] = [
       'gpqa-diamond': 93.6,
     },
     blurb:
-      'The top pick for real-world coding and agentic work — leads the hard coding benchmarks at half the price of Fable 5.',
+      'The best choice for coding and autonomous work. It leads the toughest coding benchmarks and costs half as much as Fable 5.',
   },
   {
     id: 'claude-sonnet-5',
@@ -65,7 +65,7 @@ export const models: Model[] = [
     internetAccess: true,
     scores: {},
     blurb:
-      'Near-Opus quality on coding and everyday tasks at a much lower price — the sensible default for most people.',
+      'Opus-level quality on coding and everyday tasks at a much lower price. The sensible default for most people.',
   },
   {
     id: 'claude-haiku-4-5',
@@ -82,7 +82,7 @@ export const models: Model[] = [
     internetAccess: true,
     scores: {},
     blurb:
-      "Anthropic's fastest and cheapest model — great for quick answers and simple tasks in bulk.",
+      "Anthropic's fastest and cheapest model. Great for quick answers and simple tasks in high volume.",
   },
 
   // ─── OpenAI ──────────────────────────────────────────────────
@@ -104,7 +104,7 @@ export const models: Model[] = [
       'swe-bench-pro': 64.6,
     },
     blurb:
-      "OpenAI's brand-new flagship — state of the art on agentic terminal work, strong all-rounder.",
+      "OpenAI's brand-new flagship. State of the art on autonomous terminal work, strong all-rounder.",
   },
   {
     id: 'gpt-5-6-terra',
@@ -121,7 +121,7 @@ export const models: Model[] = [
     releaseDate: '2026-07-09',
     scores: {},
     blurb:
-      'The balanced middle tier of the GPT-5.6 family — most of Sol\'s ability at half the cost.',
+      'The balanced middle tier of the GPT-5.6 family. Most of Sol\'s ability at half the cost.',
   },
   {
     id: 'gpt-5-6-luna',
@@ -138,7 +138,7 @@ export const models: Model[] = [
     releaseDate: '2026-07-09',
     scores: {},
     blurb:
-      'The fastest, most cost-efficient GPT-5.6 tier — built for speed and high-volume simple tasks.',
+      'The fastest, most cost-efficient GPT-5.6 tier. Built for speed and high-volume simple tasks.',
   },
 
   // ─── Google ──────────────────────────────────────────────────
@@ -158,7 +158,7 @@ export const models: Model[] = [
       'swe-bench-pro': 54.2,
     },
     blurb:
-      "Google's flagship — a top-tier reasoner with strong long-context skills at an aggressive price.",
+      "Google's flagship. A top-tier reasoner with strong long-context skills at an aggressive price.",
   },
   {
     id: 'gemini-3-5-flash',
@@ -175,7 +175,7 @@ export const models: Model[] = [
     releaseDate: '2026-05-19',
     scores: {},
     blurb:
-      'Google\'s speed tier that punches above its weight — beats 3.1 Pro on coding at ~25% lower cost.',
+      'Google\'s speed tier that punches above its weight. Beats 3.1 Pro on coding at about 25% lower cost.',
   },
 
   // ─── xAI ─────────────────────────────────────────────────────
@@ -195,7 +195,7 @@ export const models: Model[] = [
       'gpqa-diamond': 90.1,
     },
     blurb:
-      "xAI's flagship — remarkably cheap for a frontier model, with live access to X (Twitter) data.",
+      "xAI's flagship. Remarkably cheap for a frontier model, with live access to X (Twitter) data.",
   },
   {
     id: 'grok-4-1-fast',
@@ -210,7 +210,7 @@ export const models: Model[] = [
     internetAccess: true,
     scores: {},
     blurb:
-      'A budget speedster with a huge 2M-token context window — one of the cheapest ways to process a lot of text.',
+      'A budget speedster with a huge 2M-token context window. One of the cheapest ways to process large amounts of text.',
   },
 
   // ─── Open source ─────────────────────────────────────────────
@@ -230,7 +230,7 @@ export const models: Model[] = [
       'gpqa-diamond': 91.2,
     },
     blurb:
-      'The current #1 open-source model — frontier-level science reasoning you can download and run yourself, MIT-licensed.',
+      'The current #1 open-source model. Frontier-level science reasoning you can download and run yourself, MIT-licensed.',
   },
   {
     id: 'deepseek-v4-pro',
@@ -246,7 +246,7 @@ export const models: Model[] = [
     internetAccess: false,
     scores: {},
     blurb:
-      'An open-source powerhouse for code and math — free to self-host under an MIT license.',
+      'An open-source powerhouse for code and math. Free to self-host under an MIT license.',
   },
   {
     id: 'qwen-3-6',
@@ -280,7 +280,7 @@ export const models: Model[] = [
       mmlu: 85.5,
     },
     blurb:
-      "Meta's general-purpose open model — the highest general-knowledge score among open models.",
+      "Meta's general-purpose open model. The highest general-knowledge score among open models.",
   },
   {
     id: 'llama-4-scout',
@@ -296,6 +296,6 @@ export const models: Model[] = [
     internetAccess: false,
     scores: {},
     blurb:
-      'The long-context champion — a 10-million-token window, enough to read hundreds of books at once.',
+      'The long-context champion. A 10-million-token window, enough to read hundreds of books at once.',
   },
 ]
