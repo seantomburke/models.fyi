@@ -3,19 +3,37 @@ import type { Model, ProviderId } from '../data/index.ts'
 
 // ─── Quiz vocabulary ───────────────────────────────────────────
 
+export interface RoleNeeds {
+  precision?: boolean
+  creative?: boolean
+  simple?: boolean
+}
+
 export interface Role {
   id: string
   label: string
   emoji: string
+  needs?: RoleNeeds
 }
 
 export const roles: Role[] = [
-  { id: 'engineer', label: 'Software engineer', emoji: '🧑‍💻' },
-  { id: 'marketer', label: 'Marketer', emoji: '📣' },
-  { id: 'writer', label: 'Writer', emoji: '✍️' },
+  { id: 'engineer', label: 'Software engineer', emoji: '🧑‍💻', needs: { precision: true } },
+  { id: 'marketer', label: 'Marketer', emoji: '📣', needs: { creative: true } },
+  { id: 'writer', label: 'Writer', emoji: '✍️', needs: { creative: true } },
   { id: 'student', label: 'Student', emoji: '🎓' },
-  { id: 'researcher', label: 'Researcher / analyst', emoji: '🔬' },
-  { id: 'everyday', label: 'Everyday curious person', emoji: '🙋' },
+  { id: 'researcher', label: 'Researcher / analyst', emoji: '🔬', needs: { precision: true } },
+  { id: 'everyday', label: 'Everyday curious person', emoji: '🙋', needs: { simple: true } },
+  { id: 'designer', label: 'Designer', emoji: '🎨', needs: { creative: true } },
+  { id: 'sales', label: 'Sales professional', emoji: '💼', needs: { simple: true } },
+  { id: 'support', label: 'Customer support', emoji: '💬', needs: { simple: true } },
+  { id: 'hr', label: 'HR / People ops', emoji: '👥', needs: { simple: true } },
+  { id: 'finance', label: 'Finance / Accounting', emoji: '💰', needs: { precision: true } },
+  { id: 'legal', label: 'Legal / Compliance', emoji: '⚖️', needs: { precision: true } },
+  { id: 'operations', label: 'Operations / Logistics', emoji: '🚚', needs: { simple: true } },
+  { id: 'product', label: 'Product management', emoji: '🎯', needs: { creative: true } },
+  { id: 'healthcare', label: 'Healthcare / Medical', emoji: '⚕️', needs: { precision: true } },
+  { id: 'educator', label: 'Teacher / Educator', emoji: '📖', needs: { simple: true } },
+  { id: 'executive', label: 'Executive / Founder', emoji: '🏢' },
 ]
 
 export interface TaskNeeds {
@@ -44,6 +62,14 @@ export const tasks: Task[] = [
   { id: 'hard-problem', label: 'Solve a hard technical problem', emoji: '🧮', needs: { science: true } },
   { id: 'summarize', label: 'Summarize big documents', emoji: '🗜️', needs: { longContext: true, simple: true } },
   { id: 'chat-learn', label: 'Chat and learn things', emoji: '💬', needs: { simple: true } },
+  { id: 'code-review', label: 'Review code', emoji: '🔍', needs: { coding: true } },
+  { id: 'data-analysis', label: 'Analyze data', emoji: '📊', needs: { science: true } },
+  { id: 'translate', label: 'Translate text', emoji: '🌍', needs: { simple: true } },
+  { id: 'meeting-notes', label: 'Transcribe & organize meeting notes', emoji: '📝', needs: { longContext: true, simple: true } },
+  { id: 'brainstorm', label: 'Brainstorm ideas', emoji: '💡', needs: { simple: true } },
+  { id: 'doc-review', label: 'Review contracts or documents', emoji: '📋', needs: { longContext: true } },
+  { id: 'customer-draft', label: 'Draft customer support responses', emoji: '✉️', needs: { simple: true } },
+  { id: 'planning', label: 'Schedule and plan work', emoji: '📅', needs: { simple: true } },
 ]
 
 export type Budget = 'free' | 'value' | 'premium'
@@ -102,9 +128,17 @@ function capabilityScore(m: Model, needs: TaskNeeds): number {
   return avg > 0 ? avg : tierRank[m.tier] * 20
 }
 
-export function recommend(task: Task, budget: Budget, pref: CompanyPref): Recommendation {
+export function recommend(role: Role, task: Task, budget: Budget, pref: CompanyPref): Recommendation {
   const why: string[] = []
-  const needs = task.needs
+  const needs = { ...task.needs }
+
+  // Merge role bias into needs (task needs take priority over role bias)
+  if (role.needs?.precision && !needs.science && !needs.coding) {
+    needs.science = true
+  }
+  if (role.needs?.simple && !needs.internet && !needs.longContext && !needs.agentic) {
+    needs.simple = true
+  }
 
   // 1. Company preference.
   let pool = models
@@ -183,7 +217,14 @@ export function recommend(task: Task, budget: Budget, pref: CompanyPref): Recomm
   const pick = ranked[0]
   const runnerUp = ranked[1]
 
-  // 6. Explain the winner.
+  // 6. Role context.
+  if (role.needs?.precision && (needs.science || needs.coding)) {
+    why.push(
+      `As a ${role.label}, we prioritized accuracy and reasoning ability over raw speed.`,
+    )
+  }
+
+  // 7. Explain the winner.
   if (needs.coding && (pick.scores['swe-bench-pro'] ?? pick.scores['swe-bench-verified'])) {
     why.push(
       `${pick.name} posts one of the strongest published scores on real-world coding tests among your options.`,

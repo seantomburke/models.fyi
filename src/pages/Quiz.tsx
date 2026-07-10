@@ -52,7 +52,7 @@ function StepHeading({ step, children }: { step: number; children: React.ReactNo
 }
 
 function ResultCard({ role, task, budget, pref }: { role: Role; task: Task; budget: Budget; pref: CompanyPref }) {
-  const { pick, runnerUp, why } = recommend(task, budget, pref)
+  const { pick, runnerUp, why } = recommend(role, task, budget, pref)
   const provider = providers.find((p) => p.id === pick.providerId)
   return (
     <div className="space-y-4">
