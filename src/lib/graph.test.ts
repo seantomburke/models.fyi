@@ -1,5 +1,5 @@
 import { validateSpec } from '@opendata-ai/openchart-react'
-import { axisOptions, buildGraphRows, buildGraphSpec, defaultYAxisId, paddedDomain, paletteFor } from './graph'
+import { axisOptions, buildGraphRows, buildGraphSpec, defaultYAxisId, paddedDomain, paletteFor, providerColor } from './graph'
 import { benchmarks, models, providers } from '../data/index.ts'
 
 const byId = (id: string) => axisOptions.find((o) => o.id === id)!
@@ -80,6 +80,13 @@ test('spec pads both domains past the data, pins the legend on top, and draws no
   expect(xDomain[1]).toBeGreaterThan(Math.max(...rows.map((r) => r.x)))
   expect(yDomain[1]).toBeGreaterThanOrEqual(Math.max(...rows.map((r) => r.y)))
   expect(yDomain[1]).toBeLessThanOrEqual(100) // percentage axis never reads past 100
+})
+
+test('providerColor resolves brand colors by display name with a neutral fallback', () => {
+  for (const p of providers) {
+    expect(providerColor(p.name)).toBe(p.color)
+  }
+  expect(providerColor('Unknown Lab')).toBe('#78716c')
 })
 
 test('palette matches the first-appearance provider order (the engine domain order)', () => {

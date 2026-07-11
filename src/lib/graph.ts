@@ -50,6 +50,11 @@ export interface GraphRow extends Record<string, unknown> {
 const providerName = new Map(providers.map((p) => [p.id, p.name]))
 const providerColorByName = new Map(providers.map((p) => [p.name, p.color]))
 
+/** Brand color for a provider display name, with a neutral fallback. */
+export function providerColor(name: string): string {
+  return providerColorByName.get(name) ?? '#78716c'
+}
+
 /**
  * Brand colors ordered to match openchart's nominal color domain.
  * Verified empirically (headless-browser QA, issue #18): the engine assigns
@@ -58,7 +63,7 @@ const providerColorByName = new Map(providers.map((p) => [p.name, p.color]))
  */
 export function paletteFor(rows: GraphRow[]): string[] {
   const names = [...new Set(rows.map((r) => r.provider))]
-  return names.map((n) => providerColorByName.get(n) ?? '#78716c')
+  return names.map(providerColor)
 }
 
 /**
