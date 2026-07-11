@@ -15,4 +15,4 @@ export { benchmarks } from './benchmarks.ts'
 export { models } from './models.ts'
 
 /** When the dataset was last researched (ISO date). */
-export const dataSourcedAt = '2026-07-09'
+export const dataSourcedAt = '2026-07-11'

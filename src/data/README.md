@@ -31,7 +31,39 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 3. Bump `dataSourcedAt` in `index.ts`.
 4. Run `npm run validate` (schema + sanity checks; also runs in CI).
 
-Last refreshed: **2026-07-09**. Sources used: Anthropic model docs;
+Last refreshed: **2026-07-11** (scores; prices and context windows from the
+2026-07-09 pass). Provider-published evals win over third-party harness runs;
+where a number is third-party or contested, `models.ts` carries an inline
+comment saying so.
+
+Dataset conventions decided at this refresh:
+
+- **MMLU was dropped.** Only 3 of 16 models had a reliably sourced plain-MMLU
+  score (no 2026 flagship launch publishes it), below our 4-model floor for
+  keeping a column.
+- **Terminal-Bench numbers are 2.1 only.** Published 2.0/1.0 results (Haiku
+  4.5, Gemini 3.1 Pro from Google, Qwen 3.6) are excluded, not converted.
+- **"Qwen 3.6" means Qwen3.6-35B-A3B**, the flagship open-weights release
+  (not the closed "Plus"/Max-Preview variants).
+- **DeepSeek V4 Pro figures are the tech report's "Think Max" mode.**
+- GPT-5.6 GPQA numbers circulating (94.6/92.9/92.3) are disputed (Vellum and
+  MarkTechPost report OpenAI published none), so they are omitted.
+
+Sources used (2026-07-11 score refresh):
+
+- Provider/official: anthropic.com/news (Fable 5 & Mythos 5, Haiku 4.5),
+  Claude Sonnet 5 System Card, blog.google (Gemini 3.5), Meta Llama 4 model
+  card on Hugging Face, DeepSeek V4 technical report (arXiv:2606.19348),
+  nist.gov (CAISI evaluation of DeepSeek V4 Pro).
+- Leaderboards: tbench.ai (official Terminal-Bench 2.1), vals.ai,
+  llm-stats.com, benchlm.ai, artificialanalysis.ai, labs.scale.com
+  (SWE-bench Pro public subset).
+- Secondary coverage quoting provider eval tables: vellum.ai,
+  marktechpost.com, smartchunks.com, digitalapplied.com, emergent.sh,
+  macaron.im, labellerr.com, the-decoder.com, theairankings.com,
+  designforonline.com.
+
+Earlier pass (2026-07-09, prices/context): Anthropic model docs;
 aipricing.guru / digitalapplied.com (GPT-5.6); ai.google.dev + tldl.io
-(Gemini); docs.x.ai + requesty.ai (Grok); morphllm.com, vals.ai,
-llm-stats.com, techsy.io, benchlm.ai (benchmarks & open-source lineup).
+(Gemini); docs.x.ai + requesty.ai (Grok); morphllm.com, techsy.io
+(open-source lineup).

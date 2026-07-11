@@ -1,9 +1,9 @@
 import type { Model } from './types.ts'
 
 /**
- * Model facts researched 2026-07-09. Scores are provider-published evals
- * collected from public leaderboards/coverage. A missing score means no
- * reliable published number was found, not zero.
+ * Model facts researched 2026-07-11. Scores are provider-published evals
+ * where available, otherwise independent leaderboard runs (noted below).
+ * A missing score means no reliable published number was found, not zero.
  * Sources are listed in src/data/README.md.
  */
 export const models: Model[] = [
@@ -22,9 +22,10 @@ export const models: Model[] = [
     reasoning: true,
     internetAccess: true,
     scores: {
-      'swe-bench-verified': 95.0,
-      'swe-bench-pro': 80.3,
-      'terminal-bench': 88.0,
+      'swe-bench-verified': 95.0, // vals.ai independent run; Anthropic claims 95.5
+      'swe-bench-pro': 80.3, // Anthropic-published; BenchLM attributes 80.3 to Mythos 5
+      'gpqa-diamond': 93.2, // vals.ai independent run (Anthropic published no number)
+      'terminal-bench': 88.0, // Anthropic harness; independent runs land 80-83
     },
     blurb:
       "Anthropic's most capable model. Built for the hardest reasoning and long autonomous work, at a premium price.",
@@ -46,9 +47,10 @@ export const models: Model[] = [
       'swe-bench-verified': 88.6,
       'swe-bench-pro': 69.2,
       'gpqa-diamond': 93.6,
+      'terminal-bench': 74.6,
     },
     blurb:
-      'The best choice for coding and autonomous work. It leads the toughest coding benchmarks and costs half as much as Fable 5.',
+      'A coding workhorse. Near the top of the toughest coding benchmarks at half the price of Fable 5.',
   },
   {
     id: 'claude-sonnet-5',
@@ -63,9 +65,13 @@ export const models: Model[] = [
     maxOutputTokens: 128_000,
     reasoning: true,
     internetAccess: true,
-    scores: {},
+    scores: {
+      'swe-bench-verified': 82.1,
+      'swe-bench-pro': 63.2,
+      'terminal-bench': 80.4,
+    },
     blurb:
-      'Opus-level quality on coding and everyday tasks at a much lower price. The sensible default for most people.',
+      'Close to Opus quality on coding and everyday tasks at a much lower price. The sensible default for most people.',
   },
   {
     id: 'claude-haiku-4-5',
@@ -80,7 +86,9 @@ export const models: Model[] = [
     maxOutputTokens: 64_000,
     reasoning: true,
     internetAccess: true,
-    scores: {},
+    scores: {
+      'swe-bench-verified': 73.3,
+    },
     blurb:
       "Anthropic's fastest and cheapest model. Great for quick answers and simple tasks in high volume.",
   },
@@ -119,7 +127,10 @@ export const models: Model[] = [
     reasoning: true,
     internetAccess: true,
     releaseDate: '2026-07-09',
-    scores: {},
+    scores: {
+      'swe-bench-pro': 63.4,
+      'terminal-bench': 87.4,
+    },
     blurb:
       'The balanced middle tier of the GPT-5.6 family. Most of Sol\'s ability at half the cost.',
   },
@@ -136,7 +147,10 @@ export const models: Model[] = [
     reasoning: true,
     internetAccess: true,
     releaseDate: '2026-07-09',
-    scores: {},
+    scores: {
+      'swe-bench-pro': 62.7,
+      'terminal-bench': 84.7,
+    },
     blurb:
       'The fastest, most cost-efficient GPT-5.6 tier. Built for speed and high-volume simple tasks.',
   },
@@ -154,8 +168,10 @@ export const models: Model[] = [
     reasoning: true,
     internetAccess: true,
     scores: {
-      'gpqa-diamond': 94.1,
-      'swe-bench-pro': 54.2,
+      'swe-bench-verified': 80.6,
+      'swe-bench-pro': 54.2, // from Anthropic's comparison table; Google published none
+      'gpqa-diamond': 94.3,
+      'terminal-bench': 70.7, // tbench.ai leaderboard (Google published only 2.0)
     },
     blurb:
       "Google's flagship. A top-tier reasoner with strong long-context skills at an aggressive price.",
@@ -173,7 +189,10 @@ export const models: Model[] = [
     reasoning: true,
     internetAccess: true,
     releaseDate: '2026-05-19',
-    scores: {},
+    scores: {
+      'swe-bench-pro': 55.1,
+      'terminal-bench': 76.2,
+    },
     blurb:
       'Google\'s speed tier that punches above its weight. Beats 3.1 Pro on coding at about 25% lower cost.',
   },
@@ -208,7 +227,9 @@ export const models: Model[] = [
     contextWindowTokens: 2_000_000,
     reasoning: true,
     internetAccess: true,
-    scores: {},
+    scores: {
+      'gpqa-diamond': 85.3, // Artificial Analysis independent run (reasoning mode)
+    },
     blurb:
       'A budget speedster with a huge 2M-token context window. One of the cheapest ways to process large amounts of text.',
   },
@@ -227,7 +248,9 @@ export const models: Model[] = [
     reasoning: true,
     internetAccess: false,
     scores: {
+      'swe-bench-pro': 62.1,
       'gpqa-diamond': 91.2,
+      'terminal-bench': 81.0,
     },
     blurb:
       'The current #1 open-source model. Frontier-level science reasoning you can download and run yourself, MIT-licensed.',
@@ -244,7 +267,12 @@ export const models: Model[] = [
     contextWindowTokens: null,
     reasoning: true,
     internetAccess: false,
-    scores: {},
+    scores: {
+      // DeepSeek technical report figures for V4 Pro in "Think Max" mode.
+      'swe-bench-verified': 80.6,
+      'swe-bench-pro': 55.4,
+      'gpqa-diamond': 90.1, // independently reproduced by NIST/CAISI
+    },
     blurb:
       'An open-source powerhouse for code and math. Free to self-host under an MIT license.',
   },
@@ -260,7 +288,12 @@ export const models: Model[] = [
     contextWindowTokens: null,
     reasoning: true,
     internetAccess: false,
-    scores: {},
+    scores: {
+      // Alibaba-published figures for Qwen3.6-35B-A3B, the flagship open release.
+      'swe-bench-verified': 73.4,
+      'swe-bench-pro': 49.5,
+      'gpqa-diamond': 86.0,
+    },
     blurb:
       'The leading open model for multilingual work, under the business-friendly Apache 2.0 license.',
   },
@@ -277,10 +310,10 @@ export const models: Model[] = [
     reasoning: false,
     internetAccess: false,
     scores: {
-      mmlu: 85.5,
+      'gpqa-diamond': 69.8,
     },
     blurb:
-      "Meta's general-purpose open model. The highest general-knowledge score among open models.",
+      "Meta's general-purpose open model. Easy to run and widely supported, though newer open models beat it on hard reasoning.",
   },
   {
     id: 'llama-4-scout',
@@ -294,7 +327,9 @@ export const models: Model[] = [
     contextWindowTokens: 10_000_000,
     reasoning: false,
     internetAccess: false,
-    scores: {},
+    scores: {
+      'gpqa-diamond': 57.2,
+    },
     blurb:
       'The long-context champion. A 10-million-token window, enough to read hundreds of books at once.',
   },

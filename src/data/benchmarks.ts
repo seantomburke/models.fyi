@@ -25,10 +25,4 @@ export const benchmarks: Benchmark[] = [
     eli5: 'Puts the AI in front of a computer terminal and asks it to finish multi-step tasks on its own. Measures how good an "AI agent" it is.',
     unit: '%',
   },
-  {
-    id: 'mmlu',
-    name: 'MMLU',
-    eli5: 'A giant general-knowledge exam across 57 subjects, from law to biology. Top models all ace it now, so small differences here mean little.',
-    unit: '%',
-  },
 ]

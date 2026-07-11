@@ -1,6 +1,6 @@
 import { validateSpec } from '@opendata-ai/openchart-react'
-import { axisOptions, buildGraphRows, buildGraphSpec, paletteFor } from './graph'
-import { models, providers } from '../data/index.ts'
+import { axisOptions, buildGraphRows, buildGraphSpec, defaultYAxisId, paletteFor } from './graph'
+import { benchmarks, models, providers } from '../data/index.ts'
 
 const byId = (id: string) => axisOptions.find((o) => o.id === id)!
 
@@ -30,6 +30,19 @@ test('context axis converts tokens to millions', () => {
   const { rows } = buildGraphRows(byId('context'), byId('gpqa-diamond'))
   const opus = rows.find((r) => r.model === 'Claude Opus 4.8')
   expect(opus?.x).toBe(1)
+})
+
+test('default y-axis is the benchmark with the most models plottable against price', () => {
+  const yId = defaultYAxisId()
+  const benchmarkIds = benchmarks.map((b) => b.id as string)
+  expect(benchmarkIds).toContain(yId)
+  const priceInput = axisOptions.find((o) => o.id === 'price-input')!
+  const countFor = (id: string) =>
+    buildGraphRows(priceInput, axisOptions.find((o) => o.id === id)!).rows.length
+  const defaultCount = countFor(yId)
+  for (const id of benchmarkIds) {
+    expect(defaultCount).toBeGreaterThanOrEqual(countFor(id))
+  }
 })
 
 test('every non-empty axis combination produces a spec the chart engine accepts', () => {

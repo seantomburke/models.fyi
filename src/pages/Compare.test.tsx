@@ -41,8 +41,10 @@ test('open source filter shows only open models', async () => {
 
 test('best score per benchmark is highlighted', () => {
   renderCompare()
-  // Claude Fable 5 has the best published SWE-bench Verified score (95.0).
-  const cell = screen.getByText('95.0%')
+  const best = Math.max(
+    ...models.map((m) => m.scores['swe-bench-verified'] ?? -Infinity),
+  )
+  const cell = screen.getByText(`${best.toFixed(1)}%`)
   expect(cell.className).toContain('text-accent-deep')
 })
 

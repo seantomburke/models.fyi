@@ -58,6 +58,26 @@ export function paletteFor(rows: GraphRow[]): string[] {
   return names.map((n) => providerColorByName.get(n) ?? '#78716c')
 }
 
+/**
+ * Benchmark axis with the most models plottable against the default price
+ * axis, so the landing view shows as much of the dataset as the data allows.
+ * Ties break toward the earlier entry in `benchmarks`.
+ */
+export function defaultYAxisId(): string {
+  const priceInput = axisOptions.find((o) => o.id === 'price-input')!
+  let bestId = benchmarks[0].id as string
+  let bestCount = -1
+  for (const b of benchmarks) {
+    const axis = axisOptions.find((o) => o.id === b.id)!
+    const { rows } = buildGraphRows(priceInput, axis)
+    if (rows.length > bestCount) {
+      bestId = b.id
+      bestCount = rows.length
+    }
+  }
+  return bestId
+}
+
 /** Scatter spec for the chosen axes. Kept here so tests can validate it against the engine. */
 export function buildGraphSpec(xAxis: AxisOption, yAxis: AxisOption, rows: GraphRow[]): ChartSpec<GraphRow> {
   return {

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Chart } from '@opendata-ai/openchart-react'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
-import { axisOptions, buildGraphRows, buildGraphSpec } from '../lib/graph.ts'
+import { axisOptions, buildGraphRows, buildGraphSpec, defaultYAxisId } from '../lib/graph.ts'
 import type { GraphRow } from '../lib/graph.ts'
 
 interface AxisPickerProps {
@@ -43,7 +43,7 @@ export function Graph() {
   usePageMeta(meta.title, meta.description)
 
   const [xId, setXId] = useState('price-input')
-  const [yId, setYId] = useState('swe-bench-pro')
+  const [yId, setYId] = useState(defaultYAxisId)
 
   const xAxis = axisOptions.find((o) => o.id === xId)!
   const yAxis = axisOptions.find((o) => o.id === yId)!

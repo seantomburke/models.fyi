@@ -28,7 +28,6 @@ export type BenchmarkId =
   | 'swe-bench-pro'
   | 'gpqa-diamond'
   | 'terminal-bench'
-  | 'mmlu'
 
 export interface Benchmark {
   id: BenchmarkId
