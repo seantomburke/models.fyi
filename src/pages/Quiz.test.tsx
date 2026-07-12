@@ -42,6 +42,18 @@ test('completing the quiz shows a result with correct grammar, plain pricing, an
   scrollSpy.mockRestore()
 })
 
+test('function-named roles read as people in the result heading', async () => {
+  const user = userEvent.setup()
+  renderQuiz()
+  await user.click(screen.getByRole('button', { name: /Customer support/ }))
+  await user.click(screen.getByRole('button', { name: /Chat and learn things/ }))
+  await user.click(screen.getByRole('button', { name: /Good value/ }))
+  await user.click(screen.getByRole('button', { name: 'No preference' }))
+
+  // "a customer support agent", not "a customer support".
+  expect(screen.getByText(/our pick for a customer support agent who wants to/i)).toBeInTheDocument()
+})
+
 test('reverse mode shows provider, pricing, and links for the chosen model', async () => {
   const user = userEvent.setup()
   renderQuiz()

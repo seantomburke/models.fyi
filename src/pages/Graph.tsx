@@ -43,13 +43,14 @@ interface SelectedPointProps {
   row: GraphRow | null
   xAxis: AxisOption
   yAxis: AxisOption
+  onDismiss: () => void
 }
 
 /**
  * Details for the last tapped point. Tooltips need a precise hover, which is
  * hard on touch screens, so tapping pins the point's details here instead.
  */
-export function SelectedPoint({ row, xAxis, yAxis }: SelectedPointProps) {
+export function SelectedPoint({ row, xAxis, yAxis, onDismiss }: SelectedPointProps) {
   return (
     <div aria-live="polite">
       {!row ? (
@@ -73,6 +74,14 @@ export function SelectedPoint({ row, xAxis, yAxis }: SelectedPointProps) {
           <span className="text-fg-secondary">
             {yAxis.axisTitle}: <span className="font-medium text-fg">{row.y}</span>
           </span>
+          <button
+            type="button"
+            onClick={onDismiss}
+            aria-label="Clear pinned point"
+            className="ml-auto self-center rounded p-1 leading-none text-fg-muted transition-colors duration-150 hover:text-fg"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>
@@ -130,7 +139,7 @@ export function Graph() {
                 onMarkClick={(e) => setSelected(e.datum as GraphRow)}
               />
             </div>
-            <SelectedPoint row={selected} xAxis={xAxis} yAxis={yAxis} />
+            <SelectedPoint row={selected} xAxis={xAxis} yAxis={yAxis} onDismiss={() => setSelected(null)} />
           </>
         ) : (
           <p className="py-16 text-center text-sm text-fg-muted">

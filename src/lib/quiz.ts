@@ -1,5 +1,6 @@
-import { models, providers } from '../data/index.ts'
+import { models, providerById } from '../data/index.ts'
 import type { Model, ProviderId } from '../data/index.ts'
+import { withArticle } from './format.ts'
 
 // ─── Quiz vocabulary ───────────────────────────────────────────
 
@@ -12,28 +13,30 @@ export interface RoleNeeds {
 export interface Role {
   id: string
   label: string
+  /** Person-noun for prose ("customer support agent"), since labels name job functions. */
+  person: string
   emoji: string
   needs?: RoleNeeds
 }
 
 export const roles: Role[] = [
-  { id: 'engineer', label: 'Software engineer', emoji: '🧑‍💻', needs: { precision: true } },
-  { id: 'marketer', label: 'Marketer', emoji: '📣', needs: { creative: true } },
-  { id: 'writer', label: 'Writer', emoji: '✍️', needs: { creative: true } },
-  { id: 'student', label: 'Student', emoji: '🎓' },
-  { id: 'researcher', label: 'Researcher / analyst', emoji: '🔬', needs: { precision: true } },
-  { id: 'everyday', label: 'Everyday curious person', emoji: '🙋', needs: { simple: true } },
-  { id: 'designer', label: 'Designer', emoji: '🎨', needs: { creative: true } },
-  { id: 'sales', label: 'Sales professional', emoji: '💼', needs: { simple: true } },
-  { id: 'support', label: 'Customer support', emoji: '💬', needs: { simple: true } },
-  { id: 'hr', label: 'HR / People ops', emoji: '👥', needs: { simple: true } },
-  { id: 'finance', label: 'Finance / Accounting', emoji: '💰', needs: { precision: true } },
-  { id: 'legal', label: 'Legal / Compliance', emoji: '⚖️', needs: { precision: true } },
-  { id: 'operations', label: 'Operations / Logistics', emoji: '🚚', needs: { simple: true } },
-  { id: 'product', label: 'Product management', emoji: '🎯', needs: { creative: true } },
-  { id: 'healthcare', label: 'Healthcare / Medical', emoji: '⚕️', needs: { precision: true } },
-  { id: 'educator', label: 'Teacher / Educator', emoji: '📖', needs: { simple: true } },
-  { id: 'executive', label: 'Executive / Founder', emoji: '🏢' },
+  { id: 'engineer', label: 'Software engineer', person: 'software engineer', emoji: '🧑‍💻', needs: { precision: true } },
+  { id: 'marketer', label: 'Marketer', person: 'marketer', emoji: '📣', needs: { creative: true } },
+  { id: 'writer', label: 'Writer', person: 'writer', emoji: '✍️', needs: { creative: true } },
+  { id: 'student', label: 'Student', person: 'student', emoji: '🎓' },
+  { id: 'researcher', label: 'Researcher / analyst', person: 'researcher or analyst', emoji: '🔬', needs: { precision: true } },
+  { id: 'everyday', label: 'Everyday curious person', person: 'everyday curious person', emoji: '🙋', needs: { simple: true } },
+  { id: 'designer', label: 'Designer', person: 'designer', emoji: '🎨', needs: { creative: true } },
+  { id: 'sales', label: 'Sales professional', person: 'sales professional', emoji: '💼', needs: { simple: true } },
+  { id: 'support', label: 'Customer support', person: 'customer support agent', emoji: '💬', needs: { simple: true } },
+  { id: 'hr', label: 'HR / People ops', person: 'HR professional', emoji: '👥', needs: { simple: true } },
+  { id: 'finance', label: 'Finance / Accounting', person: 'finance professional', emoji: '💰', needs: { precision: true } },
+  { id: 'legal', label: 'Legal / Compliance', person: 'legal professional', emoji: '⚖️', needs: { precision: true } },
+  { id: 'operations', label: 'Operations / Logistics', person: 'operations professional', emoji: '🚚', needs: { simple: true } },
+  { id: 'product', label: 'Product management', person: 'product manager', emoji: '🎯', needs: { creative: true } },
+  { id: 'healthcare', label: 'Healthcare / Medical', person: 'healthcare professional', emoji: '⚕️', needs: { precision: true } },
+  { id: 'educator', label: 'Teacher / Educator', person: 'teacher', emoji: '📖', needs: { simple: true } },
+  { id: 'executive', label: 'Executive / Founder', person: 'executive or founder', emoji: '🏢' },
 ]
 
 export interface TaskNeeds {
@@ -147,7 +150,7 @@ export function recommend(role: Role, task: Task, budget: Budget, pref: CompanyP
     why.push('You asked for open source, so every option here is free to download and run.')
   } else if (pref !== 'any') {
     pool = pool.filter((m) => m.providerId === pref)
-    const name = providers.find((p) => p.id === pref)?.name ?? pref
+    const name = providerById.get(pref)?.name ?? pref
     why.push(`Limited to ${name} models, as you asked.`)
   }
 
@@ -220,7 +223,7 @@ export function recommend(role: Role, task: Task, budget: Budget, pref: CompanyP
   // 6. Role context.
   if (role.needs?.precision && (needs.science || needs.coding)) {
     why.push(
-      `As a ${role.label}, we prioritized accuracy and reasoning ability over raw speed.`,
+      `As ${withArticle(role.person)}, we prioritized accuracy and reasoning ability over raw speed.`,
     )
   }
 

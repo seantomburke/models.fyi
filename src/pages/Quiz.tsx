@@ -12,7 +12,7 @@ import {
   tasks,
 } from '../lib/quiz.ts'
 import type { Budget, CompanyPref, Role, Task } from '../lib/quiz.ts'
-import { models, providers } from '../data/index.ts'
+import { models, providerById } from '../data/index.ts'
 import type { Model } from '../data/index.ts'
 import { ProviderLogo } from '../components/ProviderLogo.tsx'
 
@@ -65,12 +65,12 @@ function SeeAlsoLinks({ name }: { name: string }) {
 
 function ResultCard({ role, task, budget, pref }: { role: Role; task: Task; budget: Budget; pref: CompanyPref }) {
   const { pick, runnerUp, why } = recommend(role, task, budget, pref)
-  const provider = providers.find((p) => p.id === pick.providerId)
+  const provider = providerById.get(pick.providerId)
   return (
     <div className="space-y-4">
       <div className="rounded-xl border border-line bg-accent-soft/60 p-6">
         <p className="text-xs font-medium uppercase tracking-wide text-accent-deep">
-          Our pick for {withArticle(role.label)} who wants to {task.label.toLowerCase()}
+          Our pick for {withArticle(role.person)} who wants to {task.label.toLowerCase()}
         </p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight">{pick.name}</h2>
         <p className="mt-1 flex items-center gap-1.5 text-sm text-fg-secondary">
@@ -107,7 +107,7 @@ function ResultCard({ role, task, budget, pref }: { role: Role; task: Task; budg
 function ReverseFlow() {
   const [selected, setSelected] = useState<Model | null>(null)
   const profile = selected ? profileModel(selected) : null
-  const provider = selected ? providers.find((p) => p.id === selected.providerId) : null
+  const provider = selected ? providerById.get(selected.providerId) : null
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-1.5">

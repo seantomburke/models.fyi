@@ -2,13 +2,11 @@ import { useMemo, useState } from 'react'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
 import { formatPrice, formatTokens } from '../lib/format.ts'
-import { benchmarks, models, providers, dataSourcedAt } from '../data/index.ts'
+import { benchmarks, models, providers, providerById, dataSourcedAt } from '../data/index.ts'
 import type { ProviderId } from '../data/index.ts'
 import { ProviderLogo } from '../components/ProviderLogo.tsx'
 
 type Filter = 'all' | 'open-source' | ProviderId
-
-const providerById = new Map(providers.map((p) => [p.id, p]))
 
 /** Visible-word capability tag; hover title carries the fuller explanation. */
 function CapabilityBadge({ label, title }: { label: string; title: string }) {
