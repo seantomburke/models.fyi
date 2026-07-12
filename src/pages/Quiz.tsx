@@ -194,6 +194,8 @@ export function Quiz() {
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     resultRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+    // Land keyboard/screen-reader focus on the result, not the last answer chip.
+    resultRef.current?.focus({ preventScroll: true })
   }, [done])
 
   return (
@@ -272,7 +274,7 @@ export function Quiz() {
           )}
 
           {done && (
-            <div ref={resultRef} className="scroll-mt-6 space-y-8">
+            <div ref={resultRef} tabIndex={-1} className="scroll-mt-6 space-y-8 outline-none">
               <ResultCard role={role} task={task} budget={budget} pref={pref} />
               <button
                 type="button"

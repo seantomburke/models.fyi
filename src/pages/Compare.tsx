@@ -192,9 +192,9 @@ export function Compare() {
 
       <p className="text-xs text-fg-muted">
         *Open-source models are free to download and run yourself; hosted-API pricing varies by
-        vendor. Scores are provider-published evals collected {dataSourcedAt}. "reasoning" means
-        the model thinks step by step before answering; "web" means the provider's assistant can
-        search the live internet.
+        vendor. Scores are provider-published evals where available, otherwise independent
+        leaderboard runs, collected {dataSourcedAt}. “reasoning” means the model thinks step by
+        step before answering; “web” means the provider's assistant can search the live internet.
       </p>
     </div>
   )

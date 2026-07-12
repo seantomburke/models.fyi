@@ -50,30 +50,31 @@ interface SelectedPointProps {
  * hard on touch screens, so tapping pins the point's details here instead.
  */
 export function SelectedPoint({ row, xAxis, yAxis }: SelectedPointProps) {
-  if (!row) {
-    return (
-      <p className="mt-3 text-center text-xs text-fg-muted">
-        Tap or click a point to pin its details here.
-      </p>
-    )
-  }
   return (
-    <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-lg bg-surface px-3 py-2 text-sm">
-      <span className="flex items-center gap-2 font-medium text-fg">
-        <span
-          aria-hidden="true"
-          className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
-          style={{ backgroundColor: providerColor(row.provider) }}
-        />
-        {row.model}
-      </span>
-      <span className="text-fg-muted">{row.provider}</span>
-      <span className="text-fg-secondary">
-        {xAxis.label}: <span className="font-medium text-fg">{row.x}</span>
-      </span>
-      <span className="text-fg-secondary">
-        {yAxis.label}: <span className="font-medium text-fg">{row.y}</span>
-      </span>
+    <div aria-live="polite">
+      {!row ? (
+        <p className="mt-3 text-center text-xs text-fg-muted">
+          Tap or click a point to pin its details here.
+        </p>
+      ) : (
+        <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-lg bg-surface px-3 py-2 text-sm">
+          <span className="flex items-center gap-2 font-medium text-fg">
+            <span
+              aria-hidden="true"
+              className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: providerColor(row.provider) }}
+            />
+            {row.model}
+          </span>
+          <span className="text-fg-muted">{row.provider}</span>
+          <span className="text-fg-secondary">
+            {xAxis.axisTitle}: <span className="font-medium text-fg">{row.x}</span>
+          </span>
+          <span className="text-fg-secondary">
+            {yAxis.axisTitle}: <span className="font-medium text-fg">{row.y}</span>
+          </span>
+        </div>
+      )}
     </div>
   )
 }

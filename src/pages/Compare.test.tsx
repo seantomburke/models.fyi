@@ -44,8 +44,10 @@ test('best score per benchmark is highlighted', () => {
   const best = Math.max(
     ...models.map((m) => m.scores['swe-bench-verified'] ?? -Infinity),
   )
-  const cell = screen.getByText(`${best.toFixed(1)}%`)
-  expect(cell.className).toContain('text-accent-deep')
+  // Another column can legitimately display the same value; at least one
+  // cell with this text must carry the highlight.
+  const cells = screen.getAllByText(`${best.toFixed(1)}%`)
+  expect(cells.some((c) => c.className.includes('text-accent-deep'))).toBe(true)
 })
 
 test('every model row carries its company logo', () => {

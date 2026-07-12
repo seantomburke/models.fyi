@@ -105,19 +105,22 @@ export function buildGraphSpec(xAxis: AxisOption, yAxis: AxisOption, rows: Graph
     data: rows,
     legend: { position: 'top', maxRows: 2 },
     encoding: {
+      // The engine skips its nice/zero adjustments whenever an explicit
+      // domain is set, so paddedDomain (which anchors at 0) is the whole
+      // story for both scales.
       x: {
         field: 'x',
         type: 'quantitative',
         title: xAxis.axisTitle,
         axis: { title: xAxis.axisTitle },
-        scale: { domain: paddedDomain(rows.map((r) => r.x), xAxis.domainCap), nice: true, zero: true },
+        scale: { domain: paddedDomain(rows.map((r) => r.x), xAxis.domainCap) },
       },
       y: {
         field: 'y',
         type: 'quantitative',
         title: yAxis.axisTitle,
         axis: { title: yAxis.axisTitle },
-        scale: { domain: paddedDomain(rows.map((r) => r.y), yAxis.domainCap), nice: true, zero: true },
+        scale: { domain: paddedDomain(rows.map((r) => r.y), yAxis.domainCap) },
       },
       color: { field: 'provider', type: 'nominal', title: 'Company' },
       detail: { field: 'model', type: 'nominal' },

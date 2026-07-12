@@ -13,11 +13,14 @@ test('shows a hint until a point is tapped', () => {
   expect(screen.getByText(/tap or click a point/i)).toBeInTheDocument()
 })
 
-test('shows the tapped model with both axis values', () => {
+test('shows the tapped model with both axis values, labeled with units', () => {
   render(<SelectedPoint row={row} xAxis={xAxis} yAxis={yAxis} />)
   expect(screen.getByText('Claude Opus 4.8')).toBeInTheDocument()
   expect(screen.getByText('Anthropic')).toBeInTheDocument()
-  expect(screen.getByText(xAxis.label, { exact: false })).toBeInTheDocument()
+  // Axis titles carry the units; bare labels like "Context window: 0.2"
+  // would mislead a non-expert audience.
+  expect(screen.getByText(xAxis.axisTitle, { exact: false })).toBeInTheDocument()
+  expect(screen.getByText(yAxis.axisTitle, { exact: false })).toBeInTheDocument()
   expect(screen.getByText('5')).toBeInTheDocument()
   expect(screen.getByText('69.2')).toBeInTheDocument()
 })
