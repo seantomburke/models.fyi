@@ -1,7 +1,7 @@
 import type { Model } from './types.ts'
 
 /**
- * Model facts researched 2026-07-11. Scores are provider-published evals
+ * Model facts researched 2026-07-13. Scores are provider-published evals
  * where available, otherwise independent leaderboard runs (noted below).
  * A missing score means no reliable published number was found, not zero.
  * Sources are listed in src/data/README.md.
@@ -68,6 +68,7 @@ export const models: Model[] = [
     scores: {
       'swe-bench-verified': 82.1,
       'swe-bench-pro': 63.2,
+      'gpqa-diamond': 91.1, // Artificial Analysis independent run (Anthropic published none)
       'terminal-bench': 80.4,
     },
     blurb:
@@ -110,6 +111,7 @@ export const models: Model[] = [
     scores: {
       'terminal-bench': 88.8,
       'swe-bench-pro': 64.6,
+      'gpqa-diamond': 94.1, // Artificial Analysis independent run (OpenAI's 94.6 remains unconfirmed)
     },
     blurb:
       "OpenAI's brand-new flagship. State of the art on autonomous terminal work, strong all-rounder.",
@@ -199,22 +201,25 @@ export const models: Model[] = [
 
   // ─── xAI ─────────────────────────────────────────────────────
   {
-    id: 'grok-4-3',
-    name: 'Grok 4.3',
+    id: 'grok-4-5',
+    name: 'Grok 4.5',
     providerId: 'xai',
+    apiId: 'grok-4.5',
     tier: 'flagship',
     openSource: false,
-    inputPricePerMTok: 1.25,
-    outputPricePerMTok: 2.5,
-    contextWindowTokens: 1_000_000,
+    inputPricePerMTok: 2, // list price up to 200K context; longer requests bill higher
+    outputPricePerMTok: 6,
+    contextWindowTokens: 500_000,
     reasoning: true,
     internetAccess: true,
-    releaseDate: '2026-04-30',
+    releaseDate: '2026-07-08',
     scores: {
-      'gpqa-diamond': 90.1,
+      'swe-bench-pro': 64.7, // xAI-published; no independent run yet
+      'gpqa-diamond': 93.1, // Artificial Analysis independent run (xAI published none)
+      'terminal-bench': 83.3, // xAI-published 2.1 number; not yet on tbench.ai
     },
     blurb:
-      "xAI's flagship. Remarkably cheap for a frontier model, with live access to X (Twitter) data.",
+      "xAI's brand-new flagship. Strong terminal and coding chops at a mid-tier price, with live access to X (Twitter) data.",
   },
   {
     id: 'grok-4-1-fast',

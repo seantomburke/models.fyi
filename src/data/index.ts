@@ -23,4 +23,4 @@ export const providerById: ReadonlyMap<ProviderId, Provider> = new Map(
 )
 
 /** When the dataset was last researched (ISO date). */
-export const dataSourcedAt = '2026-07-11'
+export const dataSourcedAt = '2026-07-13'
