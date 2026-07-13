@@ -31,12 +31,35 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 3. Bump `dataSourcedAt` in `index.ts`.
 4. Run `npm run validate` (schema + sanity checks; also runs in CI).
 
-Last refreshed: **2026-07-13** (Grok 4.5 lineup swap + GPQA backfill; prices
-and context windows otherwise from the 2026-07-09 pass). Provider-published
+Last refreshed: **2026-07-13, second pass** (Muse Spark 1.1 added; earlier
+same-day pass did the Grok 4.5 lineup swap + GPQA backfill; prices and
+context windows otherwise from the 2026-07-09 pass). Provider-published
 evals win over third-party harness runs; where a number is third-party or
 contested, `models.ts` carries an inline comment saying so.
 
-2026-07-13 refresh notes:
+2026-07-13 second-pass refresh notes:
+
+- **Muse Spark 1.1 added as Meta's flagship** (released 2026-07-09 by Meta
+  Superintelligence Labs, `muse-spark-1.1`, $1.25/$4.25, 1M context, 256K max
+  output, reasoning with adjustable effort). It is closed-weights on the new
+  Meta Model API — Meta's pivot away from open-weights Llama — so the `meta`
+  provider is now `openSource: false` while the Llama 4 models keep their
+  model-level open flags (they remain Meta's newest open weights). SWE-bench
+  Pro 61.5 is Meta-published; GPQA Diamond 88.4 is an Artificial Analysis
+  independent run; Terminal-Bench is omitted because Meta published only a
+  2.0 run (80.0) and we track 2.1 only. Meta published no SWE-bench Verified.
+  Note: several outlets covered this release as "Llama 5" — that name is
+  wrong; Wikipedia and deeplearning.ai confirm the Llama line ended at 4.
+- Meta was also added to the quiz's company-preference options now that it
+  sells API access like the other closed providers.
+- Checked and unchanged: no new tbench.ai Terminal-Bench 2.1 entries for our
+  models beyond what the morning pass recorded (Grok 4.5 and GPT-5.6 still
+  absent from the official leaderboard); GPT-5.6 Terra/Luna GPQA still
+  unpublished (Artificial Analysis shows only composite index scores);
+  Gemini 3.5 Pro is still unreleased (third-party reports point at July 17
+  with no official Google model card, docs, or pricing — excluded until GA).
+
+2026-07-13 morning refresh notes:
 
 - **Grok 4.5 replaced Grok 4.3** as xAI's flagship (launched 2026-07-08,
   `grok-4.5`, $2/$6, 500K context — long-context requests above 200K bill
@@ -66,7 +89,15 @@ Dataset conventions decided at this refresh:
 - GPT-5.6 GPQA numbers circulating (94.6/92.9/92.3) are disputed (Vellum and
   MarkTechPost report OpenAI published none), so they are omitted.
 
-Sources used (2026-07-13 refresh): artificialanalysis.ai (GPQA Diamond and
+Sources used (2026-07-13 second pass): marktechpost.com and
+digitalapplied.com (Muse Spark 1.1 launch coverage: pricing, context, model
+id, Meta's published eval table), vals.ai and benchlm.ai (Muse Spark 1.1
+model pages: max output, GPQA Diamond via Artificial Analysis, Terminal-Bench
+2.0-only status), deeplearning.ai + Wikipedia Llama article (Muse Spark
+replaced Llama; closed-weights pivot), tbench.ai (2.1 leaderboard recheck),
+llm-stats.com (news recheck for July 8–13 releases).
+
+Sources used (2026-07-13 morning refresh): artificialanalysis.ai (GPQA Diamond and
 Terminal-Bench v2.1 leaderboards, Grok 4.5 model page), benchlm.ai (Grok 4.5
 and Claude Sonnet 5 model pages), openrouter.ai + requesty.ai +
 cloudprice.net (Grok 4.5 pricing/specs/model id), roo.beehiiv.com and

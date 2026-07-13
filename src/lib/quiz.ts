@@ -91,6 +91,7 @@ export const companyPrefs: Array<{ id: CompanyPref; label: string }> = [
   { id: 'openai', label: 'OpenAI' },
   { id: 'google', label: 'Google' },
   { id: 'xai', label: 'xAI' },
+  { id: 'meta', label: 'Meta' },
   { id: 'open-source', label: 'Open source' },
 ]
 

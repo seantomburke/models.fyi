@@ -239,6 +239,30 @@ export const models: Model[] = [
       'A budget speedster with a huge 2M-token context window. One of the cheapest ways to process large amounts of text.',
   },
 
+  // ─── Meta ────────────────────────────────────────────────────
+  {
+    id: 'muse-spark-1-1',
+    name: 'Muse Spark 1.1',
+    providerId: 'meta',
+    apiId: 'muse-spark-1.1',
+    tier: 'flagship',
+    openSource: false,
+    inputPricePerMTok: 1.25,
+    outputPricePerMTok: 4.25,
+    contextWindowTokens: 1_000_000,
+    maxOutputTokens: 256_000,
+    reasoning: true,
+    internetAccess: true,
+    releaseDate: '2026-07-09',
+    scores: {
+      'swe-bench-pro': 61.5, // Meta-published; no independent run yet
+      'gpqa-diamond': 88.4, // Artificial Analysis independent run (Meta published none)
+      // Terminal-Bench omitted: Meta published only a 2.0 run (80.0); we track 2.1 only.
+    },
+    blurb:
+      "Meta's new flagship and its first paid, closed-weights model after the open Llama era. Built for agent work at an aggressive price.",
+  },
+
   // ─── Open source ─────────────────────────────────────────────
   {
     id: 'glm-5-2',
