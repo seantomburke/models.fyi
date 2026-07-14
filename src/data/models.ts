@@ -47,7 +47,7 @@ export const models: Model[] = [
       'swe-bench-verified': 88.6,
       'swe-bench-pro': 69.2,
       'gpqa-diamond': 93.6,
-      'terminal-bench': 74.6,
+      'terminal-bench': 74.6, // Anthropic-published (Terminus 2); tbench.ai independent run (Claude Code) lands higher at 78.9
     },
     blurb:
       'A coding workhorse. Near the top of the toughest coding benchmarks at half the price of Fable 5.',
@@ -69,7 +69,7 @@ export const models: Model[] = [
       'swe-bench-verified': 82.1,
       'swe-bench-pro': 63.2,
       'gpqa-diamond': 91.1, // Artificial Analysis independent run (Anthropic published none)
-      'terminal-bench': 80.4,
+      'terminal-bench': 80.4, // Anthropic-published; tbench.ai independent run (Claude Code) lands 74.6
     },
     blurb:
       'Close to Opus quality on coding and everyday tasks at a much lower price. The sensible default for most people.',

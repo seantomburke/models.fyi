@@ -31,12 +31,40 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 3. Bump `dataSourcedAt` in `index.ts`.
 4. Run `npm run validate` (schema + sanity checks; also runs in CI).
 
-Last refreshed: **2026-07-14** (Terminal-Bench 2.1 leaderboard backfill;
-prices and context windows from the 2026-07-09 pass). Provider-published
-evals win over third-party harness runs; where a number is third-party or
-contested, `models.ts` carries an inline comment saying so.
+Last refreshed: **2026-07-14, second pass** (Terminal-Bench 2.1 independent
+runs annotated for Opus 4.8 and Sonnet 5; prices and context windows from
+the 2026-07-09 pass). Provider-published evals win over third-party harness
+runs; where a number is third-party or contested, `models.ts` carries an
+inline comment saying so.
 
-2026-07-14 refresh notes:
+2026-07-14 second-pass refresh notes:
+
+- **Annotated Anthropic Terminal-Bench numbers with tbench.ai Claude Code
+  runs.** Opus 4.8's published 74.6 (Terminus 2, per its system card) has an
+  independent Claude Code run at 78.9; Sonnet 5's published 80.4 has a
+  Claude Code run at 74.6. Scores unchanged per the provider-wins
+  convention; inline comments added. (We also verified the published
+  numbers against launch coverage — the 80.4/74.6 pair looked like a
+  possible row-misalignment from the leaderboard, but both are genuinely
+  Anthropic-published: Sonnet 5 announcement and Opus 4.8 system card
+  §8.3.)
+- **Rejected leads:** an llm-stats.com search snippet claimed "Gemini 3.2
+  Pro", "DeepSeek V4.5", and "Llama 5" joined the July leaderboards — all
+  three are phantom names (no such releases exist; Llama 5 was already
+  debunked 7/13 as a misnaming of Muse Spark 1.1). A Lushbinary post cites
+  "GPT-5.6 Sol Ultra 91.9" on Terminal-Bench 2.1 — that is a max-effort
+  config from a secondary source; Sol's 88.8 OpenAI-published number stays.
+- **Sonnet 5 intro pricing ignored:** $2/$10 promotional pricing runs until
+  2026-08-31, but per convention we list the $3/$15 list price.
+- Checked and unchanged: Gemini 3.5 Pro still not GA (still no model card,
+  docs, or pricing; reporting still points at July 17); no new flagship
+  releases July 14 (news is business-side: OpenAI/government stake, TSMC,
+  Anthropic IPO prep); GPT-5.6 Sol still absent from tbench.ai; Terra/Luna
+  GPQA still unpublished (Artificial Analysis shows only composite index);
+  Sol SWE-bench Verified still unpublished; no 2.1 runs yet for DeepSeek V4
+  Pro / Qwen 3.6 / GLM-5.2 / Grok 4.1 Fast.
+
+2026-07-14 morning refresh notes:
 
 - **tbench.ai now has official Terminal-Bench 2.1 runs for the models we
   were watching.** Muse Spark 1.1 gained a score (76.2, mini-SWE-agent) —
@@ -108,7 +136,14 @@ Dataset conventions decided at this refresh:
 - GPT-5.6 GPQA numbers circulating (94.6/92.9/92.3) are disputed (Vellum and
   MarkTechPost report OpenAI published none), so they are omitted.
 
-Sources used (2026-07-14): tbench.ai (Terminal-Bench 2.1 leaderboard,
+Sources used (2026-07-14 second pass): tbench.ai (Terminal-Bench 2.1
+leaderboard, full 17-row fetch), anthropic.com/news + Vellum/emergent.sh
+launch coverage (Sonnet 5 80.4 and Opus 4.8 74.6 provenance check),
+artificialanalysis.ai + benchlm.ai (Terra/Luna GPQA and Sol SWE-bench
+Verified rechecks), techtimes.com + marketscale.com (Gemini 3.5 Pro GA
+status), web search for July 14 release news.
+
+Sources used (2026-07-14 morning): tbench.ai (Terminal-Bench 2.1 leaderboard,
 fetched twice for consistency), benchlm.ai (Haiku 4.5 model page),
 o-mega.ai (GPT-5.6 benchmark article — CAISI attribution check),
 web search for July 13–14 release news and Gemini 3.5 Pro GA status.
