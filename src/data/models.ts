@@ -1,7 +1,7 @@
 import type { Model } from './types.ts'
 
 /**
- * Model facts researched 2026-07-13. Scores are provider-published evals
+ * Model facts researched 2026-07-14. Scores are provider-published evals
  * where available, otherwise independent leaderboard runs (noted below).
  * A missing score means no reliable published number was found, not zero.
  * Sources are listed in src/data/README.md.
@@ -25,7 +25,7 @@ export const models: Model[] = [
       'swe-bench-verified': 95.0, // vals.ai independent run; Anthropic claims 95.5
       'swe-bench-pro': 80.3, // Anthropic-published; BenchLM attributes 80.3 to Mythos 5
       'gpqa-diamond': 93.2, // vals.ai independent run (Anthropic published no number)
-      'terminal-bench': 88.0, // Anthropic harness; independent runs land 80-83
+      'terminal-bench': 88.0, // Anthropic harness; independent runs land 80-84 (tbench.ai #1 at 83.8)
     },
     blurb:
       "Anthropic's most capable model. Built for the hardest reasoning and long autonomous work, at a premium price.",
@@ -109,7 +109,7 @@ export const models: Model[] = [
     internetAccess: true,
     releaseDate: '2026-07-09',
     scores: {
-      'terminal-bench': 88.8,
+      'terminal-bench': 88.8, // OpenAI-published; no tbench.ai run yet
       'swe-bench-pro': 64.6,
       'gpqa-diamond': 94.1, // Artificial Analysis independent run (OpenAI's 94.6 remains unconfirmed)
     },
@@ -131,7 +131,7 @@ export const models: Model[] = [
     releaseDate: '2026-07-09',
     scores: {
       'swe-bench-pro': 63.4,
-      'terminal-bench': 87.4,
+      'terminal-bench': 87.4, // OpenAI-published; tbench.ai independent run (Codex) lands 78.4
     },
     blurb:
       'The balanced middle tier of the GPT-5.6 family. Most of Sol\'s ability at half the cost.',
@@ -151,7 +151,7 @@ export const models: Model[] = [
     releaseDate: '2026-07-09',
     scores: {
       'swe-bench-pro': 62.7,
-      'terminal-bench': 84.7,
+      'terminal-bench': 84.7, // OpenAI-published; tbench.ai independent run (Codex) lands 75.7
     },
     blurb:
       'The fastest, most cost-efficient GPT-5.6 tier. Built for speed and high-volume simple tasks.',
@@ -216,7 +216,7 @@ export const models: Model[] = [
     scores: {
       'swe-bench-pro': 64.7, // xAI-published; no independent run yet
       'gpqa-diamond': 93.1, // Artificial Analysis independent run (xAI published none)
-      'terminal-bench': 83.3, // xAI-published 2.1 number; not yet on tbench.ai
+      'terminal-bench': 83.3, // xAI-published; tbench.ai independent run (Cursor CLI) lands 79.3
     },
     blurb:
       "xAI's brand-new flagship. Strong terminal and coding chops at a mid-tier price, with live access to X (Twitter) data.",
@@ -257,7 +257,7 @@ export const models: Model[] = [
     scores: {
       'swe-bench-pro': 61.5, // Meta-published; no independent run yet
       'gpqa-diamond': 88.4, // Artificial Analysis independent run (Meta published none)
-      // Terminal-Bench omitted: Meta published only a 2.0 run (80.0); we track 2.1 only.
+      'terminal-bench': 76.2, // tbench.ai independent run (mini-SWE-agent); Meta itself published only a 2.0 number
     },
     blurb:
       "Meta's new flagship and its first paid, closed-weights model after the open Llama era. Built for agent work at an aggressive price.",

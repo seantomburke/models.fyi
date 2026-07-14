@@ -31,11 +31,30 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 3. Bump `dataSourcedAt` in `index.ts`.
 4. Run `npm run validate` (schema + sanity checks; also runs in CI).
 
-Last refreshed: **2026-07-13, second pass** (Muse Spark 1.1 added; earlier
-same-day pass did the Grok 4.5 lineup swap + GPQA backfill; prices and
-context windows otherwise from the 2026-07-09 pass). Provider-published
+Last refreshed: **2026-07-14** (Terminal-Bench 2.1 leaderboard backfill;
+prices and context windows from the 2026-07-09 pass). Provider-published
 evals win over third-party harness runs; where a number is third-party or
 contested, `models.ts` carries an inline comment saying so.
+
+2026-07-14 refresh notes:
+
+- **tbench.ai now has official Terminal-Bench 2.1 runs for the models we
+  were watching.** Muse Spark 1.1 gained a score (76.2, mini-SWE-agent) —
+  previously omitted because Meta had published only a 2.0 run. Grok 4.5
+  (79.3, Cursor CLI), GPT-5.6 Terra (78.4, Codex), and Luna (75.7, Codex)
+  got independent runs that land well below the providers' self-reported
+  numbers; per the convention above the provider numbers stay, with the
+  independent runs noted in inline comments. GPT-5.6 Sol is still absent
+  from the leaderboard.
+- **Rejected lead:** a search snippet attributed "74 on SWE-bench Verified,
+  NIST CAISI-verified" to GPT-5.6 Terra; the underlying article (o-mega.ai)
+  actually says that figure is CAISI's DeepSeek V4 Pro run. Nothing added.
+- Checked and unchanged: OpenAI still publishes no GPQA/SWE-bench Verified
+  for the GPT-5.6 family; Haiku 4.5 GPQA still has no verifiable source
+  (benchlm.ai shows none); Gemini 3.5 Pro still not GA (no model card,
+  docs, or pricing — reporting now points at July 17); no new flagship
+  releases July 13–14; no 2.1 runs yet for DeepSeek V4 Pro / Qwen 3.6 /
+  GLM-5.2 / Grok 4.1 Fast.
 
 2026-07-13 second-pass refresh notes:
 
@@ -88,6 +107,11 @@ Dataset conventions decided at this refresh:
 - **DeepSeek V4 Pro figures are the tech report's "Think Max" mode.**
 - GPT-5.6 GPQA numbers circulating (94.6/92.9/92.3) are disputed (Vellum and
   MarkTechPost report OpenAI published none), so they are omitted.
+
+Sources used (2026-07-14): tbench.ai (Terminal-Bench 2.1 leaderboard,
+fetched twice for consistency), benchlm.ai (Haiku 4.5 model page),
+o-mega.ai (GPT-5.6 benchmark article — CAISI attribution check),
+web search for July 13–14 release news and Gemini 3.5 Pro GA status.
 
 Sources used (2026-07-13 second pass): marktechpost.com and
 digitalapplied.com (Muse Spark 1.1 launch coverage: pricing, context, model
