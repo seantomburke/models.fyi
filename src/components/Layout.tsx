@@ -4,6 +4,7 @@ import { dataSourcedAt } from '../data/index.ts'
 const navItems = [
   { to: '/compare', label: 'Compare' },
   { to: '/graph', label: 'Graph' },
+  { to: '/calculator', label: 'Calculator' },
   { to: '/quiz', label: 'Which model?' },
   { to: '/learn', label: 'Learn' },
 ]

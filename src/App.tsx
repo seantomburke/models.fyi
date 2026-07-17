@@ -8,8 +8,12 @@ import { Learn } from './pages/learn/Learn.tsx'
 import { LearnTopic } from './pages/learn/LearnTopic.tsx'
 import { Placeholder } from './pages/Placeholder.tsx'
 
-// The graph page pulls in the charting library — keep it off the main bundle.
+// These pages pull in the charting library (and the calculator a tokenizer) —
+// keep them off the main bundle.
 const Graph = lazy(() => import('./pages/Graph.tsx').then((m) => ({ default: m.Graph })))
+const Calculator = lazy(() =>
+  import('./pages/Calculator.tsx').then((m) => ({ default: m.Calculator })),
+)
 
 function App() {
   return (
@@ -22,6 +26,14 @@ function App() {
           element={
             <Suspense fallback={<p className="text-sm text-fg-muted">Loading graph…</p>}>
               <Graph />
+            </Suspense>
+          }
+        />
+        <Route
+          path="calculator"
+          element={
+            <Suspense fallback={<p className="text-sm text-fg-muted">Loading calculator…</p>}>
+              <Calculator />
             </Suspense>
           }
         />

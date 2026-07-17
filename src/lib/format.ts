@@ -14,6 +14,20 @@ export function formatPrice(price: number | null): string {
   return `$${Number.isInteger(price) ? price : price.toFixed(2)}`
 }
 
+/**
+ * "$1.24", "$0.50", "$0.0425", "< $0.0001" — computed conversation costs,
+ * which are often fractions of a cent. Sub-dollar values keep up to four
+ * decimals (trailing zeros trimmed, never fewer than two).
+ */
+export function formatCost(cost: number): string {
+  if (cost === 0) return '$0.00'
+  if (cost >= 1) return `$${cost.toFixed(2)}`
+  if (cost < 0.0001) return '< $0.0001'
+  const trimmed = cost.toFixed(4).replace(/0+$/, '')
+  const [whole, frac = ''] = trimmed.split('.')
+  return `$${whole}.${frac.padEnd(2, '0')}`
+}
+
 /** Initial letters whose spoken names start with a vowel ("aitch", "ex"). */
 const AN_LETTER_NAMES = new Set(['A', 'E', 'F', 'H', 'I', 'L', 'M', 'N', 'O', 'R', 'S', 'X'])
 

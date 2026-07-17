@@ -61,7 +61,7 @@ export function providerColor(name: string): string {
  * categorical palette entries in FIRST-APPEARANCE order of the color field in
  * the data, not alphabetical order. Feed this to `theme.colors.categorical`.
  */
-export function paletteFor(rows: GraphRow[]): string[] {
+export function paletteFor(rows: Array<{ provider: string }>): string[] {
   const names = [...new Set(rows.map((r) => r.provider))]
   return names.map(providerColor)
 }

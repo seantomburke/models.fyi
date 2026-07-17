@@ -14,6 +14,7 @@
   "dependencies": {
     "@opendata-ai/openchart-react": "^7.9.2",
     "@tailwindcss/vite": "^4.3.2",
+    "gpt-tokenizer": "^3.4.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1",

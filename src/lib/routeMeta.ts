@@ -32,6 +32,12 @@ export const routeMeta: RouteMeta[] = [
       'Plot AI model performance against price on axes you choose. Compare GPT, Claude, Gemini, Grok, and open-source models visually.',
   },
   {
+    path: '/calculator',
+    title: 'AI token cost calculator — Models.fyi',
+    description:
+      'Compare what AI models charge per million tokens, then paste your own text to calculate input, output, and thinking-token costs across GPT, Claude, Gemini, and Grok.',
+  },
+  {
     path: '/quiz',
     title: 'Which AI model should I use? — Models.fyi',
     description:

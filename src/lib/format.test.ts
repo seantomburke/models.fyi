@@ -1,4 +1,4 @@
-import { describePricing, withArticle } from './format.ts'
+import { describePricing, formatCost, withArticle } from './format.ts'
 import { roles } from './quiz.ts'
 
 test('withArticle picks the right article for every quiz role', () => {
@@ -26,6 +26,16 @@ test('withArticle picks the right article for every quiz role', () => {
   }
   // Every current role must be covered by this table.
   expect(roles.map((r) => r.label).sort()).toEqual(Object.keys(expected).sort())
+})
+
+test('formatCost renders dollars, sub-cent values, and a floor for dust', () => {
+  expect(formatCost(0)).toBe('$0.00')
+  expect(formatCost(1.238)).toBe('$1.24')
+  expect(formatCost(0.5)).toBe('$0.50')
+  expect(formatCost(0.0425)).toBe('$0.0425')
+  expect(formatCost(0.005)).toBe('$0.005')
+  expect(formatCost(0.0001)).toBe('$0.0001')
+  expect(formatCost(0.00003)).toBe('< $0.0001')
 })
 
 test('describePricing maps price tiers to plain language with exact rates', () => {
