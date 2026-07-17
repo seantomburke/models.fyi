@@ -1,7 +1,7 @@
 import type { Model } from './types.ts'
 
 /**
- * Model facts researched 2026-07-14. Scores are provider-published evals
+ * Model facts researched 2026-07-17. Scores are provider-published evals
  * where available, otherwise independent leaderboard runs (noted below).
  * A missing score means no reliable published number was found, not zero.
  * Sources are listed in src/data/README.md.
@@ -59,12 +59,13 @@ export const models: Model[] = [
     apiId: 'claude-sonnet-5',
     tier: 'balanced',
     openSource: false,
-    inputPricePerMTok: 3,
-    outputPricePerMTok: 15,
+    inputPricePerMTok: 2, // intro pricing $2/$10 through Aug 31, 2026; regular $3/$15
+    outputPricePerMTok: 10,
     contextWindowTokens: 1_000_000,
     maxOutputTokens: 128_000,
     reasoning: true,
     internetAccess: true,
+    releaseDate: '2026-06-30',
     scores: {
       'swe-bench-verified': 82.1,
       'swe-bench-pro': 63.2,
@@ -72,7 +73,7 @@ export const models: Model[] = [
       'terminal-bench': 80.4, // Anthropic-published; tbench.ai independent run (Claude Code) lands 74.6
     },
     blurb:
-      'Close to Opus quality on coding and everyday tasks at a much lower price. The sensible default for most people.',
+      'The most agentic Sonnet yet, released June 30. Can make plans and run tools autonomously. Best value for daily work, now at intro pricing.',
   },
   {
     id: 'claude-haiku-4-5',
