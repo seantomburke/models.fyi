@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { usePostHog } from '@posthog/react'
 import { usePageMeta } from '../../lib/meta.ts'
 import { topics } from './topics.ts'
 
@@ -9,6 +11,7 @@ const crossLinks = [
 ]
 
 export function LearnTopic() {
+  const posthog = usePostHog()
   const { slug } = useParams()
   const index = topics.findIndex((t) => t.slug === slug)
   const topic = topics[index]
@@ -16,15 +19,20 @@ export function LearnTopic() {
   // Hooks must run unconditionally; harmless values for the not-found case.
   usePageMeta(
     topic?.metaTitle ?? 'Not found — Models.fyi',
-    topic?.metaDescription ?? 'That explainer doesn’t exist.',
+    topic?.metaDescription ?? "That explainer doesn't exist.",
   )
+
+  useEffect(() => {
+    if (!topic) return
+    posthog?.capture('learn_topic_viewed', { slug: topic.slug, title: topic.question, topic_index: index })
+  }, [posthog, topic, index])
 
   if (!topic) {
     return (
       <div className="max-w-2xl">
         <h1 className="text-3xl font-semibold tracking-tight">Page not found</h1>
         <p className="mt-3 text-fg-secondary">
-          That explainer doesn’t exist.{' '}
+          That explainer doesn't exist.{' '}
           <Link to="/learn" className="text-accent-deep underline underline-offset-2">
             See all topics
           </Link>

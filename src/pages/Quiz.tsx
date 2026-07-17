@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { usePostHog } from '@posthog/react'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
 import { describePricing, formatTokens, withArticle } from '../lib/format.ts'
@@ -105,14 +106,21 @@ function ResultCard({ role, task, budget, pref }: { role: Role; task: Task; budg
 }
 
 function ReverseFlow() {
+  const posthog = usePostHog()
   const [selected, setSelected] = useState<Model | null>(null)
   const profile = selected ? profileModel(selected) : null
   const provider = selected ? providerById.get(selected.providerId) : null
+
+  const handleModelSelect = (m: Model) => {
+    setSelected(m)
+    posthog?.capture('quiz_model_selected', { model_id: m.id, model_name: m.name, provider_id: m.providerId })
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-1.5">
         {models.map((m) => (
-          <Chip key={m.id} selected={selected?.id === m.id} onClick={() => setSelected(m)}>
+          <Chip key={m.id} selected={selected?.id === m.id} onClick={() => handleModelSelect(m)}>
             {m.name}
           </Chip>
         ))}
@@ -169,6 +177,7 @@ function ReverseFlow() {
 }
 
 export function Quiz() {
+  const posthog = usePostHog()
   const meta = metaFor('/quiz')
   usePageMeta(meta.title, meta.description)
 
@@ -178,7 +187,26 @@ export function Quiz() {
   const [budget, setBudget] = useState<Budget | null>(null)
   const [pref, setPref] = useState<CompanyPref | null>(null)
 
+  const handleModeSwitch = (nextMode: Mode) => {
+    setMode(nextMode)
+    posthog?.capture('quiz_mode_switched', { mode: nextMode })
+  }
+
+  const handlePrefSelect = (c: { id: CompanyPref; label: string }) => {
+    setPref(c.id)
+    const { pick } = recommend(role!, task!, budget!, c.id)
+    posthog?.capture('quiz_completed', {
+      role_id: role!.id,
+      task_id: task!.id,
+      budget,
+      pref: c.id,
+      recommended_model_id: pick.id,
+      recommended_model_name: pick.name,
+    })
+  }
+
   const reset = () => {
+    posthog?.capture('quiz_restarted')
     setRole(null)
     setTask(null)
     setBudget(null)
@@ -210,10 +238,10 @@ export function Quiz() {
       </div>
 
       <div className="flex gap-1.5" role="group" aria-label="Quiz direction">
-        <Chip selected={mode === 'forward'} onClick={() => setMode('forward')}>
+        <Chip selected={mode === 'forward'} onClick={() => handleModeSwitch('forward')}>
           Find me a model
         </Chip>
-        <Chip selected={mode === 'reverse'} onClick={() => setMode('reverse')}>
+        <Chip selected={mode === 'reverse'} onClick={() => handleModeSwitch('reverse')}>
           Start from a model
         </Chip>
       </div>
@@ -265,7 +293,7 @@ export function Quiz() {
               <StepHeading step={4}>Any company preference?</StepHeading>
               <div className="flex flex-wrap gap-1.5">
                 {companyPrefs.map((c) => (
-                  <Chip key={c.id} selected={pref === c.id} onClick={() => setPref(c.id)}>
+                  <Chip key={c.id} selected={pref === c.id} onClick={() => handlePrefSelect(c)}>
                     {c.label}
                   </Chip>
                 ))}

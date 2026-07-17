@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { usePostHog } from '@posthog/react'
 import { Chart } from '@opendata-ai/openchart-react'
 import '@opendata-ai/openchart-react/styles.css'
 import { usePageMeta } from '../lib/meta.ts'
@@ -89,6 +90,7 @@ export function SelectedPoint({ row, xAxis, yAxis, onDismiss }: SelectedPointPro
 }
 
 export function Graph() {
+  const posthog = usePostHog()
   const meta = metaFor('/graph')
   usePageMeta(meta.title, meta.description)
 
@@ -100,10 +102,17 @@ export function Graph() {
   const changeX = (id: string) => {
     setXId(id)
     setSelected(null)
+    posthog?.capture('graph_axes_changed', { axis: 'x', axis_id: id })
   }
   const changeY = (id: string) => {
     setYId(id)
     setSelected(null)
+    posthog?.capture('graph_axes_changed', { axis: 'y', axis_id: id })
+  }
+
+  const handlePointSelected = (row: GraphRow) => {
+    setSelected(row)
+    posthog?.capture('graph_point_selected', { model: row.model, provider: row.provider, x: row.x, y: row.y })
   }
 
   const xAxis = axisOptions.find((o) => o.id === xId)!
@@ -136,7 +145,7 @@ export function Graph() {
               <Chart<GraphRow>
                 spec={spec}
                 darkMode="off"
-                onMarkClick={(e) => setSelected(e.datum as GraphRow)}
+                onMarkClick={(e) => handlePointSelected(e.datum as GraphRow)}
               />
             </div>
             <SelectedPoint row={selected} xAxis={xAxis} yAxis={yAxis} onDismiss={() => setSelected(null)} />

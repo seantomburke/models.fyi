@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { usePostHog } from '@posthog/react'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
 import { formatPrice, formatTokens } from '../lib/format.ts'
@@ -21,10 +22,16 @@ function CapabilityBadge({ label, title }: { label: string; title: string }) {
 }
 
 export function Compare() {
+  const posthog = usePostHog()
   const meta = metaFor('/compare')
   usePageMeta(meta.title, meta.description)
 
   const [filter, setFilter] = useState<Filter>('all')
+
+  const handleFilterChange = (id: Filter) => {
+    setFilter(id)
+    posthog?.capture('compare_filter_changed', { filter: id })
+  }
 
   const visible = useMemo(() => {
     if (filter === 'all') return models
@@ -81,7 +88,7 @@ export function Compare() {
           <button
             key={id}
             type="button"
-            onClick={() => setFilter(id)}
+            onClick={() => handleFilterChange(id)}
             aria-pressed={filter === id}
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-colors duration-150 ${
               filter === id

@@ -1,8 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import posthog from 'posthog-js'
+import { PostHogProvider } from '@posthog/react'
 import './index.css'
 import App from './App.tsx'
+
+posthog.init(import.meta.env.VITE_POSTHOG_PROJECT_TOKEN, {
+  api_host: import.meta.env.VITE_POSTHOG_HOST,
+  defaults: '2026-05-30',
+})
 
 // Routes are prerendered to static HTML for crawlers and first paint
 // (scripts/prerender.mjs). We deliberately client-render over that markup
@@ -12,8 +19,10 @@ import App from './App.tsx'
 const container = document.getElementById('root')!
 createRoot(container).render(
   <StrictMode>
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
-      <App />
-    </BrowserRouter>
+    <PostHogProvider client={posthog}>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <App />
+      </BrowserRouter>
+    </PostHogProvider>
   </StrictMode>,
 )

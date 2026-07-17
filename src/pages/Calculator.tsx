@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { usePostHog } from '@posthog/react'
 import { Chart } from '@opendata-ai/openchart-react'
 import '@opendata-ai/openchart-react/styles.css'
 import { usePageMeta } from '../lib/meta.ts'
@@ -155,6 +156,7 @@ interface CalculatorProps {
 }
 
 export function Calculator({ debounceMs = 200 }: CalculatorProps) {
+  const posthog = usePostHog()
   const meta = metaFor('/calculator')
   usePageMeta(meta.title, meta.description)
 
@@ -163,6 +165,20 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
   const [effort, setEffort] = useState<EffortId>('medium')
   const [counter, setCounter] = useState<TokenCounter | null>(null)
   const [sort, setSort] = useState<SortState>({ key: 'totalCost', dir: 'asc' })
+  const inputEnteredRef = useRef(false)
+
+  const handleEffortChange = (id: EffortId) => {
+    setEffort(id)
+    posthog?.capture('calculator_effort_changed', { effort: id })
+  }
+
+  const handleInputTextChange = (value: string) => {
+    setInputText(value)
+    if (!inputEnteredRef.current && value.length > 0) {
+      inputEnteredRef.current = true
+      posthog?.capture('calculator_text_entered', { field: 'input' })
+    }
+  }
 
   // The real tokenizer is a large lazy chunk; until it lands (and during
   // prerender, where effects never run) counts fall back to the estimate.
@@ -249,7 +265,7 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
             hint="What you'd send the model: a question, a document, a prompt."
             placeholder="Paste or type the text you'd send to the model…"
             value={inputText}
-            onChange={setInputText}
+            onChange={handleInputTextChange}
             tokens={inputTokens}
             estimated={counter === null}
           />
@@ -262,7 +278,7 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
             tokens={outputTokens}
             estimated={counter === null}
           />
-          <EffortPicker value={effort} onChange={setEffort} />
+          <EffortPicker value={effort} onChange={handleEffortChange} />
           <p className="text-xs text-fg-muted">
             Token counts use OpenAI's o200k tokenizer. Other providers split text slightly
             differently, so treat their counts as close approximations.
