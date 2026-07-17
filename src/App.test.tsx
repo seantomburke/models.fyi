@@ -28,6 +28,7 @@ test('every nav destination renders with a heading and page title', async () => 
   const routes: Array<[string, RegExp]> = [
     ['/compare', /compare models/i],
     ['/graph', /see it on a graph/i], // lazy-loaded
+    ['/calculator', /what does a conversation cost/i], // lazy-loaded
     ['/quiz', /which model should i use/i],
     ['/learn', /learn the basics/i],
   ]
