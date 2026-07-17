@@ -227,10 +227,9 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
   }, [costRows, sort])
 
   const toggleSort = (key: SortKey) => {
-    const newSort = { key, dir: 'asc' as const }
-    if (key === sort.key) {
-      newSort.dir = sort.dir === 'asc' ? 'desc' : 'asc'
-    }
+    const newSort: SortState = key === sort.key
+      ? { key, dir: sort.dir === 'asc' ? 'desc' : 'asc' }
+      : { key, dir: 'asc' }
     setSort(newSort)
     captureCalculatorSortChanged(posthog, key, newSort.dir)
   }

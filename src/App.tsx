@@ -31,7 +31,8 @@ function App() {
   }, [])
 
   const handleToggleDarkMode = useCallback(() => {
-    setIsDark((prev: boolean) => !prev)
+    const currentIsDark = document.documentElement.classList.contains('dark')
+    setIsDark(!currentIsDark)
   }, [setIsDark])
 
   const shortcuts = createDefaultShortcuts({
