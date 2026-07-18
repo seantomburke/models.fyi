@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { models } from '../../data/models'
 import { providers } from '../../data'
 import { ProviderLogo } from '../ProviderLogo'
+import { getRecommendedModels } from '../../lib/recommendations'
 
 interface Props {
   currentModelId: string
@@ -10,13 +11,11 @@ interface Props {
 export function RelatedModels({ currentModelId }: Props) {
   const currentModel = models.find((m) => m.id === currentModelId)
 
-  if (!currentModel || !currentModel.relatedModelIds || currentModel.relatedModelIds.length === 0) {
+  if (!currentModel) {
     return null
   }
 
-  const related = currentModel.relatedModelIds
-    .map((id) => models.find((m) => m.id === id))
-    .filter((m) => m !== undefined) as typeof models
+  const related = getRecommendedModels(currentModel, models)
 
   if (related.length === 0) {
     return null
