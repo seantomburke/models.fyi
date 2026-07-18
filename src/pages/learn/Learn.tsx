@@ -25,8 +25,7 @@ export function Learn() {
       <div className="max-w-2xl">
         <h1 className="text-3xl font-semibold tracking-tight">Learn the basics</h1>
         <p className="mt-3 leading-relaxed text-fg-secondary">
-          Six short explainers, no jargon, no math. Read them in order or jump to the one you
-          came for.
+          Plain-language explainers on AI models, benchmarks, comparisons, and use cases. No jargon, no math. Read them in order or jump to the one you came for.
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">

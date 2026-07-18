@@ -44,7 +44,7 @@ function readTopicSlugs() {
  * Build the complete sitemap XML.
  */
 function generateSitemap() {
-  const baseUrl = 'https://models.fyi'
+  const baseUrl = 'https://seantomburke.github.io'
   const basePath = '/models.fyi' // GitHub Pages project path
   const buildDate = new Date().toISOString().split('T')[0] // YYYY-MM-DD
 
@@ -53,6 +53,7 @@ function generateSitemap() {
   // Define all routes: [path, changefreq]
   const routes = [
     ['/', 'weekly'],
+    ['/search', 'monthly'],
     ['/compare', 'monthly'],
     ['/graph', 'monthly'],
     ['/calculator', 'monthly'],
@@ -63,7 +64,13 @@ function generateSitemap() {
 
   // Build XML entries
   const urlEntries = routes.map(([path, changefreq]) => {
-    const loc = `${baseUrl}${basePath}${path}`.replace(/\/+$/, '') || baseUrl + basePath + '/'
+    let loc = `${baseUrl}${basePath}${path}`
+    // Ensure home page has trailing slash
+    if (path === '/') {
+      loc = loc.replace(/\/+$/, '') + '/'
+    } else {
+      loc = loc.replace(/\/+$/, '')
+    }
     return `  <url>
     <loc>${loc}</loc>
     <lastmod>${buildDate}</lastmod>
