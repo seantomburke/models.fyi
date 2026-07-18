@@ -26,6 +26,7 @@ export const models: Model[] = [
       'swe-bench-pro': 80.0, // Anthropic-published via BenchLM (July 2026)
       'gpqa-diamond': 92.6, // Anthropic-published (July 2026)
       'terminal-bench': 88.0, // vals.ai independent run (July 16, 2026)
+      'hle': 53.3, // Artificial Analysis independent run (July 2026)
     },
     blurb:
       "Anthropic's most capable model. Built for the hardest reasoning and long autonomous work, at a premium price.",
@@ -48,6 +49,7 @@ export const models: Model[] = [
       'swe-bench-pro': 69.2,
       'gpqa-diamond': 93.6,
       'terminal-bench': 74.6, // Anthropic-published (Terminus 2); tbench.ai independent run (Claude Code) lands higher at 78.9
+      'hle': 45.7, // Artificial Analysis independent run (July 2026)
     },
     blurb:
       'A coding workhorse. Near the top of the toughest coding benchmarks at half the price of Fable 5.',
@@ -71,6 +73,7 @@ export const models: Model[] = [
       'swe-bench-pro': 63.2,
       'gpqa-diamond': 91.1, // Artificial Analysis independent run (Anthropic published none)
       'terminal-bench': 80.4, // Anthropic-published; tbench.ai independent run (Claude Code) lands 74.6
+      'hle': 57.4, // BenchLM independent run (July 2026)
     },
     blurb:
       'The most agentic Sonnet yet, released June 30. Can make plans and run tools autonomously. Best value for daily work, now at intro pricing.',
@@ -113,6 +116,7 @@ export const models: Model[] = [
       'terminal-bench': 88.8, // OpenAI-published (single-agent) (July 2026)
       'swe-bench-pro': 64.6, // OpenAI-published
       'gpqa-diamond': 94.1, // Artificial Analysis independent run (July 2026)
+      'hle': 47.2, // Artificial Analysis independent run (July 2026; max effort)
     },
     blurb:
       "OpenAI's brand-new flagship. State of the art on autonomous terminal work, strong all-rounder.",
@@ -193,6 +197,7 @@ export const models: Model[] = [
     internetAccess: true,
     releaseDate: '2026-05-19',
     scores: {
+      'swe-bench-verified': 78.0, // Google-published (announced at Google I/O 2026)
       'swe-bench-pro': 55.1, // Google-published (single attempt)
       'gpqa-diamond': 92.2, // Google-published (July 2026)
       'terminal-bench': 76.2, // Google-published (July 2026)
@@ -235,7 +240,8 @@ export const models: Model[] = [
     reasoning: true,
     internetAccess: true,
     scores: {
-      'gpqa-diamond': 85.3, // Artificial Analysis independent run (reasoning mode)
+      'swe-bench-pro': 70.0, // xAI-published (July 2026)
+      'gpqa-diamond': 63.7, // Artificial Analysis independent run (July 2026)
     },
     blurb:
       'A budget speedster with a huge 2M-token context window. One of the cheapest ways to process large amounts of text.',
@@ -260,6 +266,7 @@ export const models: Model[] = [
       'swe-bench-pro': 61.5, // Meta-published; no independent run yet
       'gpqa-diamond': 88.4, // Artificial Analysis independent run (Meta published none)
       'terminal-bench': 76.2, // tbench.ai independent run (mini-SWE-agent); Meta itself published only a 2.0 number
+      'hle': 62.1, // BenchLM independent run (July 2026)
     },
     blurb:
       "Meta's new flagship and its first paid, closed-weights model after the open Llama era. Built for agent work at an aggressive price.",
@@ -303,6 +310,7 @@ export const models: Model[] = [
       'swe-bench-verified': 80.6,
       'swe-bench-pro': 55.4,
       'gpqa-diamond': 90.1, // independently reproduced by NIST/CAISI
+      'terminal-bench': 67.9, // DeepSeek-published (max reasoning) (July 2026)
     },
     blurb:
       'An open-source powerhouse for code and math. Free to self-host under an MIT license.',
@@ -324,6 +332,7 @@ export const models: Model[] = [
       'swe-bench-verified': 73.4,
       'swe-bench-pro': 49.5,
       'gpqa-diamond': 86.0,
+      'terminal-bench': 61.6, // Alibaba-published (Qwen 3.6 Plus) (July 2026)
     },
     blurb:
       'The leading open model for multilingual work, under the business-friendly Apache 2.0 license.',
@@ -341,7 +350,7 @@ export const models: Model[] = [
     reasoning: false,
     internetAccess: false,
     scores: {
-      'gpqa-diamond': 69.8,
+      'gpqa-diamond': 69.8, // Meta-published (April 2026)
     },
     blurb:
       "Meta's general-purpose open model. Easy to run and widely supported, though newer open models beat it on hard reasoning.",
@@ -359,7 +368,7 @@ export const models: Model[] = [
     reasoning: false,
     internetAccess: false,
     scores: {
-      'gpqa-diamond': 57.2,
+      'gpqa-diamond': 57.2, // Meta-published (April 2026)
     },
     blurb:
       'The long-context champion. A 10-million-token window, enough to read hundreds of books at once.',
