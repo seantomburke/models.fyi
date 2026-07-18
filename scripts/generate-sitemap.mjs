@@ -59,6 +59,7 @@ function generateSitemap() {
     ['/calculator', 'monthly'],
     ['/quiz', 'monthly'],
     ['/learn', 'monthly'],
+    ['/faq', 'monthly'],
     ...topicSlugs.map(slug => [`/learn/${slug}`, 'monthly']),
   ]
 

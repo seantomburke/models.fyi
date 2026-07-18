@@ -73,6 +73,14 @@ export const routeMeta: RouteMeta[] = [
     type: 'website',
     image: ogImage,
   },
+  {
+    path: '/faq',
+    title: 'FAQ — Models.fyi',
+    description:
+      'Frequently asked questions about AI models, benchmarks, pricing, and model selection. Get answers to common questions in plain language.',
+    type: 'website',
+    image: ogImage,
+  },
   ...topics.map((t) => ({
     path: `/learn/${t.slug}`,
     title: t.metaTitle,

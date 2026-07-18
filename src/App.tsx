@@ -8,6 +8,7 @@ import { Compare } from './pages/Compare.tsx'
 import { Quiz } from './pages/Quiz.tsx'
 import { Learn } from './pages/learn/Learn.tsx'
 import { LearnTopic } from './pages/learn/LearnTopic.tsx'
+import { FAQ } from './pages/FAQ.tsx'
 import { Search } from './pages/Search.tsx'
 import { NotFound } from './pages/NotFound.tsx'
 import { GraphSkeleton } from './components/GraphSkeleton.tsx'
@@ -46,6 +47,7 @@ function App() {
     goToCalculator: () => navigate('/calculator'),
     goToQuiz: () => navigate('/quiz'),
     goToLearn: () => navigate('/learn'),
+    goToFAQ: () => navigate('/faq'),
     toggleExport: () => {
       // TODO: Implement export functionality
       console.log('Export not yet implemented')
@@ -86,6 +88,7 @@ function App() {
         <Route path="quiz" element={<Quiz />} />
         <Route path="learn" element={<Learn />} />
         <Route path="learn/:slug" element={<LearnTopic />} />
+        <Route path="faq" element={<FAQ />} />
         <Route path="*" element={<NotFound />} />
       </Route>
       </Routes>

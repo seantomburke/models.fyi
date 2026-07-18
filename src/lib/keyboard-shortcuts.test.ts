@@ -18,6 +18,7 @@ describe('keyboard-shortcuts', () => {
         goToCalculator: vi.fn(),
         goToQuiz: vi.fn(),
         goToLearn: vi.fn(),
+        goToFAQ: vi.fn(),
         toggleExport: vi.fn(),
         toggleDarkMode: vi.fn(),
       }
@@ -25,7 +26,7 @@ describe('keyboard-shortcuts', () => {
 
     test('creates default shortcuts array', () => {
       const shortcuts = createDefaultShortcuts(callbacks)
-      expect(shortcuts).toHaveLength(9)
+      expect(shortcuts).toHaveLength(10)
     })
 
     test('includes help shortcut with ? key', () => {
@@ -82,6 +83,14 @@ describe('keyboard-shortcuts', () => {
       expect(learnShortcut).toBeDefined()
       expect(learnShortcut?.keys).toEqual(['g', 'l'])
       expect(learnShortcut?.label).toBe('g l')
+    })
+
+    test('includes faq shortcut with g+f chord', () => {
+      const shortcuts = createDefaultShortcuts(callbacks)
+      const faqShortcut = shortcuts.find((s) => s.id === 'faq')
+      expect(faqShortcut).toBeDefined()
+      expect(faqShortcut?.keys).toEqual(['g', 'f'])
+      expect(faqShortcut?.label).toBe('g f')
     })
 
     test('includes export shortcut with e key', () => {

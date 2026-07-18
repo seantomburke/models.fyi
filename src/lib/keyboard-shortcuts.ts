@@ -123,6 +123,7 @@ export const createDefaultShortcuts = (callbacks: {
   goToCalculator: () => void
   goToQuiz: () => void
   goToLearn: () => void
+  goToFAQ: () => void
   toggleExport: () => void
   toggleDarkMode: () => void
 }): Shortcut[] => [
@@ -174,6 +175,13 @@ export const createDefaultShortcuts = (callbacks: {
     label: 'g l',
     description: 'Go to Learn',
     action: callbacks.goToLearn,
+  },
+  {
+    id: 'faq',
+    keys: ['g', 'f'],
+    label: 'g f',
+    description: 'Go to FAQ',
+    action: callbacks.goToFAQ,
   },
   {
     id: 'export',

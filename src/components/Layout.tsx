@@ -10,6 +10,7 @@ const navItems = [
   { to: '/calculator', label: 'Calculator' },
   { to: '/quiz', label: 'Which model?' },
   { to: '/learn', label: 'Learn' },
+  { to: '/faq', label: 'FAQ' },
 ]
 
 export function Layout() {
@@ -48,6 +49,7 @@ export function Layout() {
                 '/calculator': 'g k',
                 '/quiz': 'g q',
                 '/learn': 'g l',
+                '/faq': 'g f',
               }
               return (
                 <NavLink
