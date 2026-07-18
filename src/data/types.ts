@@ -28,6 +28,33 @@ export type BenchmarkId =
   | 'swe-bench-pro'
   | 'gpqa-diamond'
   | 'terminal-bench'
+  | 'mask'
+  | 'hle'
+  | 'virology-test'
+  | 'livebench'
+  | 'livecodebench-pro'
+  | 'aider'
+  | 'cybench'
+  | 'arc-prize'
+  | 'geobench'
+  | 'forecastbench'
+  | 'videommu'
+  | 'balrog'
+  | 'hallucination-leaderboard'
+  | 'hallucination-rag'
+  | 'physics-puzzles'
+  | 'vending-bench'
+  | 'simple-bench'
+
+export type BenchmarkCategory =
+  | 'Software Engineering'
+  | 'Writing'
+  | 'Reasoning'
+  | 'Knowledge'
+  | 'Coding'
+  | 'Safety & Alignment'
+  | 'Specialized Skills'
+  | 'Adversarial Robustness'
 
 export interface Benchmark {
   id: BenchmarkId
@@ -36,6 +63,8 @@ export interface Benchmark {
   eli5: string
   /** All current benchmarks are 0-100 percentages, higher = better. */
   unit: '%'
+  /** Category that groups related benchmarks. */
+  category: BenchmarkCategory
   /** URL to the benchmark source or documentation. */
   sourceUrl?: string
 }

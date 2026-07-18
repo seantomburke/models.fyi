@@ -7,6 +7,7 @@ export type {
   ProviderId,
   Benchmark,
   BenchmarkId,
+  BenchmarkCategory,
   Model,
   ModelTier,
 } from './types.ts'
