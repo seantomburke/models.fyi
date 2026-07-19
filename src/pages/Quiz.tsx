@@ -187,6 +187,7 @@ export function Quiz() {
     image: meta.image,
     type: meta.type,
     pathname: '/quiz',
+    structuredData: meta.structuredData,
   })
 
   const [mode, setMode] = useState<Mode>('forward')

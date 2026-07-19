@@ -1,6 +1,10 @@
-import { topics } from '../pages/learn/topics.ts'
+import { topics, levels } from '../pages/learn/topics.ts'
+import type { Topic } from '../pages/learn/topics.ts'
 import { models } from '../data/models.ts'
 import { providers } from '../data/providers.ts'
+import { glossaryTerms } from '../data/glossary.ts'
+import { releases } from '../data/releases.ts'
+import { faqs } from '../data/faqs.ts'
 import type { Model } from '../data/types.ts'
 
 /**
@@ -229,4 +233,254 @@ export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
       item: canonicalUrl(item.path),
     })),
   }
+}
+
+/**
+ * Bundle several schemas into one JSON-LD block via @graph.
+ * A page usually has both a page-level type and the BreadcrumbList that
+ * matches the trail rendered in the UI; @graph is how schema.org expresses
+ * "these describe the same page" without emitting two script tags.
+ * The inner @context keys are dropped — the graph carries one for all of them.
+ */
+function graph(...nodes: Array<Record<string, unknown>>): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': nodes.map(({ '@context': _context, ...node }) => node),
+  }
+}
+
+/**
+ * The breadcrumb trail a page renders, as schema. Every page that passes items
+ * to <Breadcrumb> gets the same trail here, so the markup matches what users see.
+ */
+function trail(...items: Array<{ name: string; path: string }>) {
+  return breadcrumbSchema([{ name: 'Home', path: '/' }, ...items])
+}
+
+/**
+ * Generate WebSite schema for the home page, including the on-site search
+ * action that /search actually implements (it reads the `q` query param).
+ */
+export function websiteSchema(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Models.fyi',
+    url: canonicalUrl('/'),
+    description: metaFor('/').description,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${canonicalUrl('/search')}?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  }
+}
+
+/**
+ * Generate LearningResource schema for a Learn topic.
+ * LearningResource (not Article) is the honest type: these are explainers on a
+ * levelled learning path, and we have no author or publication date for them,
+ * so none is claimed. Every field below comes from the topic record itself.
+ */
+export function learnTopicSchema(topic: Topic): Record<string, unknown> {
+  const level = levels.find((l) => l.id === topic.level)
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'LearningResource',
+    name: topic.question,
+    headline: topic.question,
+    url: canonicalUrl(`/learn/${topic.slug}`),
+    description: topic.metaDescription,
+    abstract: topic.hook,
+    inLanguage: 'en',
+    learningResourceType: 'Explainer',
+    isPartOf: {
+      '@type': 'Collection',
+      name: 'Learn how AI models work',
+      url: canonicalUrl('/learn'),
+    },
+    // The section headings are the real teaching outline of the page.
+    teaches: topic.sections.map((s) => s.heading),
+  }
+  if (level) schema.educationalLevel = level.title
+  return schema
+}
+
+/**
+ * Generate DefinedTermSet schema for the glossary, from the real entries.
+ * Each term's `short` is the definition users see collapsed; `long` is the
+ * expanded one, so the long form is the description.
+ */
+export function glossarySchema(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DefinedTermSet',
+    name: 'AI model glossary',
+    url: canonicalUrl('/glossary'),
+    description: metaFor('/glossary').description,
+    inLanguage: 'en',
+    hasDefinedTerm: glossaryTerms.map((t) => ({
+      '@type': 'DefinedTerm',
+      '@id': `${canonicalUrl('/glossary')}#${t.id}`,
+      name: t.term,
+      termCode: t.id,
+      description: t.long,
+      inDefinedTermSet: canonicalUrl('/glossary'),
+    })),
+  }
+}
+
+/**
+ * Generate ItemList schema for the What's New feed, newest first.
+ * Dates are the release records' own ISO dates — nothing is inferred.
+ */
+export function releasesSchema(): Record<string, unknown> {
+  const ordered = [...releases].sort((a, b) => b.date.localeCompare(a.date))
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: "What's New in AI models",
+    url: canonicalUrl('/whats-new'),
+    description: metaFor('/whats-new').description,
+    numberOfItems: ordered.length,
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    itemListElement: ordered.map((r, index) => {
+      const item: Record<string, unknown> = {
+        '@type': 'ListItem',
+        position: index + 1,
+        name: r.title,
+        description: r.description,
+      }
+      if (r.modelId && models.some((m) => m.id === r.modelId)) {
+        item.url = canonicalUrl(`/models/${r.modelId}`)
+      }
+      return item
+    }),
+  }
+}
+
+/**
+ * Generate ItemList schema for the compare table: every model in the dataset,
+ * in the order the table renders them, each pointing at its own detail page.
+ */
+export function compareSchema(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'AI models compared',
+    url: canonicalUrl('/compare'),
+    description: metaFor('/compare').description,
+    numberOfItems: models.length,
+    itemListElement: models.map((m, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: canonicalUrl(`/models/${m.id}`),
+      name: m.name,
+    })),
+  }
+}
+
+/**
+ * Generate WebApplication schema for the interactive tools (calculator, quiz,
+ * graph). These are real browser-only tools with no server and no price, so
+ * `isAccessibleForFree` is a fact about them, not a marketing claim.
+ */
+export function toolSchema(path: string): Record<string, unknown> {
+  const meta = metaFor(path)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: meta.title.replace(/ — Models\.fyi$/, ''),
+    url: canonicalUrl(path),
+    description: meta.description,
+    applicationCategory: 'UtilityApplication',
+    browserRequirements: 'Requires JavaScript.',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+  }
+}
+
+/** Generate plain WebPage schema for a route that has no richer honest type. */
+export function webPageSchema(path: string, extra: Record<string, unknown> = {}) {
+  const meta = metaFor(path)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: meta.title.replace(/ — Models\.fyi$/, ''),
+    url: canonicalUrl(path),
+    description: meta.description,
+    inLanguage: 'en',
+    isPartOf: { '@type': 'WebSite', name: 'Models.fyi', url: canonicalUrl('/') },
+    ...extra,
+  }
+}
+
+/**
+ * Structured data per route, attached after routeMeta is built so the builders
+ * above can read titles and descriptions back out of it via metaFor.
+ * Model routes already carry their SoftwareApplication schema inline.
+ */
+const pageSchemas: Record<string, () => Record<string, unknown>> = {
+  '/': () => graph(organizationSchema(), websiteSchema()),
+  '/compare': () => graph(compareSchema(), trail({ name: 'Compare', path: '/compare' })),
+  '/graph': () => graph(toolSchema('/graph'), trail({ name: 'Graph', path: '/graph' })),
+  '/calculator': () =>
+    graph(toolSchema('/calculator'), trail({ name: 'Calculator', path: '/calculator' })),
+  '/quiz': () => graph(toolSchema('/quiz'), trail({ name: 'Quiz', path: '/quiz' })),
+  // /search renders an empty breadcrumb trail, so it gets no BreadcrumbList.
+  '/search': () =>
+    webPageSchema('/search', {
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${canonicalUrl('/search')}?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    }),
+  '/learn': () =>
+    graph(
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Collection',
+        name: 'Learn how AI models work',
+        url: canonicalUrl('/learn'),
+        description: metaFor('/learn').description,
+        inLanguage: 'en',
+        hasPart: topics.map((t) => ({
+          '@type': 'LearningResource',
+          name: t.question,
+          url: canonicalUrl(`/learn/${t.slug}`),
+          abstract: t.hook,
+        })),
+      },
+      trail({ name: 'Learn', path: '/learn' }),
+    ),
+  '/faq': () =>
+    graph(
+      faqSchema(faqs.map((f) => ({ question: f.question, answer: f.answer }))),
+      trail({ name: 'FAQ', path: '/faq' }),
+    ),
+  '/glossary': () => graph(glossarySchema(), trail({ name: 'Glossary', path: '/glossary' })),
+  '/whats-new': () =>
+    graph(releasesSchema(), trail({ name: "What's New", path: '/whats-new' })),
+  ...Object.fromEntries(
+    topics.map((t) => [
+      `/learn/${t.slug}`,
+      () =>
+        graph(
+          learnTopicSchema(t),
+          trail({ name: 'Learn', path: '/learn' }, { name: t.question, path: `/learn/${t.slug}` }),
+        ),
+    ]),
+  ),
+}
+
+for (const meta of routeMeta) {
+  const build = pageSchemas[meta.path]
+  if (build) meta.structuredData = build()
 }

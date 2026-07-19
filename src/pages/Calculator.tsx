@@ -169,6 +169,8 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
     description: meta.description,
     image: meta.image,
     type: meta.type,
+    pathname: '/calculator',
+    structuredData: meta.structuredData,
   })
 
   const [inputText, setInputText] = useState('')

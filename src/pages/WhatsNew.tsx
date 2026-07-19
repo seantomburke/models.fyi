@@ -41,6 +41,7 @@ export function WhatsNew() {
     title: meta.title,
     description: meta.description,
     pathname: '/whats-new',
+    structuredData: meta.structuredData,
   })
 
   const sortedReleases = useMemo(() => {

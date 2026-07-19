@@ -13,6 +13,7 @@ export function Glossary() {
     image: meta.image,
     type: meta.type,
     pathname: '/glossary',
+    structuredData: meta.structuredData,
   })
 
   const [search, setSearch] = useState('')

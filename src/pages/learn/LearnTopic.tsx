@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
 import { usePageMeta } from '../../lib/meta.ts'
-import { metaFor, faqSchema } from '../../lib/routeMeta.ts'
+import { metaFor } from '../../lib/routeMeta.ts'
 import { topics, levels } from './topics.ts'
 import { Breadcrumb } from '../../components/Breadcrumb.tsx'
 
@@ -26,14 +26,7 @@ export function LearnTopic() {
     image: baseMeta.image,
     type: baseMeta.type,
     pathname: slug ? `/learn/${slug}` : undefined,
-    structuredData: topic
-      ? faqSchema([
-          {
-            question: topic.question,
-            answer: topic.hook + '\n\n' + topic.sections.map((s) => `${s.heading}\n${s.paragraphs.join('\n')}`).join('\n\n'),
-          },
-        ])
-      : undefined,
+    structuredData: topic ? baseMeta.structuredData : undefined,
   })
 
   useEffect(() => {

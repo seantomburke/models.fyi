@@ -17,6 +17,7 @@ export function Search() {
     image: meta.image,
     type: meta.type,
     pathname: '/search',
+    structuredData: meta.structuredData,
   })
 
   const [query, setQuery] = useState('')

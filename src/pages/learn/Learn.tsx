@@ -12,6 +12,7 @@ export function Learn() {
     image: meta.image,
     type: meta.type,
     pathname: '/learn',
+    structuredData: meta.structuredData,
   })
   return (
     <div className="space-y-10">

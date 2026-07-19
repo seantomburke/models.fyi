@@ -100,6 +100,7 @@ export function Graph() {
     image: meta.image,
     type: meta.type,
     pathname: '/graph',
+    structuredData: meta.structuredData,
   })
 
   const [xId, setXId] = useState('price-input')

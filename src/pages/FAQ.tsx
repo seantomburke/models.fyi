@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { usePageMeta } from '../lib/meta.ts'
-import { metaFor, faqSchema } from '../lib/routeMeta.ts'
+import { metaFor } from '../lib/routeMeta.ts'
 import { faqsByCategory, faqCategories } from '../data/faqs.ts'
 import { Breadcrumb } from '../components/Breadcrumb.tsx'
 
@@ -14,6 +14,7 @@ export function FAQ() {
     image: meta.image,
     type: meta.type,
     pathname: '/faq',
+    structuredData: meta.structuredData,
   })
 
   const toggleItem = (id: string) => {
@@ -106,23 +107,6 @@ export function FAQ() {
           </section>
         )
       })}
-
-      {/* JSON-LD schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
-            faqSchema(
-              faqCategories.flatMap((category) =>
-                faqsByCategory(category).map((faq) => ({
-                  question: faq.question,
-                  answer: faq.answer,
-                })),
-              ),
-            ),
-          ),
-        }}
-      />
     </div>
   )
 }

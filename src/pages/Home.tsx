@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { usePageMeta } from '../lib/meta.ts'
-import { metaFor, organizationSchema } from '../lib/routeMeta.ts'
+import { metaFor } from '../lib/routeMeta.ts'
 import { models, providers, providerById } from '../data/index.ts'
 import { loadBookmarks } from '../lib/bookmarks.ts'
 import { ProviderLogo } from '../components/ProviderLogo.tsx'
@@ -15,7 +15,7 @@ export function Home() {
     image: meta.image,
     type: meta.type,
     pathname: '/',
-    structuredData: organizationSchema(),
+    structuredData: meta.structuredData,
   })
 
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set())
