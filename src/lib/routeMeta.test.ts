@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs'
 import { routeMeta, metaFor, canonicalUrl, SITE_URL } from './routeMeta'
 import { topics } from '../pages/learn/topics'
+import { models } from '../data/models'
+import { providers } from '../data/providers'
 
 test('covers every route in the sitemap, and nothing extra', () => {
   const sitemap = readFileSync('public/sitemap.xml', 'utf8')
@@ -50,6 +52,27 @@ test('canonical URLs use the trailing-slash form GitHub Pages serves with a 200'
     const url = canonicalUrl(r.path)
     expect(url.endsWith('/')).toBe(true)
     expect(url).not.toMatch(/(?<!:)\/\//)
+  }
+})
+
+test('every model route carries valid SoftwareApplication JSON-LD', () => {
+  for (const m of models) {
+    const schema = metaFor(`/models/${m.id}`).structuredData
+    expect(schema).toBeDefined()
+    expect(schema!['@type']).toBe('SoftwareApplication')
+    expect(schema!.url).toBe(canonicalUrl(`/models/${m.id}`))
+    const provider = providers.find((p) => p.id === m.providerId)!
+    expect((schema!.creator as { name: string }).name).toBe(provider.name)
+    if (m.inputPricePerMTok !== null) {
+      // schema.org price must be a bare number — unit text invalidates it.
+      const offers = schema!.offers as { price: unknown; priceCurrency: string }
+      expect(offers.price).toBe(m.inputPricePerMTok)
+      expect(offers.priceCurrency).toBe('USD')
+    } else {
+      expect(schema!.offers).toBeUndefined()
+    }
+    if (m.releaseDate) expect(schema!.datePublished).toBe(m.releaseDate)
+    if (m.license) expect(schema!.license).toBe(m.license)
   }
 })
 

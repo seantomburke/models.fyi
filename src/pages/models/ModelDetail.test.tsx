@@ -1,6 +1,31 @@
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { models } from '../../data/models'
+import { providers } from '../../data'
+import { ModelDetail } from './ModelDetail'
 
 describe('ModelDetail page', () => {
+  test('links to the pre-filtered provider comparison', () => {
+    const model = models[0]
+    const provider = providers.find((p) => p.id === model.providerId)!
+    render(
+      <MemoryRouter initialEntries={[`/models/${model.id}`]}>
+        <Routes>
+          <Route path="/models/:id" element={<ModelDetail />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    const providerLink = screen.getByRole('link', {
+      name: new RegExp(`compare all ${provider.name} models`, 'i'),
+    })
+    expect(providerLink).toHaveAttribute('href', `/compare?filter=${model.providerId}`)
+    expect(screen.getByRole('link', { name: /compare every model/i })).toHaveAttribute(
+      'href',
+      '/compare',
+    )
+  })
+
   test('page accepts model id parameter', () => {
     const testModel = models[0]
     expect(testModel.id).toBeDefined()

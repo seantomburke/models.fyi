@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { models } from '../../data/models'
 import { benchmarks, providers } from '../../data'
 import type { Model } from '../../data/types'
@@ -34,21 +34,7 @@ function ModelDetailContent({ model }: { model: Model }) {
     type: meta.type,
     image: meta.image,
     pathname: `/models/${model.id}`,
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: model.name,
-      description: model.blurb,
-      brand: { '@type': 'Brand', name: provider?.name },
-      offers: {
-        '@type': 'Offer',
-        priceCurrency: 'USD',
-        price:
-          model.inputPricePerMTok !== null
-            ? `${model.inputPricePerMTok} per 1M input tokens`
-            : 'Contact for pricing',
-      },
-    },
+    structuredData: meta.structuredData,
   })
 
   return (
@@ -84,6 +70,26 @@ function ModelDetailContent({ model }: { model: Model }) {
         )}
 
         <RelatedModels currentModelId={model.id} />
+
+        <nav
+          aria-label="Compare links"
+          className="flex flex-wrap gap-x-6 gap-y-2 pt-8 border-t border-slate-200 dark:border-slate-700"
+        >
+          {provider && (
+            <Link
+              to={`/compare?filter=${model.providerId}`}
+              className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              Compare all {provider.name} models →
+            </Link>
+          )}
+          <Link
+            to="/compare"
+            className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Compare every model →
+          </Link>
+        </nav>
       </div>
     </main>
   )

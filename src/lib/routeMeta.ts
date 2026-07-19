@@ -1,5 +1,7 @@
 import { topics } from '../pages/learn/topics.ts'
 import { models } from '../data/models.ts'
+import { providers } from '../data/providers.ts'
+import type { Model } from '../data/types.ts'
 
 /**
  * Canonical SEO metadata for every prerenderable route.
@@ -13,6 +15,8 @@ export interface RouteMeta {
   description: string
   type?: 'website' | 'article'
   image?: string
+  /** JSON-LD for this route. Injected into static HTML by scripts/prerender.mjs. */
+  structuredData?: Record<string, unknown>
 }
 
 /** Absolute base URL of the deployed site — og:image and canonical URLs must be absolute. */
@@ -124,6 +128,7 @@ export const routeMeta: RouteMeta[] = [
     description: m.blurb,
     type: 'article' as const,
     image: ogImage,
+    structuredData: modelSchema(m),
   })),
 ]
 
@@ -131,6 +136,50 @@ export function metaFor(path: string): RouteMeta {
   const meta = routeMeta.find((r) => r.path === path)
   if (!meta) throw new Error(`No route meta for "${path}"`)
   return meta
+}
+
+/**
+ * Generate SoftwareApplication schema for a model detail page.
+ * schema.org requires a bare numeric `price`, so the per-1M-token unit is
+ * expressed through a UnitPriceSpecification instead of appended as text.
+ */
+export function modelSchema(model: Model): Record<string, unknown> {
+  const provider = providers.find((p) => p.id === model.providerId)
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: model.name,
+    url: canonicalUrl(`/models/${model.id}`),
+    description: model.blurb,
+    applicationCategory: 'DeveloperApplication',
+    creator: {
+      '@type': 'Organization',
+      name: provider?.name ?? model.providerId,
+    },
+  }
+  if (model.releaseDate) schema.datePublished = model.releaseDate
+  if (model.license) schema.license = model.license
+  if (model.inputPricePerMTok !== null) {
+    schema.offers = {
+      '@type': 'Offer',
+      price: model.inputPricePerMTok,
+      priceCurrency: 'USD',
+      priceSpecification: {
+        '@type': 'UnitPriceSpecification',
+        price: model.inputPricePerMTok,
+        priceCurrency: 'USD',
+        referenceQuantity: {
+          '@type': 'QuantitativeValue',
+          value: 1_000_000,
+          unitText: 'input tokens',
+        },
+      },
+    }
+  } else if (model.openSource) {
+    // Open-weight models with no fixed API price: the weights are free to run.
+    schema.isAccessibleForFree = true
+  }
+  return schema
 }
 
 /**

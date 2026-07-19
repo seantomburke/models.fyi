@@ -40,19 +40,29 @@ const socialHead = ({ path, title, description, type, image }) => {
   ].join('\n    ')
 }
 
+// JSON-LD goes in the static head too — Google renders JS but most other
+// crawlers (and LLM scrapers) read structured data only from raw HTML.
+// Escape "<" so model text can never form a premature </script>.
+const jsonLd = (data) =>
+  `<script type="application/ld+json">${JSON.stringify(data).replaceAll('<', '\\u003c')}</script>`
+
 let count = 0
 for (const meta of routeMeta) {
-  const { path, title, description } = meta
+  const { path, title, description, structuredData } = meta
   const body = await render(path)
+  const headExtras = structuredData
+    ? `${socialHead(meta)}\n    ${jsonLd(structuredData)}`
+    : socialHead(meta)
   const out = template
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/(name="description"[\s\S]*?content=")[^"]*(")/, `$1${esc(description)}$2`)
-    .replace('</head>', `  ${socialHead(meta)}\n  </head>`)
+    .replace('</head>', `  ${headExtras}\n  </head>`)
     .replace('<div id="root"></div>', `<div id="root">${body}</div>`)
   if (
     !out.includes(`<div id="root">${body}</div>`) ||
     !out.includes(esc(title)) ||
-    !out.includes('og:image')
+    !out.includes('og:image') ||
+    (structuredData && !out.includes('application/ld+json'))
   ) {
     throw new Error(`prerender injection failed for ${path}`)
   }
