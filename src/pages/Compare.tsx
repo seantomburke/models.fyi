@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
@@ -7,7 +7,7 @@ import { formatPrice, formatTokens, formatDateForDisplay } from '../lib/format.t
 import { exportComparison, EXPORT_SHORTCUT_EVENT } from '../lib/export.ts'
 import { benchmarks, models, providers, providerById, dataSourcedAt } from '../data/index.ts'
 import type { ProviderId } from '../data/index.ts'
-import { sortModels, toggleSort, type SortConfig } from '../lib/sort.ts'
+import { sortModels, toggleSort } from '../lib/sort.ts'
 import { searchModels } from '../lib/search.ts'
 import {
   captureFilterChange,
@@ -30,8 +30,45 @@ import { ModelCard } from '../components/ModelCard.tsx'
 import { loadBookmarks, saveBookmarks, toggleBookmark, isBookmarked } from '../lib/bookmarks.ts'
 import { capabilityOptions, filterByCapabilities, type CapabilityFilter } from '../lib/capabilityFilters.ts'
 import { loadViewMode, saveViewMode, type ViewMode } from '../lib/viewMode.ts'
+import {
+  parseCompareParams,
+  serializeCompareParams,
+  type CompareFilter,
+  type CompareUrlState,
+} from '../lib/compareUrlState.ts'
 
-type Filter = 'all' | 'open-source' | 'bookmarked' | ProviderId
+type Filter = CompareFilter
+
+/**
+ * Copies the current URL — which carries the active filters, search, and sort —
+ * so a comparison can be shared as-is. Reads location at click time because the
+ * page is prerendered without a window.
+ */
+function ShareLinkButton() {
+  const [copied, setCopied] = useState(false)
+
+  const handleShare = async () => {
+    const url = window.location.href
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy share link:', error)
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleShare}
+      className="rounded-lg border border-line px-3 py-1.5 text-sm font-medium text-fg-secondary transition-colors duration-150 hover:border-line-strong hover:text-fg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-deep print:hidden"
+      aria-label="Copy a shareable link to this comparison"
+    >
+      {copied ? 'Link copied!' : 'Copy link'}
+    </button>
+  )
+}
 
 /** Visible-word capability tag; hover title carries the fuller explanation. */
 function CapabilityBadge({ label, title }: { label: string; title: string }) {
@@ -57,32 +94,46 @@ export function Compare() {
     pathname: '/compare',
   })
 
-  const [filter, setFilter] = useState<Filter>('all')
-  const [sort, setSort] = useState<SortConfig>({ column: null, direction: 'asc' })
+  // The URL is the source of truth for filter/search/sort state, so any
+  // comparison can be shared, bookmarked, or restored with the back button.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const urlState = useMemo(() => parseCompareParams(searchParams), [searchParams])
+  const { filter, capabilities, searchQuery, sort } = urlState
+
+  const updateUrl = useCallback(
+    (patch: Partial<CompareUrlState>) => {
+      setSearchParams(
+        (prev) => serializeCompareParams({ ...parseCompareParams(prev), ...patch }),
+        { replace: true },
+      )
+    },
+    [setSearchParams],
+  )
+
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set())
-  const [capabilities, setCapabilities] = useState<Set<CapabilityFilter>>(new Set())
-  const [searchQuery, setSearchQuery] = useState('')
-  // 'table' during server prerender; the real preference loads client-side below.
-  const [viewMode, setViewMode] = useState<ViewMode>('table')
+  // 'table' during server prerender; the real preference loads client-side
+  // below. A ?view= param in the URL overrides the stored preference.
+  const [storedViewMode, setStoredViewMode] = useState<ViewMode>('table')
+  const viewMode = urlState.viewMode ?? storedViewMode
 
   useEffect(() => {
     setBookmarks(loadBookmarks())
-    setViewMode(loadViewMode(window.innerWidth))
+    setStoredViewMode(loadViewMode(window.innerWidth))
   }, [])
 
   const handleFilterChange = (id: Filter) => {
-    setFilter(id)
+    updateUrl({ filter: id })
     captureFilterChange(posthog, id)
   }
 
   const handleClearFilter = () => {
-    setFilter('all')
+    updateUrl({ filter: 'all' })
     captureFilterCleared(posthog)
   }
 
   const handleSortChange = (column: string) => {
     const newSort = toggleSort(sort, column)
-    setSort(newSort)
+    updateUrl({ sort: newSort })
     captureSortChange(posthog, newSort.column || '', newSort.direction)
   }
 
@@ -93,8 +144,9 @@ export function Compare() {
   }
 
   const handleViewModeChange = (mode: ViewMode) => {
-    setViewMode(mode)
+    setStoredViewMode(mode)
     saveViewMode(mode)
+    updateUrl({ viewMode: mode })
     captureViewModeChange(posthog, mode)
   }
 
@@ -105,7 +157,7 @@ export function Compare() {
     } else {
       updated.add(cap)
     }
-    setCapabilities(updated)
+    updateUrl({ capabilities: updated })
   }
 
   const filtered = useMemo(() => {
@@ -209,7 +261,11 @@ export function Compare() {
       </details>
 
       <div className="space-y-3">
-        <SearchInput value={searchQuery} onChange={setSearchQuery} placeholder="Search models, capabilities..." />
+        <SearchInput
+          value={searchQuery}
+          onChange={(q) => updateUrl({ searchQuery: q })}
+          placeholder="Search models, capabilities..."
+        />
 
         <div className="flex flex-wrap gap-2 sm:gap-1.5" role="group" aria-label="Filter by provider">
           {filters.map(({ id, label }) => (
@@ -263,7 +319,7 @@ export function Compare() {
           {capabilities.size > 0 && (
             <button
               type="button"
-              onClick={() => setCapabilities(new Set())}
+              onClick={() => updateUrl({ capabilities: new Set() })}
               className="inline-flex items-center rounded-lg px-3 py-2 sm:py-1.5 text-sm font-medium text-fg-secondary transition-colors duration-150 hover:text-fg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-deep min-h-11 sm:min-h-auto"
               aria-label="Clear capability filters"
             >
@@ -297,6 +353,7 @@ export function Compare() {
                 </button>
               ))}
             </div>
+            <ShareLinkButton />
             <button
               type="button"
               onClick={handleExport}
@@ -325,8 +382,7 @@ export function Compare() {
             <button
               type="button"
               onClick={() => {
-                setFilter('all')
-                setCapabilities(new Set())
+                updateUrl({ filter: 'all', capabilities: new Set() })
                 captureFilterCleared(posthog)
               }}
               className="text-accent-deep hover:text-accent-deep/80 font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-deep rounded px-2 py-1"

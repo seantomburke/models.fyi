@@ -1,6 +1,6 @@
 import { render, screen, within, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, useLocation } from 'react-router-dom'
 import { Compare } from './Compare'
 import { benchmarks, models } from '../data/index.ts'
 import type { Model } from '../data/index.ts'
@@ -12,10 +12,16 @@ vi.mock('../lib/export.ts', async (importOriginal) => {
   return { ...actual, exportComparison: vi.fn() }
 })
 
-function renderCompare() {
+function LocationProbe() {
+  const location = useLocation()
+  return <div data-testid="location">{location.pathname + location.search}</div>
+}
+
+function renderCompare(initialEntry = '/compare') {
   render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <Compare />
+      <LocationProbe />
     </MemoryRouter>,
   )
 }
@@ -271,5 +277,90 @@ describe('export', () => {
     expect(exported.length).toBeLessThan(models.length)
     expect(exported.some((m) => m.name === 'Claude Opus 4.8')).toBe(true)
     expect(exported.some((m) => m.name === 'GPT-5.6 Sol')).toBe(false)
+  })
+})
+
+describe('URL-shareable state', () => {
+  test('a provider filter in the URL pre-applies on load', () => {
+    renderCompare('/compare?filter=anthropic')
+    const table = screen.getByRole('table')
+    expect(within(table).getByText('Claude Opus 4.8')).toBeInTheDocument()
+    expect(within(table).queryByText('GPT-5.6 Sol')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Anthropic' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  test('a search query in the URL pre-applies on load', () => {
+    renderCompare('/compare?q=claude')
+    expect(screen.getByRole('textbox', { name: 'Search models' })).toHaveValue('claude')
+    const table = screen.getByRole('table')
+    expect(within(table).getByText('Claude Opus 4.8')).toBeInTheDocument()
+    expect(within(table).queryByText('Gemini 3 Pro')).not.toBeInTheDocument()
+  })
+
+  test('a sort in the URL orders the table on load', () => {
+    renderCompare('/compare?sort=swe-bench-verified&dir=desc')
+    const table = screen.getByRole('table')
+    const rows = within(table).getAllByRole('row').slice(1) // skip header
+    const topScorer = [...models]
+      .filter((m) => m.scores['swe-bench-verified'] !== undefined)
+      .sort((a, b) => b.scores['swe-bench-verified']! - a.scores['swe-bench-verified']!)[0]
+    expect(within(rows[0]).getByText(topScorer.name)).toBeInTheDocument()
+  })
+
+  test('view=cards in the URL shows the card view', () => {
+    renderCompare('/compare?view=cards')
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Model cards' })).toBeInTheDocument()
+  })
+
+  test('junk params fall back to the default table', () => {
+    renderCompare('/compare?filter=bogus&sort=bogus&view=bogus')
+    const table = screen.getByRole('table')
+    for (const m of models) {
+      expect(within(table).getByText(m.name)).toBeInTheDocument()
+    }
+  })
+
+  test('clicking a provider filter writes it to the URL', async () => {
+    const user = userEvent.setup()
+    renderCompare()
+    await user.click(screen.getByRole('button', { name: 'Anthropic' }))
+    expect(screen.getByTestId('location')).toHaveTextContent('/compare?filter=anthropic')
+  })
+
+  test('toggling a capability and sorting both land in the URL', async () => {
+    const user = userEvent.setup()
+    renderCompare()
+    await user.click(screen.getByRole('button', { name: /Reasoning/ }))
+    await user.click(screen.getByRole('button', { name: 'Model' }))
+    expect(screen.getByTestId('location')).toHaveTextContent(
+      '/compare?caps=reasoning&sort=name',
+    )
+  })
+
+  test('clearing all filters cleans the URL back to /compare', async () => {
+    const user = userEvent.setup()
+    renderCompare('/compare?filter=anthropic&caps=reasoning')
+    await user.click(screen.getByRole('button', { name: 'Clear all filters' }))
+    expect(screen.getByTestId('location')).toHaveTextContent(/\/compare$/)
+  })
+
+  test('Copy link copies the current URL to the clipboard', async () => {
+    const user = userEvent.setup()
+    // Installed after userEvent.setup(), which stubs the clipboard itself.
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    })
+    renderCompare()
+    await user.click(
+      screen.getByRole('button', { name: 'Copy a shareable link to this comparison' }),
+    )
+    expect(writeText).toHaveBeenCalledWith(window.location.href)
+    expect(screen.getByText('Link copied!')).toBeInTheDocument()
   })
 })
