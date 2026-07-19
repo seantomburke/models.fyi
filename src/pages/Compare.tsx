@@ -417,32 +417,43 @@ export function Compare() {
         <table className="w-full min-w-[56rem] text-sm">
           <thead className="sticky top-0 z-10 bg-surface-raised">
             <tr className="border-b border-line text-left">
-              <th className="sticky left-0 z-20 bg-surface-raised px-3 sm:px-4 py-3 font-medium text-fg-muted">
-                <SortableHeader
-                  column="name"
-                  label="Model"
-                  sort={sort}
-                  onSort={handleSortChange}
-                  className="sticky left-0"
-                />
-              </th>
+              <SortableHeader
+                column="name"
+                label="Model"
+                sort={sort}
+                onSort={handleSortChange}
+                className="sticky left-0 z-20 bg-surface-raised"
+              />
               {benchmarks.map((b) => (
-                <th key={b.id} className="px-2 sm:px-3 py-3 text-right text-sm font-medium text-fg-muted">
-                  <button
-                    type="button"
-                    onClick={() => handleSortChange(b.id)}
-                    aria-pressed={sort.column === b.id}
-                    title={b.eli5}
-                    className="hover:text-fg transition-colors duration-150 w-full text-right"
-                  >
-                    {b.name}
-                    {sort.column === b.id && (
-                      <span aria-hidden className="ml-1">
-                        {sort.direction === 'asc' ? '↑' : '↓'}
-                      </span>
-                    )}
+                <th
+                  key={b.id}
+                  aria-sort={
+                    sort.column === b.id
+                      ? sort.direction === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  }
+                  className="px-2 sm:px-3 py-3 text-right text-sm font-medium text-fg-muted"
+                >
+                  {/* The source link sits beside the sort button, not inside it —
+                      nesting a link in a button hides it from keyboard users. */}
+                  <span className="inline-flex w-full items-center justify-end">
+                    <button
+                      type="button"
+                      onClick={() => handleSortChange(b.id)}
+                      title={b.eli5}
+                      className="hover:text-fg transition-colors duration-150 text-right"
+                    >
+                      {b.name}
+                      {sort.column === b.id && (
+                        <span aria-hidden className="ml-1">
+                          {sort.direction === 'asc' ? '↑' : '↓'}
+                        </span>
+                      )}
+                    </button>
                     <BenchmarkSourceLink sourceUrl={b.sourceUrl} benchmarkName={b.name} />
-                  </button>
+                  </span>
                 </th>
               ))}
               <SortableHeader

@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Benchmark } from '../data/types.ts'
 import type { ProvenanceDisplay } from '../lib/scoreProvenance.ts'
-import { BenchmarkSourceLink } from './BenchmarkSourceLink.tsx'
 
 interface BenchmarkCellProps {
   benchmark: Benchmark
@@ -91,14 +90,9 @@ export function BenchmarkCell({ benchmark, score, isBest, provenance }: Benchmar
           title={`${benchmark.name}: ${benchmark.eli5}`}
           aria-label={`${benchmark.name} score: ${scoreContent}. Click for details`}
         >
-          <BenchmarkSourceLink
-            sourceUrl={benchmark.sourceUrl}
-            benchmarkName={benchmark.name}
-            variant="wrapper"
-            className={isBest ? 'text-accent-deep' : 'text-fg-secondary'}
-          >
-            {scoreContent}
-          </BenchmarkSourceLink>
+          {/* The score itself is not a link: nesting one inside this button made it
+              unreachable by keyboard. The tooltip below carries the source link. */}
+          {scoreContent}
           {provenanceDot}
         </button>
       ) : (

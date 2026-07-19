@@ -64,8 +64,9 @@ test('best score per benchmark is highlighted', () => {
   )
   // Another column can legitimately display the same value; at least one
   // cell with this text must carry the highlight.
+  // The highlight class lives on the enclosing cell, not the score text itself.
   const cells = screen.getAllByText(`${best.toFixed(1)}%`)
-  expect(cells.some((c) => c.className.includes('text-accent-deep'))).toBe(true)
+  expect(cells.some((c) => c.closest('td')?.className.includes('text-accent-deep'))).toBe(true)
 })
 
 test('every model row carries its company logo', () => {
@@ -175,13 +176,15 @@ test('sorting by name reorders models alphabetically', async () => {
 test('header has aria-sort attribute for accessibility', async () => {
   const user = userEvent.setup()
   renderCompare()
-  const modelHeader = screen.getByRole('button', { name: 'Model' })
+  const sortButton = screen.getByRole('button', { name: 'Model' })
+  // aria-sort is only valid on the columnheader, not on the button inside it.
+  const modelHeader = screen.getByRole('columnheader', { name: /Model/ })
   // Initial state
   expect(modelHeader).toHaveAttribute('aria-sort', 'none')
   // After sorting
-  await user.click(modelHeader)
+  await user.click(sortButton)
   expect(modelHeader).toHaveAttribute('aria-sort', 'ascending')
-  await user.click(modelHeader)
+  await user.click(sortButton)
   expect(modelHeader).toHaveAttribute('aria-sort', 'descending')
 })
 

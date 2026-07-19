@@ -36,13 +36,15 @@ export function SortableHeader({
   return (
     <th
       title={title}
+      // aria-sort belongs on the columnheader itself, not the button inside it —
+      // it is not a supported attribute on a generic button role.
+      aria-sort={isActive ? (isAscending ? 'ascending' : 'descending') : 'none'}
       className={`${textAlign === 'right' ? 'text-right' : 'text-left'} font-medium text-fg-muted px-2 sm:px-3 py-3 ${className}`}
     >
       <button
         type="button"
         onClick={() => onSort(column)}
         className={`flex cursor-pointer items-center ${textAlign === 'right' ? 'justify-end' : 'justify-start'} gap-1 ${textAlign === 'right' ? 'w-full' : ''} transition-colors hover:text-fg focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-accent-deep`}
-        aria-sort={isActive ? (isAscending ? 'ascending' : 'descending') : 'none'}
       >
         {label}
         {isActive && (

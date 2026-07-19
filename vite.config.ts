@@ -15,5 +15,24 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/test/setup.ts',
     css: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'json-summary'],
+      reportsDirectory: './coverage',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        // Entry points and framework wiring: nothing to assert, executed by the browser.
+        'src/main.tsx',
+        'src/entry-server.tsx',
+        'src/vite-env.d.ts',
+        // Type-only modules contribute no runtime statements.
+        'src/**/*.d.ts',
+        // The tests themselves, and their harness.
+        'src/**/*.test.{ts,tsx}',
+        'src/test/**',
+        // Static datasets — hand-maintained records, validated by scripts/validate-data.ts.
+        'src/data/**',
+      ],
+    },
   },
 })
