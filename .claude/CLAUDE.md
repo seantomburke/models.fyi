@@ -31,3 +31,9 @@ npm run lint      # Lint
 - SEO is a first-class requirement: semantic HTML, meta tags, and accessible markup on every page.
 - Keep the stack light. The README explicitly avoids heavy frameworks — prefer simple, composable components.
 - Model and benchmark data are hardcoded for now. Isolate data behind a typed module so migrating to a database later is a contained change.
+
+## Deployment
+
+- Always push finished work to `main` — every push to main triggers the GitHub Actions deploy to GitHub Pages. Don't leave completed work sitting on feature branches.
+- Watch the deploy with a background Monitor, not by polling or `gh run watch` in the foreground — it wastes context.
+- After the deploy succeeds, verify the change on the live site, then close the GitHub issue.
