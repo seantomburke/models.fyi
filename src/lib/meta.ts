@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-
-const BASE_URL = 'https://seantomburke.github.io/models.fyi'
+import { SITE_URL } from './routeMeta.ts'
 
 export interface PageMetaOptions {
   title: string
@@ -67,7 +66,7 @@ export function usePageMeta(titleOrOptions: string | PageMetaOptions, descriptio
 
     // Set canonical URL
     if (options.pathname) {
-      const canonicalUrl = options.pathname === '/' ? BASE_URL : `${BASE_URL}${options.pathname}`
+      const canonicalUrl = options.pathname === '/' ? SITE_URL : `${SITE_URL}${options.pathname}`
       let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
       if (!canonical) {
         canonical = document.createElement('link')

@@ -4,7 +4,7 @@ import { StaticRouter } from 'react-router'
 import App from './App.tsx'
 
 // Re-exported for scripts/prerender.mjs (which can only import compiled JS).
-export { routeMeta } from './lib/routeMeta.ts'
+export { routeMeta, SITE_URL } from './lib/routeMeta.ts'
 
 /**
  * Render the app for one route. `path` excludes the base (e.g. "/compare").

@@ -15,7 +15,10 @@ export interface RouteMeta {
   image?: string
 }
 
-const ogImage = '/models.fyi/og-image.png'
+/** Absolute base URL of the deployed site — og:image and canonical URLs must be absolute. */
+export const SITE_URL = 'https://seantomburke.github.io/models.fyi'
+
+const ogImage = `${SITE_URL}/og-image.png`
 
 export const routeMeta: RouteMeta[] = [
   {
@@ -128,7 +131,7 @@ export function organizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Models.fyi',
-    url: 'https://models.fyi',
+    url: SITE_URL,
     description:
       'Compare flagship AI models from OpenAI, Anthropic, Google, and xAI across benchmarks, cost, and capability.',
     sameAs: ['https://github.com/seantomburke/models.fyi'],
@@ -157,7 +160,6 @@ export function faqSchema(items: Array<{ question: string; answer: string }>) {
  * Generate BreadcrumbList schema for navigation.
  */
 export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
-  const basePath = '/models.fyi'
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -165,7 +167,7 @@ export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `https://models.fyi${basePath}${item.path}`,
+      item: `${SITE_URL}${item.path}`,
     })),
   }
 }
