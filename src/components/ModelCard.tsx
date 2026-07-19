@@ -8,7 +8,7 @@ interface ModelCardProps {
   model: Model
   isBookmarked: boolean
   onBookmarkToggle: (modelId: string) => void
-  bestScores?: Record<string, number>
+  bestScores?: Partial<Record<string, number>>
   onViewDetails?: (modelId: string) => void
 }
 

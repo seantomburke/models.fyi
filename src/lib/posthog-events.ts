@@ -13,6 +13,7 @@ export const EVENTS = {
   COMPARE_TABLE_EXPORTED: 'compare_table_exported',
   COMPARE_TABLE_EXPORT_FAILED: 'compare_table_export_failed',
   COMPARE_BENCHMARK_CLICKED: 'compare_benchmark_clicked',
+  COMPARE_VIEW_MODE_CHANGED: 'compare_view_mode_changed',
 
   // Graph page events
   GRAPH_AXES_CHANGED: 'graph_axes_changed',
@@ -108,6 +109,18 @@ export function captureFilterChange(posthog: ReturnType<typeof usePostHog>, filt
  */
 export function captureFilterCleared(posthog: ReturnType<typeof usePostHog>): void {
   posthog?.capture?.(EVENTS.COMPARE_FILTER_CLEARED)
+}
+
+/**
+ * Capture a compare view mode change (table vs. cards).
+ */
+export function captureViewModeChange(
+  posthog: ReturnType<typeof usePostHog>,
+  viewMode: 'table' | 'cards',
+): void {
+  posthog?.capture?.(EVENTS.COMPARE_VIEW_MODE_CHANGED, {
+    view_mode: viewMode,
+  })
 }
 
 /**

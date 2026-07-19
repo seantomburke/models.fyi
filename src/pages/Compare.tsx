@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
@@ -14,6 +15,7 @@ import {
   captureSortChange,
   captureExport,
   captureExportFailed,
+  captureViewModeChange,
 } from '../lib/posthog-events.ts'
 import { ProviderLogo } from '../components/ProviderLogo.tsx'
 import { SortableHeader } from '../components/SortableHeader.tsx'
@@ -23,8 +25,10 @@ import { BookmarkButton } from '../components/BookmarkButton.tsx'
 import { SearchInput } from '../components/SearchInput.tsx'
 import { BenchmarkCell } from '../components/BenchmarkCell.tsx'
 import { CopyButton } from '../components/CopyButton.tsx'
+import { ModelCard } from '../components/ModelCard.tsx'
 import { loadBookmarks, saveBookmarks, toggleBookmark, isBookmarked } from '../lib/bookmarks.ts'
 import { capabilityOptions, filterByCapabilities, type CapabilityFilter } from '../lib/capabilityFilters.ts'
+import { loadViewMode, saveViewMode, type ViewMode } from '../lib/viewMode.ts'
 
 type Filter = 'all' | 'open-source' | 'bookmarked' | ProviderId
 
@@ -42,6 +46,7 @@ function CapabilityBadge({ label, title }: { label: string; title: string }) {
 
 export function Compare() {
   const posthog = usePostHog()
+  const navigate = useNavigate()
   const meta = metaFor('/compare')
   usePageMeta({
     title: meta.title,
@@ -56,9 +61,12 @@ export function Compare() {
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set())
   const [capabilities, setCapabilities] = useState<Set<CapabilityFilter>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
+  // 'table' during server prerender; the real preference loads client-side below.
+  const [viewMode, setViewMode] = useState<ViewMode>('table')
 
   useEffect(() => {
     setBookmarks(loadBookmarks())
+    setViewMode(loadViewMode(window.innerWidth))
   }, [])
 
   const handleFilterChange = (id: Filter) => {
@@ -81,6 +89,12 @@ export function Compare() {
     const updated = toggleBookmark(bookmarks, modelId)
     setBookmarks(updated)
     saveBookmarks(updated)
+  }
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode)
+    saveViewMode(mode)
+    captureViewModeChange(posthog, mode)
   }
 
   const handleToggleCapability = (cap: CapabilityFilter) => {
@@ -249,14 +263,37 @@ export function Compare() {
           <div className="text-sm text-fg-muted">
             Showing {visible.length} of {models.length} models
           </div>
-          <button
-            type="button"
-            onClick={handleExport}
+          <div className="flex items-center gap-2">
+            <div
+              className="flex rounded-lg border border-line p-0.5"
+              role="group"
+              aria-label="Switch between table and card view"
+            >
+              {(['table', 'cards'] as const).map((mode) => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => handleViewModeChange(mode)}
+                  aria-pressed={viewMode === mode}
+                  className={`rounded-md px-3 py-1 text-sm capitalize transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent-deep ${
+                    viewMode === mode
+                      ? 'bg-accent-soft font-medium text-accent-deep'
+                      : 'text-fg-secondary hover:text-fg'
+                  }`}
+                >
+                  {mode}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={handleExport}
             className="rounded-lg bg-accent-soft px-3 py-1.5 text-sm font-medium text-accent-deep transition-colors duration-150 hover:bg-accent-soft/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-deep print:hidden"
-            aria-label="Export comparison table as CSV"
-          >
-            Export CSV
-          </button>
+              aria-label="Export comparison table as CSV"
+            >
+              Export CSV
+            </button>
+          </div>
         </div>
       </div>
 
@@ -288,6 +325,25 @@ export function Compare() {
         </div>
       </div>
 
+      {viewMode === 'cards' ? (
+        <div
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          role="list"
+          aria-label="Model cards"
+        >
+          {visible.map((m) => (
+            <div key={m.id} role="listitem">
+              <ModelCard
+                model={m}
+                isBookmarked={isBookmarked(bookmarks, m.id)}
+                onBookmarkToggle={handleToggleBookmark}
+                bestScores={bestScores}
+                onViewDetails={(modelId) => navigate(`/models/${modelId}`)}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
       <div className="overflow-x-auto rounded-xl border border-line bg-surface-raised">
         <table className="w-full min-w-[56rem] text-sm">
           <thead className="sticky top-0 z-10 bg-surface-raised">
@@ -425,6 +481,7 @@ export function Compare() {
           </tbody>
         </table>
       </div>
+      )}
 
       <p className="text-xs text-fg-muted">
         *Open-source models are free to download and run yourself; hosted-API pricing varies by

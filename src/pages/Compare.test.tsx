@@ -13,6 +13,11 @@ function renderCompare() {
   )
 }
 
+// View-mode and bookmark state persist in localStorage; isolate tests from each other.
+beforeEach(() => {
+  localStorage.clear()
+})
+
 test('renders a row for every model in the dataset', () => {
   renderCompare()
   const table = screen.getByRole('table')
@@ -165,4 +170,60 @@ test('header has aria-sort attribute for accessibility', async () => {
   expect(modelHeader).toHaveAttribute('aria-sort', 'ascending')
   await user.click(modelHeader)
   expect(modelHeader).toHaveAttribute('aria-sort', 'descending')
+})
+
+test('view toggle switches from table to cards and back', async () => {
+  const user = userEvent.setup()
+  renderCompare()
+  expect(screen.getByRole('table')).toBeInTheDocument()
+
+  await user.click(screen.getByRole('button', { name: 'cards' }))
+  expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  const grid = screen.getByRole('list', { name: 'Model cards' })
+  expect(within(grid).getAllByRole('listitem')).toHaveLength(models.length)
+  expect(within(grid).getByText('Claude Opus 4.8')).toBeInTheDocument()
+
+  await user.click(screen.getByRole('button', { name: 'table' }))
+  expect(screen.getByRole('table')).toBeInTheDocument()
+  expect(screen.queryByRole('list', { name: 'Model cards' })).not.toBeInTheDocument()
+})
+
+test('card view shows a View details button per model', async () => {
+  const user = userEvent.setup()
+  renderCompare()
+  await user.click(screen.getByRole('button', { name: 'cards' }))
+  expect(screen.getAllByRole('button', { name: 'View details' })).toHaveLength(models.length)
+})
+
+test('view mode preference persists to localStorage', async () => {
+  const user = userEvent.setup()
+  renderCompare()
+  await user.click(screen.getByRole('button', { name: 'cards' }))
+  expect(localStorage.getItem('models-fyi-view-mode')).toBe('cards')
+})
+
+test('filters still apply in card view', async () => {
+  const user = userEvent.setup()
+  renderCompare()
+  await user.click(screen.getByRole('button', { name: 'cards' }))
+  await user.click(screen.getByRole('button', { name: 'Anthropic' }))
+  const grid = screen.getByRole('list', { name: 'Model cards' })
+  expect(within(grid).getByText('Claude Opus 4.8')).toBeInTheDocument()
+  expect(within(grid).queryByText('GPT-5.6 Sol')).not.toBeInTheDocument()
+})
+
+test('narrow viewports default to card view', () => {
+  const originalWidth = window.innerWidth
+  Object.defineProperty(window, 'innerWidth', { value: 375, configurable: true, writable: true })
+  try {
+    renderCompare()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Model cards' })).toBeInTheDocument()
+  } finally {
+    Object.defineProperty(window, 'innerWidth', {
+      value: originalWidth,
+      configurable: true,
+      writable: true,
+    })
+  }
 })
