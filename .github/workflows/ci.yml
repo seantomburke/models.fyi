@@ -25,3 +25,9 @@ jobs:
       - run: npm run validate
       - run: npm test -- --run
       - run: npm run build
+      # Agent guidance files must never ship with the site
+      - run: |
+          if find dist \( -name 'AGENTS.md' -o -name 'CLAUDE.md' \) | grep -q .; then
+            echo 'Agent guidance files found in dist/' >&2
+            exit 1
+          fi

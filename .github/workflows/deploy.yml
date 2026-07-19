@@ -27,6 +27,12 @@ jobs:
       # Build prerenders every route to static HTML (real 200s for crawlers)
       # and writes an empty-root dist/404.html fallback for unknown paths.
       - run: npm run build
+      # Agent guidance files must never ship with the site
+      - run: |
+          if find dist \( -name 'AGENTS.md' -o -name 'CLAUDE.md' \) | grep -q .; then
+            echo 'Agent guidance files found in dist/' >&2
+            exit 1
+          fi
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

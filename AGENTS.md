@@ -26,6 +26,32 @@ npm run lint      # Lint
 
 - Node.js and npm
 
+## Agent Setup
+
+This repo is agent-agnostic. Guidance lives in `AGENTS.md` files, not in any one agent's config format:
+
+- This file holds repo-wide guidance; `src/AGENTS.md` adds frontend rules (React, error handling, testing) for work under `src/`.
+- Reusable skills live in `.agents/skills/<name>/SKILL.md`. When a task matches a skill listed below, read its SKILL.md and follow it.
+- Agent-specific config stays in that agent's folder (`.claude/` for Claude Code permissions and subagents, `.codex/` for Codex agents). Don't put repo guidance there.
+
+| Skill | Use when |
+|-------|----------|
+| `.agents/skills/writing-tests/` | Writing tests, choosing test types |
+| `.agents/skills/fixing-flaky-tests/` | Tests pass alone but fail in the suite, or fail intermittently |
+| `.agents/skills/handling-errors/` | Designing try/catch, error propagation, Result patterns |
+| `.agents/skills/systematic-debugging/` | Investigating bugs, errors, unexpected behavior |
+| `.agents/skills/design/` | Building data-heavy or dashboard-style UI |
+
+## Debugging
+
+When investigating bugs or unexpected behavior, follow `.agents/skills/systematic-debugging/SKILL.md`.
+
+Four-phase approach:
+1. Reproduce the issue
+2. Trace the code path
+3. Identify root cause
+4. Verify the fix
+
 ## Conventions
 
 - SEO is a first-class requirement: semantic HTML, meta tags, and accessible markup on every page.
