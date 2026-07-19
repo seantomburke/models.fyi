@@ -67,6 +67,10 @@ export interface Benchmark {
   category: BenchmarkCategory
   /** URL to the benchmark source or documentation. */
   sourceUrl?: string
+  /** Data quality indicator: provider-published, independent run, or mixed sources. */
+  confidence?: 'published' | 'independent' | 'mixed'
+  /** Organization that publishes or maintains this benchmark. */
+  sourceOrganization?: string
 }
 
 export type ModelTier = 'flagship' | 'balanced' | 'fast'

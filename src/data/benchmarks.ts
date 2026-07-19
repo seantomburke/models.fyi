@@ -8,6 +8,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Software Engineering',
     sourceUrl: 'https://github.com/princeton-nlp/SWE-bench',
+    confidence: 'independent',
+    sourceOrganization: 'Princeton NLP',
   },
   {
     id: 'swe-bench-pro',
@@ -16,6 +18,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Software Engineering',
     sourceUrl: 'https://github.com/princeton-nlp/SWE-bench',
+    confidence: 'independent',
+    sourceOrganization: 'Princeton NLP',
   },
   {
     id: 'gpqa-diamond',
@@ -24,6 +28,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Knowledge',
     sourceUrl: 'https://huggingface.co/datasets/Idavidrein/gpqa',
+    confidence: 'independent',
+    sourceOrganization: 'Hugging Face',
   },
   {
     id: 'terminal-bench',
@@ -32,6 +38,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Software Engineering',
     sourceUrl: 'https://github.com/aime-bench/aime-bench',
+    confidence: 'independent',
+    sourceOrganization: 'AIME Bench',
   },
   {
     id: 'mask',
@@ -40,6 +48,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Safety & Alignment',
     sourceUrl: 'https://scale.com/leaderboard/mask',
+    confidence: 'independent',
+    sourceOrganization: 'Scale AI',
   },
   {
     id: 'hle',
@@ -48,6 +58,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Knowledge',
     sourceUrl: 'https://scale.com/leaderboard/humanitys_last_exam',
+    confidence: 'independent',
+    sourceOrganization: 'Scale AI',
   },
   {
     id: 'virology-test',
@@ -56,6 +68,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Specialized Skills',
     sourceUrl: 'https://www.virologytest.ai/',
+    confidence: 'independent',
+    sourceOrganization: 'Virology.ai',
   },
   {
     id: 'livebench',
@@ -64,6 +78,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Reasoning',
     sourceUrl: 'https://livebench.ai/',
+    confidence: 'independent',
+    sourceOrganization: 'LiveBench',
   },
   {
     id: 'livecodebench-pro',
@@ -72,6 +88,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Coding',
     sourceUrl: 'https://livecodebenchpro.com/',
+    confidence: 'independent',
+    sourceOrganization: 'LiveCodeBench',
   },
   {
     id: 'aider',
@@ -80,6 +98,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Coding',
     sourceUrl: 'https://aider.chat/docs/leaderboards/',
+    confidence: 'independent',
+    sourceOrganization: 'Aider',
   },
   {
     id: 'cybench',
@@ -88,6 +108,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Specialized Skills',
     sourceUrl: 'https://cybench.github.io/',
+    confidence: 'independent',
+    sourceOrganization: 'CyBench',
   },
   {
     id: 'arc-prize',
@@ -96,6 +118,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Reasoning',
     sourceUrl: 'https://arcprize.org/leaderboard',
+    confidence: 'independent',
+    sourceOrganization: 'ARC Prize',
   },
   {
     id: 'geobench',
@@ -104,6 +128,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Specialized Skills',
     sourceUrl: 'https://geobench.org/',
+    confidence: 'independent',
+    sourceOrganization: 'GeoBench',
   },
   {
     id: 'forecastbench',
@@ -112,6 +138,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Reasoning',
     sourceUrl: 'https://www.forecastbench.org/leaderboards/human_leaderboard_overall.html',
+    confidence: 'independent',
+    sourceOrganization: 'ForecastBench',
   },
   {
     id: 'videommu',
@@ -120,6 +148,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Specialized Skills',
     sourceUrl: 'https://videommmu.github.io/#Leaderboard',
+    confidence: 'independent',
+    sourceOrganization: 'VideoMMU',
   },
   {
     id: 'balrog',
@@ -128,6 +158,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Specialized Skills',
     sourceUrl: 'https://balrogai.com/',
+    confidence: 'independent',
+    sourceOrganization: 'Balrog AI',
   },
   {
     id: 'hallucination-leaderboard',
@@ -136,6 +168,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Safety & Alignment',
     sourceUrl: 'https://github.com/vectara/hallucination-leaderboard',
+    confidence: 'independent',
+    sourceOrganization: 'Vectara',
   },
   {
     id: 'hallucination-rag',
@@ -144,6 +178,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Safety & Alignment',
     sourceUrl: 'https://lechmazur.github.io/leaderboard1.html',
+    confidence: 'independent',
+    sourceOrganization: 'RAG Hallucination Evals',
   },
   {
     id: 'physics-puzzles',
@@ -152,6 +188,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Reasoning',
     sourceUrl: 'https://cbrower.dev/vpct',
+    confidence: 'independent',
+    sourceOrganization: 'Physics Puzzles',
   },
   {
     id: 'vending-bench',
@@ -160,6 +198,8 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Reasoning',
     sourceUrl: 'https://andonlabs.com/evals/vending-bench',
+    confidence: 'independent',
+    sourceOrganization: 'Andon Labs',
   },
   {
     id: 'simple-bench',
@@ -168,5 +208,7 @@ export const benchmarks: Benchmark[] = [
     unit: '%',
     category: 'Adversarial Robustness',
     sourceUrl: 'https://simple-bench.com/',
+    confidence: 'independent',
+    sourceOrganization: 'SimpleBench',
   },
 ]

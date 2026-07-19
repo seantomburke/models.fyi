@@ -21,6 +21,8 @@ import { Breadcrumb } from '../components/Breadcrumb.tsx'
 import { BenchmarkSourceLink } from '../components/BenchmarkSourceLink.tsx'
 import { BookmarkButton } from '../components/BookmarkButton.tsx'
 import { SearchInput } from '../components/SearchInput.tsx'
+import { BenchmarkCell } from '../components/BenchmarkCell.tsx'
+import { CopyButton } from '../components/CopyButton.tsx'
 import { loadBookmarks, saveBookmarks, toggleBookmark, isBookmarked } from '../lib/bookmarks.ts'
 import { capabilityOptions, filterByCapabilities, type CapabilityFilter } from '../lib/capabilityFilters.ts'
 
@@ -348,7 +350,10 @@ export function Compare() {
                         onClick={() => handleToggleBookmark(m.id)}
                         aria={`Bookmark ${m.name}`}
                       />
-                      <div className="font-medium text-fg">{m.name}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium text-fg">{m.name}</div>
+                        <CopyButton text={m.name} label="Copy model name" size="sm" />
+                      </div>
                     </div>
                     {m.releaseDate && (
                       <div className="mt-0.5 text-xs text-fg-faint">
@@ -383,45 +388,36 @@ export function Compare() {
                   {benchmarks.map((b) => {
                     const score = m.scores[b.id]
                     const isBest = score !== undefined && score === bestScores[b.id]
-                    const scoreContent = score === undefined ? (
-                      <>
-                        <span aria-hidden>—</span>
-                        <span className="sr-only">no published score</span>
-                      </>
-                    ) : (
-                      `${score.toFixed(1)}%`
-                    )
                     return (
-                      <td
+                      <BenchmarkCell
                         key={b.id}
-                        className={`px-2 sm:px-3 py-3 text-right font-mono tabular-nums ${
-                          score === undefined
-                            ? 'text-fg-faint'
-                            : isBest
-                              ? 'font-semibold text-accent-deep'
-                              : 'text-fg-secondary'
-                        }`}
-                      >
-                        {score !== undefined && b.sourceUrl ? (
-                          <BenchmarkSourceLink
-                            sourceUrl={b.sourceUrl}
-                            benchmarkName={b.name}
-                            variant="wrapper"
-                            className={isBest ? 'text-accent-deep' : 'text-fg-secondary'}
-                          >
-                            {scoreContent}
-                          </BenchmarkSourceLink>
-                        ) : (
-                          scoreContent
-                        )}
-                      </td>
+                        benchmark={b}
+                        score={score}
+                        isBest={isBest}
+                      />
                     )
                   })}
                   <td className="px-3 py-3 text-right font-mono tabular-nums text-fg-secondary">
-                    {formatPrice(m.inputPricePerMTok)} / {formatPrice(m.outputPricePerMTok)}
+                    <div className="flex items-center justify-end gap-2">
+                      <span>
+                        {formatPrice(m.inputPricePerMTok)} / {formatPrice(m.outputPricePerMTok)}
+                      </span>
+                      <CopyButton
+                        text={`${formatPrice(m.inputPricePerMTok)} / ${formatPrice(m.outputPricePerMTok)}`}
+                        label="Copy price"
+                        size="sm"
+                      />
+                    </div>
                   </td>
                   <td className="px-3 py-3 text-right font-mono tabular-nums text-fg-secondary">
-                    {formatTokens(m.contextWindowTokens)}
+                    <div className="flex items-center justify-end gap-2">
+                      <span>{formatTokens(m.contextWindowTokens)}</span>
+                      <CopyButton
+                        text={formatTokens(m.contextWindowTokens)}
+                        label="Copy context"
+                        size="sm"
+                      />
+                    </div>
                   </td>
                 </tr>
               )
