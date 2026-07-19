@@ -2,152 +2,157 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://seantomburke.github.io/models.fyi/</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/compare</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/graph</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/calculator</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/quiz</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/search</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/faq</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/glossary</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/what-is-an-ai-model</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/what-is-an-llm</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/what-is-gpt</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/what-is-a-context-window</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/learn/what-is-a-token</loc>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/reasoning-models</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/which-model-should-i-use</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/claude-vs-gpt</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/claude-vs-gemini</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/grok-vs-gpt</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/best-model-for-coding</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/best-model-for-writing</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/best-model-for-research</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/vision-models</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/embedding-models</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/fine-tuning-models</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/model-pricing-tokens</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/context-window-strategies</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/prompt-engineering-basics</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/web-search-models</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/hallucinations</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/open-source-vs-closed-source</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
 </urlset>

@@ -79,6 +79,11 @@ export function LearnTopic() {
               {p}
             </p>
           ))}
+          {s.component && (
+            <div className="mt-6">
+              <s.component />
+            </div>
+          )}
         </section>
       ))}
 

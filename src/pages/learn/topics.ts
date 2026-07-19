@@ -4,9 +4,12 @@
  * the search phrases from the product requirements.
  */
 
+import { TokenVisualization } from '../../components/learn/TokenVisualization'
+
 export interface TopicSection {
   heading: string
   paragraphs: string[]
+  component?: React.ComponentType
 }
 
 export interface Topic {
@@ -127,6 +130,30 @@ export const topics: Topic[] = [
           'Context windows are measured in tokens, chunks of about three-quarters of a word. "Hamburger" might be three tokens, while "the" is one. A 1M-token window is roughly 750,000 words: the whole Lord of the Rings trilogy with room to spare.',
           'On our comparison table, context ranges from 200K tokens, about a long novel, to Llama 4 Scout\'s absurd 10M, about a small library. Bigger isn\'t automatically better, since you pay for what the model reads, but for big documents it\'s the number that decides whether the job is possible at all.',
         ],
+      },
+    ],
+  },
+  {
+    slug: 'what-is-a-token',
+    question: 'What is a token?',
+    metaTitle: 'What is a token? AI tokenization explained - Models.fyi',
+    metaDescription:
+      'What is a token in AI? How text gets broken into chunks, why tokens matter for cost and context, and how to estimate your API bills.',
+    hook: 'The billing unit for AI: about 3/4 of a word, but not always.',
+    sections: [
+      {
+        heading: 'Tokens are how models read',
+        paragraphs: [
+          'A token is a small chunk of text. Models don\'t read whole words or sentences at once. They read tokens: single characters, word pieces, or whole small words, depending on what\'s common.',
+          '"The" is one token. "Hamburger" might be three tokens: "ham", "burg", "er". Mathematical symbols, punctuation, and newlines also get tokenized. The pattern depends on the model\'s tokenizer, which is tuned during training.',
+        ],
+      },
+      {
+        heading: 'Why tokens exist',
+        paragraphs: [
+          'Models are trained on numerical patterns, and tokens convert text into chunks manageable for math. Smaller chunks (single characters) give you more precision but make sequences very long. Larger chunks (whole words) are more efficient but miss detail. Tokens strike a balance: usually 1-3 tokens per word, optimized for the language and the model.',
+        ],
+        component: TokenVisualization,
       },
     ],
   },
