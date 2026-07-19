@@ -11,6 +11,7 @@ const navItems = [
   { to: '/quiz', label: 'Which model?' },
   { to: '/learn', label: 'Learn' },
   { to: '/faq', label: 'FAQ' },
+  { to: '/whats-new', label: 'What\'s new' },
 ]
 
 export function Layout() {
