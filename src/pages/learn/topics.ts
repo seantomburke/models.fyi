@@ -5,6 +5,7 @@
  */
 import type { ComponentType } from 'react'
 import { WeightsExplainer } from './components/WeightsExplainer'
+import { PixelClassifier } from '../../components/learn/PixelClassifier'
 
 import { TokenVisualization } from '../../components/learn/TokenVisualization'
 
@@ -755,6 +756,44 @@ export const topics: Topic[] = [
         paragraphs: [
           'Imagine training a model to predict house prices. Inputs might be: square footage, number of bedrooms, location. Weights learn how much each factor matters. Maybe the model learns: "100 extra square feet is worth $15,000, but being one neighborhood over costs $50,000."',
           'Those relative values are encoded in the weights. They\'re the model\'s learned understanding of the housing market, baked into numbers.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'understand-image-classification',
+    question: 'How do neural networks classify images?',
+    metaTitle: 'Image classification with neural networks - Interactive demo - Models.fyi',
+    metaDescription:
+      'See how neural networks classify images with an interactive 8x8 pixel demo. Draw a 3 or E and watch the classifier predict.',
+    hook: 'Train your own (tiny) classifier: teach the network to tell 3 from E.',
+    interactive: PixelClassifier,
+    sections: [
+      {
+        heading: 'From pixels to predictions',
+        paragraphs: [
+          'Image classification sounds mystical, but it\'s the same math as everything else in neural networks: inputs, weights, multiplication, and addition.',
+          'A pixel grid—like the 8x8 grid below—gets flattened into 64 numbers (0 for black, 1 for white). Each number is an input. Each input gets multiplied by its learned weight. The products all add up to a score for "this is a 3" and another score for "this is an E." Whichever score is higher wins.',
+        ],
+      },
+      {
+        heading: 'What the network learns',
+        paragraphs: [
+          'During training, the network adjusts its weights to recognize meaningful patterns. It doesn\'t learn "a 3 has a line on the right"—a programmer didn\'t tell it that. Instead, through thousands of examples, the weights naturally become sensitive to the features that matter: curves, edges, connected regions.',
+          'On this demo, we\'ve hand-coded a few heuristics (right edge pixels favor 3, left edge pixels favor E). A real image classifier with millions of weights learns far richer patterns.',
+        ],
+      },
+      {
+        heading: 'Why this matters for real models',
+        paragraphs: [
+          'Vision models like Claude\'s or GPT-4\'s vision capability work on the same principle, scaled up. They process photos, screenshots, charts. The network has learned to recognize objects, text, patterns—all through millions of learned weights.',
+          'Every model\'s understanding of images lives in those weights. That\'s why changing weights changes what the model sees, and why different models see images differently.',
+        ],
+      },
+      {
+        heading: 'Try it yourself',
+        paragraphs: [
+          'Below, draw on the pixel grid or use the example buttons. You\'re seeing how a tiny network makes a prediction. The confidence score tells you how sure the classifier is. When you draw something ambiguous (halfway between 3 and E), watch the confidence drop—just like a real model.',
         ],
       },
     ],
