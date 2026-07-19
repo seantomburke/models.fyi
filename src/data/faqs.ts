@@ -27,7 +27,7 @@ export const faqs: FAQItem[] = [
     category: 'Getting Started',
     question: 'How do I get started choosing a model?',
     answer:
-      'Try the "Which model?" quiz first — it asks you who you are, what you\'re trying to do, and your budget, then recommends a model with reasoning you can verify. If you want to compare specific models, head to Compare. If you want to explore performance visually, try Graph.',
+      'Try the "Which model?" quiz first. It asks you who you are, what you\'re trying to do, and your budget, then recommends a model with reasoning you can verify. If you want to compare specific models, head to Compare. If you want to explore performance visually, try Graph.',
   },
   {
     category: 'Getting Started',
@@ -111,7 +111,7 @@ export const faqs: FAQItem[] = [
     category: 'Technical',
     question: 'What is a token?',
     answer:
-      'A token is a chunk of text — roughly a word, but sometimes shorter (punctuation is often its own token). Models process and generate text one token at a time. Pricing is based on tokens: more tokens = more cost. The Calculator tool shows how many tokens your text contains.',
+      'A token is a chunk of text, roughly a word, but sometimes shorter since punctuation is often its own token. Models process and generate text one token at a time. Pricing is based on tokens: more tokens = more cost. The Calculator tool shows how many tokens your text contains.',
   },
   {
     category: 'Technical',

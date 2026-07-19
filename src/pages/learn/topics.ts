@@ -40,7 +40,7 @@ export const levels: Array<{ id: TopicLevel; title: string; blurb: string }> = [
   {
     id: 'lab',
     title: 'The model lab',
-    blurb: 'Real models small enough to see through, running in your browser. Meet Doodle-64, Doodle-525, and Parrot-43 — then scale the same ideas up to billion-parameter LLMs.',
+    blurb: 'Real models small enough to see through, running in your browser. Meet Doodle-64, Doodle-525, and Parrot-43, then scale the same ideas up to billion-parameter LLMs.',
   },
 ]
 
@@ -298,7 +298,7 @@ const authored: Topic[] = [
       {
         heading: 'Price and availability',
         paragraphs: [
-          'Both offer cheap fast tiers and expensive flagship tiers. GPT is available through ChatGPT (web, app, API). Claude is on Claude.ai, API, and select partners. No strong winner on cost--depends on your workload.',
+          'Both offer cheap fast tiers and expensive flagship tiers. GPT is available through ChatGPT (web, app, API). Claude is on Claude.ai, API, and select partners. Neither wins on cost. It depends on your workload.',
         ],
       },
     ],
@@ -483,7 +483,7 @@ const authored: Topic[] = [
       {
         heading: 'Pro tip',
         paragraphs: [
-          'For research, use a flagship with reasoning (Opus, GPT-5.6 Sol). The cost is worth the accuracy. Always verify claims in the original sources--no model is a substitute for that.',
+          'For research, use a flagship with reasoning (Opus, GPT-5.6 Sol). The cost is worth the accuracy. Always verify claims in the original sources. No model is a substitute for that.',
         ],
       },
     ],
@@ -834,7 +834,7 @@ const authored: Topic[] = [
         heading: 'Advanced: stacking layers',
         paragraphs: [
           'One neuron doing multiply-and-add is neat, but the magic starts when you stack them. The outputs of one layer become the inputs of the next, so the second layer works with patterns the first layer found, and the third layer works with patterns of patterns.',
-          'Watch the animation below: values enter on the left, and each layer computes its neurons from the layer before it. This exact flow — just with thousands of layers of millions of neurons — is what happens every time you send a message to an AI model.',
+          'Watch the animation below: values enter on the left, and each layer computes its neurons from the layer before it. This exact flow happens every time you send a message to an AI model. The only difference is scale: thousands of layers, millions of neurons.',
         ],
         component: MultiLayerNetwork,
       },
@@ -870,20 +870,20 @@ const authored: Topic[] = [
         heading: 'From pixels to predictions',
         paragraphs: [
           'Image classification sounds mystical, but it\'s the same math as everything else in neural networks: inputs, weights, multiplication, and addition.',
-          'A pixel grid—like the 8x8 grid below—gets flattened into 64 numbers (0 for black, 1 for white). Each number is an input. Each input gets multiplied by its learned weight. The products all add up to a score for "this is a 3" and another score for "this is an E." Whichever score is higher wins.',
+          'A pixel grid, like the 8x8 grid below, gets flattened into 64 numbers (0 for black, 1 for white). Each number is an input. Each input gets multiplied by its learned weight. The products all add up to a score for "this is a 3" and another score for "this is an E." Whichever score is higher wins.',
         ],
       },
       {
         heading: 'What the network learns',
         paragraphs: [
-          'During training, the network adjusts its weights to recognize meaningful patterns. It doesn\'t learn "a 3 has a line on the right"—a programmer didn\'t tell it that. Instead, through thousands of examples, the weights naturally become sensitive to the features that matter: curves, edges, connected regions.',
-          'The demo below shows all 64 of its weights as an 8x8 grid of colors: green pixels are evidence for "3", red pixels are evidence for "E", and transparent pixels are ignored. You can also watch your drawing flow through the network—64 inputs to 2 outputs—and see the confidence it produces. A real image classifier with millions of weights learns far richer patterns, but the mechanics are the same.',
+          'During training, the network adjusts its weights to recognize meaningful patterns. It doesn\'t learn "a 3 has a line on the right." A programmer didn\'t tell it that. Instead, through thousands of examples, the weights naturally become sensitive to the features that matter: curves, edges, connected regions.',
+          'The demo below shows all 64 of its weights as an 8x8 grid of colors: green pixels are evidence for "3", red pixels are evidence for "E", and transparent pixels are ignored. You can also watch your drawing flow through the network, from 64 inputs to 2 outputs, and see the confidence it produces. A real image classifier with millions of weights learns far richer patterns, but the mechanics are the same.',
         ],
       },
       {
         heading: 'Why this matters for real models',
         paragraphs: [
-          'Vision models like Claude\'s or GPT-4\'s vision capability work on the same principle, scaled up. They process photos, screenshots, charts. The network has learned to recognize objects, text, patterns—all through millions of learned weights.',
+          'Vision models like Claude\'s or GPT-4\'s vision capability work on the same principle, scaled up. They process photos, screenshots, charts. The network has learned to recognize objects, text, and patterns, all through millions of learned weights.',
           'Every model\'s understanding of images lives in those weights. That\'s why changing weights changes what the model sees, and why different models see images differently.',
           'And it isn\'t just vision. An LLM answering "what comes next in this sentence?" is doing the same thing Doodle-64 does: multiply inputs by learned weights, add them up, and turn the scores into probabilities. Doodle-64 chooses between 2 answers with 64 parameters; an LLM chooses between ~200,000 possible next tokens with billions. The gap is size, not kind.',
         ],
@@ -891,7 +891,7 @@ const authored: Topic[] = [
       {
         heading: 'Try it yourself',
         paragraphs: [
-          'Below, draw on the pixel grid or use the example buttons. You\'re seeing how a tiny network makes a prediction. The confidence score tells you how sure the classifier is. When you draw something ambiguous (halfway between 3 and E), watch the confidence drop—just like a real model.',
+          'Below, draw on the pixel grid or use the example buttons. You\'re seeing how a tiny network makes a prediction. The confidence score tells you how sure the classifier is. When you draw something ambiguous, halfway between 3 and E, watch the confidence drop, just like a real model.',
         ],
       },
     ],
@@ -925,28 +925,28 @@ const authored: Topic[] = [
       {
         heading: 'Why one layer stops being enough',
         paragraphs: [
-          'The 3-vs-E classifier got away with a single layer because one pixel could settle the argument: ink on the left edge means E, ink on the right curve means 3. With ten digits that trick collapses. An 8 contains every pixel of a 3, a 9 contains every pixel of a 7—so no single pixel is evidence for exactly one digit.',
+          'The 3-vs-E classifier got away with a single layer because one pixel could settle the argument: ink on the left edge means E, ink on the right curve means 3. With ten digits that trick collapses. An 8 contains every pixel of a 3, a 9 contains every pixel of a 7, so no single pixel is evidence for exactly one digit.',
           'The fix is the most important idea in deep learning: don\'t go straight from pixels to answers. First recognize parts, then reason about combinations of parts. That "first" step is a hidden layer.',
         ],
       },
       {
         heading: 'Layer 1 finds strokes, not digits',
         paragraphs: [
-          'The demo below has seven hidden neurons, and each one is a stroke detector: a top bar, a middle bar, a bottom bar, and four vertical lines. Each detector\'s weights cover just the pixels of its stroke—you can see them as seven mini heatmaps, each in its own color. When you draw most of a stroke, its detector fires.',
+          'The demo below has seven hidden neurons, and each one is a stroke detector: a top bar, a middle bar, a bottom bar, and four vertical lines. Each detector\'s weights cover just the pixels of its stroke. You can see them as seven mini heatmaps, each in its own color. When you draw most of a stroke, its detector fires.',
           'Notice what these neurons don\'t know: anything about digits. The top-bar detector fires for a 5, a 7, and an 8 alike. It has one tiny job, done with a handful of weights.',
         ],
       },
       {
         heading: 'Layer 2 combines strokes into digits',
         paragraphs: [
-          'The second layer is where digits exist. Each of the ten outputs holds a recipe: +1 for every stroke the digit uses, -1 for every stroke it doesn\'t. A firing detector pushes up the digits that want its stroke and pushes down the ones that don\'t—and a silent detector votes in reverse, because a missing bottom bar really is evidence for a 4 and against an 8.',
+          'The second layer is where digits exist. Each of the ten outputs holds a recipe: +1 for every stroke the digit uses, -1 for every stroke it doesn\'t. A firing detector pushes up the digits that want its stroke and pushes down the ones that don\'t. A silent detector votes in reverse, because a missing bottom bar really is evidence for a 4 and against an 8.',
           'Softmax then turns the ten scores into probabilities that sum to 100%. Draw an 8 and leave out the middle bar: the network\'s vote swings to 0, exactly the digit whose recipe matches what you actually drew.',
         ],
       },
       {
         heading: 'This is exactly what deep networks do',
         paragraphs: [
-          'Real image models are this demo scaled up. Their early layers learn edge and color detectors, middle layers combine edges into textures and shapes, and late layers combine shapes into "cat ear" or "handwritten 7". Nobody programs those features—training finds them, the way our stroke detectors were chosen by hand here.',
+          'Real image models are this demo scaled up. Their early layers learn edge and color detectors, middle layers combine edges into textures and shapes, and late layers combine shapes into "cat ear" or "handwritten 7". Nobody programs those features. Training finds them, the way our stroke detectors were chosen by hand here.',
           '"Deep" in deep learning just means many hidden layers stacked, each reasoning about the patterns the previous one found. Two layers read seven strokes; a hundred layers can read a photograph.',
         ],
       },
@@ -981,28 +981,28 @@ const authored: Topic[] = [
         heading: 'The smallest language model that could',
         paragraphs: [
           'Doodle-64 and Doodle-525 recognize things. Parrot-43 generates things, which makes it the closest cousin of ChatGPT and Claude in our lab. Its entire education is the nine sentences shown above, and its entire brain is 43 counts: how many times each word followed each other word in those sentences.',
-          'That\'s all "training" means here. Read the data, count the pairs. "the cat" appears three times, so after "the", the word "cat" gets 3 votes. Divide the votes by the total and you have probabilities. When you click a word in the demo, the highlighted corpus shows you exactly which sentences cast those votes — nothing is hidden, because there is nothing else.',
+          'That\'s all "training" means here. Read the data, count the pairs. "the cat" appears three times, so after "the", the word "cat" gets 3 votes. Divide the votes by the total and you have probabilities. When you click a word in the demo, the highlighted corpus shows you exactly which sentences cast those votes. Nothing is hidden, because there is nothing else.',
         ],
       },
       {
         heading: 'Generation is prediction in a loop',
         paragraphs: [
-          'To write a sentence, Parrot-43 does what every LLM does: predict the next word, append it, and predict again from the new ending. Click through a few choices and you can splice its training sentences into one it was never taught, like "my cat sat on the fence". New sentences out of old counts — that is generation.',
-          'Now press "Always pick the favorite" and watch it get stuck chanting "the cat ate my cat ate my…". Always taking the single most likely word is a real failure mode in big models too — it\'s part of why LLMs add a dash of randomness, called temperature, when they pick from their probabilities.',
+          'To write a sentence, Parrot-43 does what every LLM does: predict the next word, append it, and predict again from the new ending. Click through a few choices and you can splice its training sentences into one it was never taught, like "my cat sat on the fence". That is generation: new sentences out of old counts.',
+          'Now press "Always pick the favorite" and watch it get stuck chanting "the cat ate my cat ate my…". Always taking the single most likely word is a real failure mode in big models too. It\'s part of why LLMs add a dash of randomness, called temperature, when they pick from their probabilities.',
           'You\'ll also notice what it can never do: say a word it hasn\'t seen. Its 22-word vocabulary is the entire universe as far as it\'s concerned. And when you steer it onto a rare word like "flew", it has exactly one recorded continuation and marches straight down it. Tiny training data makes a tiny parrot.',
         ],
       },
       {
         heading: 'What LLMs do differently',
         paragraphs: [
-          'Three upgrades separate Parrot-43 from GPT or Claude. First, context: Parrot-43 looks at one previous word; an LLM weighs thousands of previous tokens at once (that\'s what the transformer\'s attention is for). Second, generalization: an LLM doesn\'t store counts in a table, it compresses the patterns of its training data into billions of weights — the same multiply-and-add weights as Doodle-64 — so it can handle sentences it has never seen. Third, scale: instead of nine sentences, most of the internet; instead of a 22-word vocabulary, ~200,000 tokens.',
+          'Three upgrades separate Parrot-43 from GPT or Claude. First, context: Parrot-43 looks at one previous word; an LLM weighs thousands of previous tokens at once (that\'s what the transformer\'s attention is for). Second, generalization: an LLM doesn\'t store counts in a table. It compresses the patterns of its training data into billions of weights, the same multiply-and-add weights as Doodle-64, so it can handle sentences it has never seen. Third, scale: instead of nine sentences, most of the internet; instead of a 22-word vocabulary, ~200,000 tokens.',
           'But the job description never changes. Every reply from a frontier model is next-token prediction repeated thousands of times: score every possible continuation, turn scores into probabilities, pick one, append, repeat. If you understand why Parrot-43 says "cat" after "the", you understand what a trillion-dollar industry is scaling up.',
         ],
       },
       {
         heading: 'Where the hallucinations come from',
         paragraphs: [
-          'Parrot-43 also demonstrates the famous LLM failure mode in miniature. Ask it to continue "my" and it says "cat" or "homework" — not because either is true, but because those are the likeliest continuations of its training data. Likely and true are different things. An LLM with billions of parameters blurs that line much more convincingly, but the gap never fully closes. That\'s a hallucination, and now you\'ve watched one get built.',
+          'Parrot-43 also demonstrates the famous LLM failure mode in miniature. Ask it to continue "my" and it says "cat" or "homework". Neither is true. They\'re just the likeliest continuations of its training data. Likely and true are different things. An LLM with billions of parameters blurs that line much more convincingly, but the gap never fully closes. That\'s a hallucination, and now you\'ve watched one get built.',
         ],
       },
     ],

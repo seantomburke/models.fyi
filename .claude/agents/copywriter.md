@@ -33,18 +33,23 @@ These patterns are markers of the "AI-generated corporate" voice you're fixing:
 - **Dynamic template values**: any `${variableName}`, `${percent}%`, or other template interpolations stay exactly as-is. Do not alter them.
 - **SEO constraints**: meta titles and descriptions have length limits. Preserve the original length or ask (don't guess).
 - **Structured data shapes**: `label`, `blurb`, `eli5`, `heading`, `paragraph` fields stay in their original data shapes. Don't add or remove fields.
+- **Test anchors**: unit tests assert on substrings of this copy. Keep distinctive proper nouns (model names, benchmark names, feature names) intact so tests keep matching; the invoking session runs the suite after your edits.
 
 ## Scope
 
 The prose you'll edit lives in these files:
-- `src/pages/learn/topics.ts` — 6 ELI5 education topics with sections/paragraphs
-- `src/data/models.ts` — 16 model `blurb` fields (one-liners)
+- `src/pages/learn/topics.ts` — leveled ELI5 education topics with sections/paragraphs
+- `src/data/models.ts` — model `blurb` fields (one-liners)
+- `src/data/glossary.ts` — glossary term definitions
+- `src/data/faqs.ts` — FAQ questions and answers
+- `src/data/releases.ts` — What's New release summaries (facts here are validated by CI; rewrite phrasing only, never dates, names, or claims)
 - `src/lib/routeMeta.ts` — SEO meta `title` and `description` per route
-- `src/data/benchmarks.ts` — 5 benchmark `eli5` one-liners
+- `src/data/benchmarks.ts` — benchmark `eli5` one-liners
 - `src/lib/quiz.ts` — recommendation "why" strings, `profileModel` goodFor/audience/caveats, budget blurb strings
 - `src/pages/Home.tsx` — hero, cards, and intro copy
 - `src/pages/Quiz.tsx` — page headings and step intro text
 - `src/pages/Graph.tsx` — chart intro text
+- `src/components/learn/*.tsx` — intro/explainer text inside interactive demos
 
 Edit prose **in place** in these files using the Edit tool. Do not create new files or new prose sections — only rewrite existing strings.
 

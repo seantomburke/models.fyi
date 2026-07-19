@@ -44,21 +44,21 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'token',
     term: 'Token',
     short: 'A small piece of text, roughly one word.',
-    long: 'A token is how AI models count words. One token is roughly one word—sometimes a bit less (for short words) or more (for long words or punctuation). When you see pricing like "$0.50 per million tokens," they\'re charging you by the token. If you input 100 words and the model outputs 100 words, you\'re paying for ~200 tokens total.',
+    long: 'A token is how AI models count words. One token is roughly one word, sometimes a bit less for short words or more for long words and punctuation. When you see pricing like "$0.50 per million tokens," they\'re charging you by the token. If you input 100 words and the model outputs 100 words, you\'re paying for ~200 tokens total.',
     relatedLearnTopic: 'how-does-ai-pricing-work',
   },
   {
     id: 'hallucination',
     term: 'Hallucination',
     short: 'When an AI model makes up false information confidently.',
-    long: 'A hallucination is when an AI model confidently says something that isn\'t true—and it sounds completely convincing. It might cite a fake research paper, invent historical events, or claim a company has a product it doesn\'t. The model isn\'t "lying" on purpose; it\'s just filling in gaps based on patterns it learned, even when it has no real information.',
+    long: 'A hallucination is when an AI model confidently says something that isn\'t true, and it sounds completely convincing. It might cite a fake research paper, invent historical events, or claim a company has a product it doesn\'t. The model isn\'t "lying" on purpose. It\'s just filling in gaps based on patterns it learned, even when it has no real information.',
     relatedLearnTopic: 'what-are-ai-hallucinations',
   },
   {
     id: 'reasoning-model',
     term: 'Reasoning Model',
     short: 'An AI model that "thinks step by step" before answering.',
-    long: 'A reasoning model is trained to break down hard problems before answering. Instead of jumping straight to an answer, it writes out its thinking: "Step 1... Step 2... Step 3... Therefore..." This takes more time and tokens, but gets better answers on really hard problems like math, coding, and logic puzzles.',
+    long: 'A reasoning model is trained to break down hard problems before answering. Instead of jumping straight to an answer, it writes out its thinking: "Step 1... Step 2... Step 3... Therefore..." This takes more time and tokens, but gets better answers on hard problems like math, coding, and logic puzzles.',
     relatedLearnTopic: 'what-is-reasoning-model',
   },
   {
@@ -78,13 +78,13 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'swe-bench',
     term: 'SWE-bench',
     short: 'A benchmark that tests how well an AI can fix real software bugs.',
-    long: 'SWE-bench (Software Engineering Benchmark) takes real bugs from open-source projects and asks AI models to fix them. It\'s like giving the model a homework assignment: "Here\'s a bug, write the code to fix it." The model gets points if its fix actually works. This shows how useful an AI is for coding.',
+    long: 'SWE-bench (Software Engineering Benchmark) takes real bugs from open-source projects and asks AI models to fix them. It\'s like giving the model a homework assignment: "Here\'s a bug, write the code to fix it." The model gets points if its fix works. This shows how useful an AI is for coding.',
   },
   {
     id: 'gpqa-diamond',
     term: 'GPQA Diamond',
     short: 'A benchmark of PhD-level science questions that can\'t be Googled.',
-    long: 'GPQA Diamond is a set of really hard science questions written by PhDs (in chemistry, biology, physics, etc). The key: you can\'t just Google the answer. You have to actually reason through the science. It tests whether an AI model can think like a scientist, not just look things up.',
+    long: 'GPQA Diamond is a set of hard science questions written by PhDs (in chemistry, biology, physics, etc). The key: you can\'t just Google the answer. You have to reason through the science. It tests whether an AI model can think like a scientist, not just look things up.',
   },
   {
     id: 'prompt-engineering',
@@ -103,7 +103,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'embedding',
     term: 'Embedding',
     short: 'A way to turn words into numbers that AI can understand.',
-    long: 'An embedding is a list of numbers that represents the meaning of a word or phrase. It\'s how AI models actually "think" internally—everything is converted to numbers. Embeddings are also useful for finding similar ideas: if you convert "cat" and "kitten" to embeddings, they\'ll be close together numerically because they\'re similar concepts.',
+    long: 'An embedding is a list of numbers that represents the meaning of a word or phrase. It\'s how AI models "think" internally: everything is converted to numbers. Embeddings are also useful for finding similar ideas. Convert "cat" and "kitten" to embeddings, and they land close together numerically, because they\'re similar concepts.',
     relatedLearnTopic: 'what-are-embedding-models',
   },
   {
@@ -129,7 +129,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'closed-source',
     term: 'Closed Source',
     short: 'AI models you access through an API, not by downloading.',
-    long: 'Closed source models like GPT-4, Claude, and Gemini aren\'t available to download. You access them through an API—you send your text to OpenAI\'s servers, they run the model, and they send the result back. The advantage: these models are typically more powerful. The tradeoff: your data goes to their servers, and you depend on their service.',
+    long: 'Closed source models like GPT-4, Claude, and Gemini aren\'t available to download. You access them through an API: you send your text to OpenAI\'s servers, they run the model, and they send the result back. The advantage: these models are typically more powerful. The tradeoff: your data goes to their servers, and you depend on their service.',
   },
   {
     id: 'temperature',
@@ -160,7 +160,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'flagship-model',
     term: 'Flagship Model',
     short: 'A company\'s most powerful, most expensive AI model.',
-    long: 'Every provider has a "flagship"—their best model. For OpenAI, it\'s GPT-4o. For Anthropic, it\'s Claude Opus. These are the most capable and usually the most expensive. It\'s like the luxury car in a car company\'s lineup.',
+    long: 'Every provider has a "flagship": their best model. For OpenAI, it\'s GPT-4o. For Anthropic, it\'s Claude Opus. These are the most capable and usually the most expensive. It\'s like the luxury car in a car company\'s lineup.',
   },
   {
     id: 'fast-model',
@@ -172,7 +172,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'input-tokens',
     term: 'Input Tokens',
     short: 'The tokens you send to an AI model (your question or text).',
-    long: 'Input tokens are the words you send to the model—your prompt, question, or request. If you write a 1000-word essay and ask the model to edit it, that\'s about 1000 input tokens. Pricing is usually cheaper per token for input than output because output takes more processing.',
+    long: 'Input tokens are the words you send to the model: your prompt, question, or request. If you write a 1000-word essay and ask the model to edit it, that\'s about 1000 input tokens. Pricing is usually cheaper per token for input than output because output takes more processing.',
   },
   {
     id: 'output-tokens',
@@ -214,7 +214,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'xai',
     term: 'xAI',
     short: 'A new AI company founded by Elon Musk in 2023.',
-    long: 'xAI (pronounced "X dot A.I.") is an AI company founded by Elon Musk in March 2023. They created Grok, an AI model known for its humor and sarcasm. xAI is trying to be interpretable and truthful—you can ask Grok "why did you say that?" and get explanations.',
+    long: 'xAI (pronounced "X dot A.I.") is an AI company founded by Elon Musk in March 2023. They created Grok, an AI model known for its humor and sarcasm. xAI is trying to be interpretable and truthful. You can ask Grok "why did you say that?" and get explanations.',
   },
   {
     id: 'meta',
@@ -232,7 +232,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'parameter',
     term: 'Parameter',
     short: 'Internal knobs in an AI model that control its behavior.',
-    long: 'A parameter is a weight or setting inside an AI model. GPT-4 has hundreds of billions of parameters—that\'s "hundreds of billions of knobs." During training, all these knobs get tuned so the model can predict text well. More parameters usually means more capability (but slower inference).',
+    long: 'A parameter is a weight or setting inside an AI model. GPT-4 has hundreds of billions of parameters: that\'s "hundreds of billions of knobs." During training, all these knobs get tuned so the model can predict text well. More parameters usually means more capability, but slower inference.',
   },
   {
     id: 'transformer',
@@ -256,7 +256,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'overfitting',
     term: 'Overfitting',
     short: 'When a model memorizes training data instead of learning general patterns.',
-    long: 'Overfitting is when an AI model gets really good at examples it saw during training but fails on new examples it\'s never seen. It\'s like if you memorized every practice SAT question but then bombed the real test. Good models generalize: they learn patterns, not individual examples.',
+    long: 'Overfitting is when an AI model gets very good at examples it saw during training but fails on new examples it\'s never seen. It\'s like if you memorized every practice SAT question but then bombed the real test. Good models generalize: they learn patterns, not individual examples.',
   },
   {
     id: 'dataset',
@@ -292,7 +292,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'batch-size',
     term: 'Batch Size',
     short: 'How many examples the model processes at once during training.',
-    long: 'During training, models don\'t learn from one example at a time—they learn from batches (groups). A batch size of 32 means the model processes 32 examples, calculates error for all of them, then updates its parameters. Larger batches are faster; smaller batches can be more accurate.',
+    long: 'During training, models don\'t learn from one example at a time. They learn from batches (groups). A batch size of 32 means the model processes 32 examples, calculates error for all of them, then updates its parameters. Larger batches are faster; smaller batches can be more accurate.',
   },
   {
     id: 'model-weights',
