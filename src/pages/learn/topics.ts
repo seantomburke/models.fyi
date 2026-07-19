@@ -6,6 +6,7 @@
 import type { ComponentType } from 'react'
 import { WeightsExplainer } from './components/WeightsExplainer'
 import { PixelClassifier } from '../../components/learn/PixelClassifier'
+import { MultiLayerNetwork } from '../../components/learn/MultiLayerNetwork'
 
 import { TokenVisualization } from '../../components/learn/TokenVisualization'
 
@@ -757,6 +758,14 @@ export const topics: Topic[] = [
           'Imagine training a model to predict house prices. Inputs might be: square footage, number of bedrooms, location. Weights learn how much each factor matters. Maybe the model learns: "100 extra square feet is worth $15,000, but being one neighborhood over costs $50,000."',
           'Those relative values are encoded in the weights. They\'re the model\'s learned understanding of the housing market, baked into numbers.',
         ],
+      },
+      {
+        heading: 'Advanced: stacking layers',
+        paragraphs: [
+          'One neuron doing multiply-and-add is neat, but the magic starts when you stack them. The outputs of one layer become the inputs of the next, so the second layer works with patterns the first layer found, and the third layer works with patterns of patterns.',
+          'Watch the animation below: values enter on the left, and each layer computes its neurons from the layer before it. This exact flow — just with thousands of layers of millions of neurons — is what happens every time you send a message to an AI model.',
+        ],
+        component: MultiLayerNetwork,
       },
     ],
   },

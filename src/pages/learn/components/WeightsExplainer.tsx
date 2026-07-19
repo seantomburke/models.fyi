@@ -10,19 +10,16 @@ export function WeightsExplainer() {
   const [inputs, setInputs] = useState<DotProductInput[]>(
     Array.from({ length: INPUT_COUNT }, () => ({ value: 0.5, weight: 0.5 }))
   )
+  const [graphedWeight, setGraphedWeight] = useState(0)
 
   const output = inputs.reduce((sum, inp) => sum + inp.value * inp.weight, 0)
 
   const handleInputChange = (index: number, newValue: number) => {
-    const updated = [...inputs]
-    updated[index].value = newValue
-    setInputs(updated)
+    setInputs(inputs.map((inp, i) => (i === index ? { ...inp, value: newValue } : inp)))
   }
 
   const handleWeightChange = (index: number, newWeight: number) => {
-    const updated = [...inputs]
-    updated[index].weight = newWeight
-    setInputs(updated)
+    setInputs(inputs.map((inp, i) => (i === index ? { ...inp, weight: newWeight } : inp)))
   }
 
   const handleRandomWeights = useCallback(() => {
@@ -130,6 +127,87 @@ export function WeightsExplainer() {
             Reset
           </button>
         </div>
+      </div>
+
+      {/* Weight → Output Graph */}
+      <div className="rounded-lg border border-line bg-bg-secondary p-6">
+        <h3 className="text-lg font-semibold">How one weight moves the output</h3>
+        <p className="mt-2 text-sm text-fg-secondary">
+          Pick a weight, then drag its slider above. The dot slides along the line: the output changes in a
+          straight line as the weight turns, and the line's steepness is that weight's input value.
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {inputs.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setGraphedWeight(i)}
+              aria-pressed={graphedWeight === i}
+              className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+                graphedWeight === i
+                  ? 'bg-accent text-white'
+                  : 'border border-line bg-bg-tertiary hover:bg-bg-secondary'
+              }`}
+            >
+              w{i + 1}
+            </button>
+          ))}
+        </div>
+
+        {(() => {
+          const sel = inputs[graphedWeight]
+          const rest = output - sel.value * sel.weight
+          const MAX_Y = INPUT_COUNT
+          const xPx = (w: number) => 40 + w * 380
+          const yPx = (v: number) => 200 - (v / MAX_Y) * 180
+          return (
+            <svg viewBox="0 0 440 240" className="mt-4 w-full" role="img" aria-label={`Graph of output as weight ${graphedWeight + 1} changes`}>
+              {/* Gridlines + y labels */}
+              {Array.from({ length: MAX_Y + 1 }, (_, v) => (
+                <g key={v}>
+                  <line x1="40" y1={yPx(v)} x2="420" y2={yPx(v)} stroke="var(--color-line)" strokeWidth="1" />
+                  <text x="32" y={yPx(v) + 4} textAnchor="end" className="text-[10px]" fill="var(--color-fg-muted)">
+                    {v}
+                  </text>
+                </g>
+              ))}
+              {/* X labels */}
+              {[0, 0.25, 0.5, 0.75, 1].map((w) => (
+                <text key={w} x={xPx(w)} y="218" textAnchor="middle" className="text-[10px]" fill="var(--color-fg-muted)">
+                  {w}
+                </text>
+              ))}
+              <text x="230" y="236" textAnchor="middle" className="text-[11px]" fill="var(--color-fg-secondary)">
+                weight w{graphedWeight + 1}
+              </text>
+              {/* Output line as this weight sweeps 0 → 1 */}
+              <line
+                x1={xPx(0)}
+                y1={yPx(rest)}
+                x2={xPx(1)}
+                y2={yPx(rest + sel.value)}
+                stroke="var(--color-accent)"
+                strokeWidth="2.5"
+              />
+              {/* Current position */}
+              <circle cx={xPx(sel.weight)} cy={yPx(output)} r="6" fill="var(--color-accent-deep)" />
+              <text
+                x={xPx(sel.weight)}
+                y={yPx(output) - 12}
+                textAnchor="middle"
+                className="text-[11px] font-semibold"
+                fill="var(--color-fg)"
+              >
+                {output.toFixed(2)}
+              </text>
+            </svg>
+          )
+        })()}
+
+        <p className="mt-2 text-xs text-fg-muted">
+          Try it: set input a{graphedWeight + 1} to 0 and the line goes flat — a weight on a zero input can't
+          change anything. Set the input high and the same weight becomes a powerful dial.
+        </p>
       </div>
 
       {/* Neural Network Visualization */}
