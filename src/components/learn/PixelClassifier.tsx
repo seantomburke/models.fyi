@@ -65,7 +65,7 @@ export function PixelClassifier() {
     // Draw a simple "3" pattern
     const newPixels = Array(GRID_SIZE * GRID_SIZE).fill(false)
     // Top bar
-    for (let col = 1; col < 6; col++) newPixels[0 * GRID_SIZE + col] = true
+    for (let col = 1; col < 6; col++) newPixels[col] = true
     // Top-right curve
     newPixels[1 * GRID_SIZE + 6] = true
     newPixels[2 * GRID_SIZE + 6] = true
@@ -83,10 +83,10 @@ export function PixelClassifier() {
     // Draw a simple "E" pattern
     const newPixels = Array(GRID_SIZE * GRID_SIZE).fill(false)
     // Left edge
-    for (let row = 0; row < 8; row++) newPixels[row * GRID_SIZE + 0] = true
+    for (let row = 0; row < 8; row++) newPixels[row * GRID_SIZE] = true
     for (let row = 0; row < 8; row++) newPixels[row * GRID_SIZE + 1] = true
     // Top bar
-    for (let col = 1; col < 6; col++) newPixels[0 * GRID_SIZE + col] = true
+    for (let col = 1; col < 6; col++) newPixels[col] = true
     // Middle bar
     for (let col = 1; col < 6; col++) newPixels[4 * GRID_SIZE + col] = true
     // Bottom bar
