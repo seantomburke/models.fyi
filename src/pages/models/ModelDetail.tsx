@@ -1,6 +1,9 @@
 import { useParams } from 'react-router-dom'
 import { models } from '../../data/models'
 import { benchmarks, providers } from '../../data'
+import type { Model } from '../../data/types'
+import { usePageMeta } from '../../lib/meta'
+import { metaFor } from '../../lib/routeMeta'
 import { ModelHeader } from '../../components/models/ModelHeader'
 import { ModelSpecs } from '../../components/models/ModelSpecs'
 import { ModelBenchmarks } from '../../components/models/ModelBenchmarks'
@@ -17,34 +20,39 @@ export function ModelDetail() {
     return <NotFound />
   }
 
+  return <ModelDetailContent model={model} />
+}
+
+function ModelDetailContent({ model }: { model: Model }) {
   const provider = providers.find((p) => p.id === model.providerId)
   const relevantBenchmarks = benchmarks.filter((b) => model.scores[b.id] !== undefined)
 
+  const meta = metaFor(`/models/${model.id}`)
+  usePageMeta({
+    title: meta.title,
+    description: meta.description,
+    type: meta.type,
+    image: meta.image,
+    pathname: `/models/${model.id}`,
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: model.name,
+      description: model.blurb,
+      brand: { '@type': 'Brand', name: provider?.name },
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'USD',
+        price:
+          model.inputPricePerMTok !== null
+            ? `${model.inputPricePerMTok} per 1M input tokens`
+            : 'Contact for pricing',
+      },
+    },
+  })
+
   return (
     <main className="min-h-screen bg-white dark:bg-slate-950 transition-colors">
-      <title>{model.name} - Models.fyi</title>
-      <meta name="description" content={model.blurb} />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Product',
-            name: model.name,
-            description: model.blurb,
-            brand: { '@type': 'Brand', name: provider?.name },
-            offers: {
-              '@type': 'Offer',
-              priceCurrency: 'USD',
-              price:
-                model.inputPricePerMTok !== null
-                  ? `${model.inputPricePerMTok} per 1M input tokens`
-                  : 'Contact for pricing',
-            },
-          }),
-        }}
-      />
-
       <div className="max-w-4xl mx-auto px-6 py-12 space-y-12">
         <ModelHeader model={model} provider={provider} />
 

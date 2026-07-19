@@ -1,4 +1,5 @@
 import { topics } from '../pages/learn/topics.ts'
+import { models } from '../data/models.ts'
 
 /**
  * Canonical SEO metadata for every prerenderable route.
@@ -89,10 +90,25 @@ export const routeMeta: RouteMeta[] = [
     type: 'website',
     image: ogImage,
   },
+  {
+    path: '/whats-new',
+    title: "What's New — latest AI model releases — Models.fyi",
+    description:
+      'The latest AI model releases, updates, and announcements from OpenAI, Anthropic, Google, xAI, and the open-source community, in one chronological feed.',
+    type: 'website',
+    image: ogImage,
+  },
   ...topics.map((t) => ({
     path: `/learn/${t.slug}`,
     title: t.metaTitle,
     description: t.metaDescription,
+    type: 'article' as const,
+    image: ogImage,
+  })),
+  ...models.map((m) => ({
+    path: `/models/${m.id}`,
+    title: `${m.name} — benchmarks, pricing, and specs — Models.fyi`,
+    description: m.blurb,
     type: 'article' as const,
     image: ogImage,
   })),

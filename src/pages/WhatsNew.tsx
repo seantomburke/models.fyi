@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { usePageMeta } from '../lib/meta.ts'
+import { metaFor } from '../lib/routeMeta.ts'
 import { releases, type ReleaseType } from '../data/releases.ts'
 import { models, providerById } from '../data/index.ts'
 import { ProviderLogo } from '../components/ProviderLogo.tsx'
@@ -36,9 +37,10 @@ function getRelativeDate(dateStr: string): string {
 export function WhatsNew() {
   const [filter, setFilter] = useState<ReleaseType | 'all'>('all')
 
+  const meta = metaFor('/whats-new')
   usePageMeta({
-    title: "What's New",
-    description: 'Latest model releases, updates, and feature announcements.',
+    title: meta.title,
+    description: meta.description,
     pathname: '/whats-new',
   })
 

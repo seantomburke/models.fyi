@@ -46,6 +46,11 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://seantomburke.github.io/models.fyi/whats-new</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/what-is-an-ai-model</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
@@ -167,6 +172,101 @@
   </url>
   <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/how-neural-networks-recognize-digits</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/claude-fable-5</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/claude-opus-4-8</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/claude-sonnet-5</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/claude-haiku-4-5</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/gpt-5-6-sol</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/gpt-5-6-terra</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/gpt-5-6-luna</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/gemini-3-1-pro</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/gemini-3-5-flash</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/grok-4-5</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/grok-4-1-fast</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/muse-spark-1-1</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/kimi-k3</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/inkling</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/glm-5-2</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/deepseek-v4-pro</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/qwen-3-6</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/llama-4-maverick</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://seantomburke.github.io/models.fyi/models/llama-4-scout</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
   </url>
