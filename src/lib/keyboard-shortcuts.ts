@@ -34,12 +34,14 @@ export function useKeyboardShortcuts(shortcuts: Shortcut[]) {
 
   const handleKeyDown = React.useCallback(
     (event: KeyboardEvent) => {
-      // Ignore if focused on input/textarea
-      const target = event.target as HTMLElement
+      // Ignore if focused on input/textarea. The target can also be the
+      // document or window itself, which has none of these accessors.
+      const target = event.target
       if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.getAttribute('contenteditable') === 'true'
+        target instanceof HTMLElement &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.getAttribute('contenteditable') === 'true')
       ) {
         return
       }
@@ -52,17 +54,22 @@ export function useKeyboardShortcuts(shortcuts: Shortcut[]) {
       const key = event.key.toLowerCase()
 
       // Only handle printable single-character keys
-      if (key.length !== 1 || event.shiftKey) {
+      if (key.length !== 1) {
         return
       }
 
-      event.preventDefault()
+      // Shifted letters (Shift+D) aren't shortcuts, but shifted punctuation
+      // like '?' is — event.key already reflects the produced character.
+      if (event.shiftKey && /[a-z]/.test(key)) {
+        return
+      }
 
       // Check for single-key shortcuts first
       const singleKeyShortcut = shortcuts.find(
         (s) => s.keys.length === 1 && s.keys[0] === key,
       )
       if (singleKeyShortcut) {
+        event.preventDefault()
         singleKeyShortcut.action()
         resetChord()
         return
@@ -70,7 +77,6 @@ export function useKeyboardShortcuts(shortcuts: Shortcut[]) {
 
       // Handle chord shortcuts (e.g., g+c)
       const newChord = [...currentChord, key]
-      setCurrentChord(newChord)
 
       // Check if the new chord matches any shortcuts
       const chordShortcut = shortcuts.find(
@@ -80,16 +86,26 @@ export function useKeyboardShortcuts(shortcuts: Shortcut[]) {
       )
 
       if (chordShortcut) {
+        event.preventDefault()
         chordShortcut.action()
         resetChord()
         return
       }
 
-      // Reset if no matching shortcut found and chord is too long
-      if (newChord.length > 2) {
+      // Keys that neither match a shortcut nor start a chord must keep their
+      // default behavior — e.g. Space still scrolls the page.
+      const startsChord = shortcuts.some(
+        (s) =>
+          s.keys.length > newChord.length &&
+          newChord.every((k, i) => k === s.keys[i]),
+      )
+      if (!startsChord) {
         resetChord()
         return
       }
+
+      event.preventDefault()
+      setCurrentChord(newChord)
 
       // Clear chord after 2 seconds of inactivity
       if (chordTimeoutRef.current) clearTimeout(chordTimeoutRef.current)

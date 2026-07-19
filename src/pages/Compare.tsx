@@ -1,10 +1,10 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
 import { formatPrice, formatTokens, formatDateForDisplay } from '../lib/format.ts'
-import { exportComparison } from '../lib/export.ts'
+import { exportComparison, EXPORT_SHORTCUT_EVENT } from '../lib/export.ts'
 import { benchmarks, models, providers, providerById, dataSourcedAt } from '../data/index.ts'
 import type { ProviderId } from '../data/index.ts'
 import { sortModels, toggleSort, type SortConfig } from '../lib/sort.ts'
@@ -128,7 +128,7 @@ export function Compare() {
     return sortModels(filtered, sort)
   }, [filtered, sort])
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     try {
       exportComparison(visible)
       captureExport(posthog, visible.length)
@@ -142,7 +142,18 @@ export function Compare() {
       // Optionally show user feedback (could use a toast library here)
       alert('Failed to export table. Please try again.')
     }
-  }
+  }, [visible, posthog])
+
+  // Claim the global `e` shortcut so the export honors this page's active
+  // filters and sort instead of App's full-list fallback.
+  useEffect(() => {
+    const onExportShortcut = (event: Event) => {
+      event.preventDefault()
+      handleExport()
+    }
+    window.addEventListener(EXPORT_SHORTCUT_EVENT, onExportShortcut)
+    return () => window.removeEventListener(EXPORT_SHORTCUT_EVENT, onExportShortcut)
+  }, [handleExport])
 
   // Best published score per benchmark among the visible models.
   const bestScores = useMemo(() => {

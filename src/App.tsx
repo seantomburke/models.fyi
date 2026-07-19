@@ -19,6 +19,10 @@ import { CalculatorSkeleton } from './components/CalculatorSkeleton.tsx'
 import { useDarkMode } from './lib/darkMode'
 import { useKeyboardShortcuts, createDefaultShortcuts } from './lib/keyboard-shortcuts.ts'
 import { usePostHogPageView } from './hooks/usePostHogPageView'
+import { usePostHog } from '@posthog/react'
+import { exportComparison, EXPORT_SHORTCUT_EVENT } from './lib/export.ts'
+import { captureExport, captureExportFailed } from './lib/posthog-events.ts'
+import { models } from './data/index.ts'
 
 // These pages pull in the charting library (and the calculator a tokenizer) —
 // keep them off the main bundle.
@@ -30,6 +34,7 @@ const Calculator = lazy(() =>
 function App() {
   usePostHogPageView()
   const navigate = useNavigate()
+  const posthog = usePostHog()
   const [, setIsDark] = useDarkMode()
   const [showShortcuts, setShowShortcuts] = useState(false)
 
@@ -52,8 +57,23 @@ function App() {
     goToLearn: () => navigate('/learn'),
     goToFAQ: () => navigate('/faq'),
     toggleExport: () => {
-      // TODO: Implement export functionality
-      console.log('Export not yet implemented')
+      // A page with richer export state (Compare's filtered table) claims the
+      // shortcut by calling preventDefault; dispatchEvent returns false then.
+      const claimed = !window.dispatchEvent(
+        new CustomEvent(EXPORT_SHORTCUT_EVENT, { cancelable: true }),
+      )
+      if (claimed) return
+      try {
+        exportComparison(models)
+        captureExport(posthog, models.length)
+      } catch (error) {
+        console.error('Failed to export model data:', error)
+        captureExportFailed(
+          posthog,
+          models.length,
+          error instanceof Error ? error.message : 'Unknown error',
+        )
+      }
     },
     toggleDarkMode: handleToggleDarkMode,
   })

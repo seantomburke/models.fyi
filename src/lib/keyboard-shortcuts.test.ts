@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest'
-import { createDefaultShortcuts } from './keyboard-shortcuts'
+import { renderHook, act } from '@testing-library/react'
+import { createDefaultShortcuts, useKeyboardShortcuts } from './keyboard-shortcuts'
 
 describe('keyboard-shortcuts', () => {
   describe('createDefaultShortcuts', () => {
@@ -140,6 +141,101 @@ describe('keyboard-shortcuts', () => {
       const darkModeShortcut = shortcuts.find((s) => s.id === 'darkMode')
       darkModeShortcut?.action()
       expect(callbacks.toggleDarkMode).toHaveBeenCalled()
+    })
+  })
+
+  describe('useKeyboardShortcuts', () => {
+    function createMockCallbacks() {
+      return {
+        showHelp: vi.fn(),
+        showSearch: vi.fn(),
+        goToCompare: vi.fn(),
+        goToGraph: vi.fn(),
+        goToCalculator: vi.fn(),
+        goToQuiz: vi.fn(),
+        goToLearn: vi.fn(),
+        goToFAQ: vi.fn(),
+        toggleExport: vi.fn(),
+        toggleDarkMode: vi.fn(),
+      }
+    }
+
+    let callbacks: ReturnType<typeof createMockCallbacks>
+
+    beforeEach(() => {
+      callbacks = createMockCallbacks()
+    })
+
+    function pressKey(key: string, init: KeyboardEventInit = {}): KeyboardEvent {
+      const event = new KeyboardEvent('keydown', { key, cancelable: true, bubbles: true, ...init })
+      act(() => {
+        window.dispatchEvent(event)
+      })
+      return event
+    }
+
+    function renderShortcuts() {
+      return renderHook(() => useKeyboardShortcuts(createDefaultShortcuts(callbacks)))
+    }
+
+    test('e triggers export and consumes the key', () => {
+      renderShortcuts()
+      const event = pressKey('e')
+      expect(callbacks.toggleExport).toHaveBeenCalledOnce()
+      expect(event.defaultPrevented).toBe(true)
+    })
+
+    test('? opens help even though it requires Shift', () => {
+      renderShortcuts()
+      pressKey('?', { shiftKey: true })
+      expect(callbacks.showHelp).toHaveBeenCalledOnce()
+    })
+
+    test('Space keeps its default behavior (page scroll)', () => {
+      renderShortcuts()
+      const event = pressKey(' ')
+      expect(event.defaultPrevented).toBe(false)
+    })
+
+    test('unbound keys keep their default behavior', () => {
+      renderShortcuts()
+      const event = pressKey('x')
+      expect(event.defaultPrevented).toBe(false)
+    })
+
+    test('shifted letters are ignored', () => {
+      renderShortcuts()
+      pressKey('D', { shiftKey: true })
+      expect(callbacks.toggleDarkMode).not.toHaveBeenCalled()
+    })
+
+    test('g then c chord navigates to Compare', () => {
+      renderShortcuts()
+      const first = pressKey('g')
+      expect(first.defaultPrevented).toBe(true)
+      pressKey('c')
+      expect(callbacks.goToCompare).toHaveBeenCalledOnce()
+    })
+
+    test('a stray key resets a pending chord', () => {
+      renderShortcuts()
+      pressKey('g')
+      pressKey('x')
+      pressKey('c')
+      expect(callbacks.goToCompare).not.toHaveBeenCalled()
+    })
+
+    test('ignores keys while typing in an input', () => {
+      const input = document.createElement('input')
+      document.body.appendChild(input)
+      renderShortcuts()
+      const event = new KeyboardEvent('keydown', { key: 'e', cancelable: true, bubbles: true })
+      act(() => {
+        input.dispatchEvent(event)
+      })
+      expect(callbacks.toggleExport).not.toHaveBeenCalled()
+      expect(event.defaultPrevented).toBe(false)
+      document.body.removeChild(input)
     })
   })
 })
