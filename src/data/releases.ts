@@ -12,6 +12,25 @@ export interface Release {
 
 export const releases: Release[] = [
   {
+    id: 'kimi-k3-launch',
+    modelId: 'kimi-k3',
+    type: 'new',
+    title: 'Kimi K3 released',
+    description:
+      'Moonshot AI launches its 2.8T-parameter flagship with 1M token context, native vision, and always-on reasoning. Open weights promised for late July.',
+    date: '2026-07-16',
+  },
+  {
+    id: 'inkling-launch',
+    modelId: 'inkling',
+    type: 'new',
+    title: 'Inkling released by Thinking Machines',
+    description:
+      "Mira Murati's Thinking Machines Lab ships its first model: a 975B open-weights multimodal flagship under Apache 2.0, available on Hugging Face.",
+    date: '2026-07-15',
+    link: 'https://thinkingmachines.ai/news/introducing-inkling/',
+  },
+  {
     id: 'claude-fable-5-launch',
     modelId: 'claude-fable-5',
     type: 'new',

@@ -4,7 +4,7 @@ import { BenchmarkCell } from './BenchmarkCell'
 import type { Benchmark } from '../data/types'
 
 const mockBenchmark: Benchmark = {
-  id: 'arc-prize',
+  id: 'gpqa-diamond',
   name: 'Test Benchmark',
   eli5: 'A test benchmark for testing',
   unit: '%',

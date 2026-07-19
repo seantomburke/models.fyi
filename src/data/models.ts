@@ -368,7 +368,69 @@ export const models: Model[] = [
     relatedModelIds: ['llama-4-maverick', 'claude-sonnet-5'],
   },
 
+  // ─── Moonshot AI ─────────────────────────────────────────────
+  {
+    id: 'kimi-k3',
+    name: 'Kimi K3',
+    providerId: 'moonshot',
+    tier: 'flagship',
+    openSource: false, // open weights promised for 2026-07-27; API-only at research time
+    inputPricePerMTok: 3,
+    outputPricePerMTok: 15,
+    contextWindowTokens: 1_000_000,
+    reasoning: true, // always-on reasoning; effort currently fixed at maximum
+    internetAccess: true,
+    releaseDate: '2026-07-16',
+    scores: {
+      'gpqa-diamond': 93.5, // Moonshot-published (July 2026)
+      'terminal-bench': 88.3, // Moonshot-published; no independent tbench.ai run yet
+      'hle': 56.0, // Moonshot-published (with tools) (July 2026)
+    },
+    blurb:
+      "Moonshot AI's brand-new 2.8-trillion-parameter flagship. Frontier scores on agentic and reasoning work, with open weights promised within weeks.",
+    useCases: ['coding', 'research', 'analysis'],
+    whyChooseThis:
+      'Kimi K3 posts some of the strongest published agentic numbers of any model, closed or open, and Moonshot has promised to release the weights — a rare combination of frontier capability now and self-hosting later. The 1M context and native vision make it a strong pick for long-horizon tool-use agents.',
+    prosVsCompetitors: {
+      'GPT-5.6 Sol': 'K3 is cheaper and matches Sol\'s published terminal scores; Sol has independent verification and a mature ecosystem.',
+      'GLM-5.2': 'K3 posts higher published agentic scores; GLM-5.2 is already downloadable and MIT-licensed today.',
+    },
+    relatedModelIds: ['gpt-5-6-sol', 'glm-5-2'],
+  },
+
   // ─── Open source ─────────────────────────────────────────────
+  {
+    id: 'inkling',
+    name: 'Inkling',
+    providerId: 'thinking-machines',
+    tier: 'flagship',
+    openSource: true,
+    license: 'Apache 2.0',
+    inputPricePerMTok: null,
+    outputPricePerMTok: null,
+    contextWindowTokens: 1_000_000,
+    reasoning: true,
+    internetAccess: false,
+    releaseDate: '2026-07-15',
+    scores: {
+      // All figures are Thinking Machines-published (launch eval table, effort=0.99).
+      'swe-bench-verified': 77.6,
+      'swe-bench-pro': 54.3, // SWE-bench Pro public subset
+      'gpqa-diamond': 87.2,
+      'terminal-bench': 63.8,
+      'hle': 46.0, // with tools
+    },
+    blurb:
+      "Thinking Machines' first model: a 975B-parameter open-weights multimodal flagship under Apache 2.0. The leading US open model on real-world coding.",
+    useCases: ['coding', 'research', 'analysis'],
+    whyChooseThis:
+      'Inkling is the strongest US-built open-weights model, and the first flagship from Mira Murati\'s Thinking Machines Lab. It handles text, images, and audio natively, and the Apache 2.0 license is as business-friendly as it gets. Weights are on Hugging Face, with hosted APIs available from several providers.',
+    prosVsCompetitors: {
+      'GLM-5.2': 'Inkling leads on SWE-bench coding and is natively multimodal; GLM-5.2 is stronger on science reasoning and terminal work.',
+      'DeepSeek V4 Pro': 'Inkling adds vision and audio; DeepSeek edges it on pure coding benchmarks.',
+    },
+    relatedModelIds: ['glm-5-2', 'deepseek-v4-pro'],
+  },
   {
     id: 'glm-5-2',
     name: 'GLM-5.2',

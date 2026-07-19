@@ -31,11 +31,51 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 3. Bump `dataSourcedAt` in `index.ts`.
 4. Run `npm run validate` (schema + sanity checks; also runs in CI).
 
-Last refreshed: **2026-07-14, second pass** (Terminal-Bench 2.1 independent
-runs annotated for Opus 4.8 and Sonnet 5; prices and context windows from
-the 2026-07-09 pass). Provider-published evals win over third-party harness
+Last refreshed: **2026-07-19** (Kimi K3 and Inkling added; Gemini 3.5 Pro
+delay confirmed). Provider-published evals win over third-party harness
 runs; where a number is third-party or contested, `models.ts` carries an
 inline comment saying so.
+
+2026-07-19 refresh notes:
+
+- **Kimi K3 added as Moonshot AI's flagship** (released 2026-07-16: 2.8T-param
+  sparse MoE, 1M context, native vision, always-on reasoning, $3/$15).
+  GPQA Diamond 93.5, Terminal-Bench 2.1 88.3, and HLE 56.0 (with tools) are
+  all Moonshot-published — no independent runs yet (K3 is absent from
+  tbench.ai's 17-row leaderboard). Moonshot publishes no SWE-bench
+  Verified/Pro (its launch table uses DeepSWE/ProgramBench/FrontierSWE
+  instead). Open weights are promised by 2026-07-27 — flip `openSource`
+  and null the prices if that lands.
+- **Inkling added as Thinking Machines' first model** (released 2026-07-15:
+  975B MoE / 41B active, Apache 2.0 open weights on Hugging Face, up to 1M
+  context, multimodal text/image/audio). All scores are from TML's launch
+  eval table (effort=0.99): SWE-bench Verified 77.6, SWE-bench Pro public
+  54.3, GPQA Diamond 87.2, Terminal-Bench 2.1 63.8, HLE 46.0 (with tools).
+  Prices are null per the open-weights convention (hosted APIs exist on
+  Together/Fireworks/Modal/Databricks/Baseten at varying rates).
+- **Gemini 3.5 Pro did NOT ship on July 17.** Bloomberg and 9to5Google
+  (July 16) report the launch slipped again — the third missed deadline —
+  over coding-benchmark shortfalls and hallucination issues; Google may ship
+  a stopgap "Gemini 3.6 Flash" instead. Several aggregator articles claiming
+  a July 17 GA are churn: deepmind.google still lists 3.5 Pro as "coming
+  soon", there is no model card, and the Gemini API pricing page lists only
+  gemini-3.5-flash and gemini-3.1-pro-preview. Still excluded.
+- **Haiku 4.5 GPQA re-verified as unpublished**: Anthropic's announcement
+  publishes SWE-bench Verified 73.3 and Terminal-Bench only; third-party
+  GPQA numbers still conflict (73.0 / 67.2 / 67). Stays omitted.
+- Checked and unchanged: tbench.ai still has no GPT-5.6 Sol, Grok 4.1 Fast,
+  GLM-5.2, DeepSeek V4 Pro, or Qwen 3.6 entries; existing annotated runs
+  (Opus 4.8 78.9, Sonnet 5 74.6, Terra 78.4, Luna 75.7, Grok 4.5 79.3,
+  Muse Spark 76.2, Gemini 3.1 Pro 65.8) match our inline comments.
+
+Sources used (2026-07-19): thinkingmachines.ai/news/introducing-inkling
+(full Inkling eval table), artificialanalysis.ai + venturebeat.com +
+ghacks.net (Inkling launch coverage, license, params), openrouter.ai +
+benchlm.ai + morphllm.com (Kimi K3 pricing/specs/Moonshot-published scores),
+tbench.ai (Terminal-Bench 2.1 leaderboard recheck), bloomberg.com +
+9to5google.com + techtimes.com (Gemini 3.5 Pro delay), ai.google.dev +
+deepmind.google (Gemini API/model-card recheck), anthropic.com/news
+(Haiku 4.5 GPQA recheck), llm-stats.com (July 14–19 release news).
 
 2026-07-14 second-pass refresh notes:
 

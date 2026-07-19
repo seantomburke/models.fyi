@@ -14,6 +14,8 @@ export type ProviderId =
   | 'deepseek'
   | 'alibaba'
   | 'zhipu'
+  | 'moonshot'
+  | 'thinking-machines'
 
 export interface Provider {
   id: ProviderId
@@ -28,23 +30,7 @@ export type BenchmarkId =
   | 'swe-bench-pro'
   | 'gpqa-diamond'
   | 'terminal-bench'
-  | 'mask'
   | 'hle'
-  | 'virology-test'
-  | 'livebench'
-  | 'livecodebench-pro'
-  | 'aider'
-  | 'cybench'
-  | 'arc-prize'
-  | 'geobench'
-  | 'forecastbench'
-  | 'videommu'
-  | 'balrog'
-  | 'hallucination-leaderboard'
-  | 'hallucination-rag'
-  | 'physics-puzzles'
-  | 'vending-bench'
-  | 'simple-bench'
 
 export type BenchmarkCategory =
   | 'Software Engineering'
