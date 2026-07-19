@@ -1,89 +1,86 @@
-import type { Model } from '../data/types'
+import type { Model } from '../data/types.ts'
+import { providerById } from '../data/index.ts'
 
 export interface SearchResult {
   model: Model
-  matchType: 'name' | 'provider' | 'benchmark' | 'description'
   relevance: number
+  matchType: 'name' | 'provider' | 'capability' | 'description' | 'all'
 }
 
-function computeLevenshtein(a: string, b: string): number {
-  const dp: number[][] = Array(a.length + 1)
-    .fill(null)
-    .map(() => Array(b.length + 1).fill(0))
+export function searchModels(query: string, models: Model[]): SearchResult[]
+export function searchModels(models: Model[], query: string): SearchResult[]
 
-  for (let i = 0; i <= a.length; i++) dp[i][0] = i
-  for (let j = 0; j <= b.length; j++) dp[0][j] = j
+export function searchModels(
+  queryOrModels: string | Model[],
+  modelsOrQuery: Model[] | string,
+): SearchResult[] {
+  // Handle both argument orders for backward compatibility
+  let q: string
+  let modelsList: Model[]
 
-  for (let i = 1; i <= a.length; i++) {
-    for (let j = 1; j <= b.length; j++) {
-      if (a[i - 1] === b[j - 1]) {
-        dp[i][j] = dp[i - 1][j - 1]
-      } else {
-        dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
-      }
-    }
+  if (typeof queryOrModels === 'string') {
+    q = queryOrModels
+    modelsList = modelsOrQuery as Model[]
+  } else {
+    modelsList = queryOrModels
+    q = modelsOrQuery as string
   }
 
-  return dp[a.length][b.length]
-}
+  const query_lower = q.toLowerCase().trim()
+  if (!query_lower) return modelsList.map((m) => ({ model: m, relevance: 100, matchType: 'all' }))
 
-function fuzzyMatch(query: string, text: string): number {
-  const q = query.toLowerCase()
-  const t = text.toLowerCase()
+  return modelsList
+    .map((m) => {
+      const nameLower = m.name.toLowerCase()
+      const apiIdLower = (m.apiId || '').toLowerCase()
+      const provider = providerById.get(m.providerId)
+      const providerName = provider?.name.toLowerCase() || ''
 
-  if (t.includes(q)) return 100 // Exact substring match
-  if (t.startsWith(q)) return 90 // Starts with
-  if (t.split(' ').some((word) => word.startsWith(q))) return 80 // Word start
+      let relevance = 0
+      let matchType: SearchResult['matchType'] = 'all'
 
-  const distance = computeLevenshtein(q, t)
-  const maxLen = Math.max(q.length, t.length)
-  const similarity = Math.max(0, (maxLen - distance) / maxLen)
-
-  return Math.round(similarity * 70)
-}
-
-export function searchModels(models: Model[], query: string): SearchResult[] {
-  if (!query.trim()) return []
-
-  const results: SearchResult[] = []
-  const q = query.toLowerCase()
-
-  for (const model of models) {
-    const nameScore = fuzzyMatch(query, model.name)
-    const providerScore = fuzzyMatch(query, model.providerId)
-
-    let bestScore = Math.max(nameScore, providerScore)
-    let matchType: SearchResult['matchType'] = nameScore > providerScore ? 'name' : 'provider'
-
-    // Check for blurb/description matches
-    if (model.blurb && model.blurb.toLowerCase().includes(q)) {
-      if (80 > bestScore) {
-        bestScore = 80
-        matchType = 'description'
+      // Name matching (highest priority)
+      if (nameLower.startsWith(query_lower)) {
+        relevance = 100
+        matchType = 'name'
+      } else if (nameLower.includes(query_lower)) {
+        relevance = 90
+        matchType = 'name'
       }
-    }
 
-    // Add result if there's a meaningful match
-    if (bestScore > 30) {
-      results.push({
-        model,
-        matchType,
-        relevance: bestScore,
-      })
-    }
-  }
+      // API ID matching
+      if (apiIdLower.includes(query_lower)) {
+        relevance = Math.max(relevance, 85)
+      }
 
-  // Sort by relevance (descending)
-  return results.sort((a, b) => b.relevance - a.relevance)
+      // Provider matching
+      if (providerName.includes(query_lower)) {
+        relevance = Math.max(relevance, 75)
+        if (matchType === 'all') matchType = 'provider'
+      }
+
+      // Capability matching
+      const hasReasoning = m.reasoning && 'reasoning'.includes(query_lower)
+      const hasInternet = m.internetAccess && 'web search internet access'.includes(query_lower)
+      if (hasReasoning || hasInternet) {
+        relevance = Math.max(relevance, 70)
+        if (matchType === 'all') matchType = 'capability'
+      }
+
+      return { model: m, relevance, matchType }
+    })
+    .filter((r) => r.relevance > 0)
+    .sort((a, b) => b.relevance - a.relevance)
 }
 
 export function groupSearchResults(
   results: SearchResult[],
-): Record<SearchResult['matchType'], SearchResult[]> {
+): Record<'name' | 'provider' | 'capability' | 'description' | 'all', SearchResult[]> {
   return {
     name: results.filter((r) => r.matchType === 'name'),
     provider: results.filter((r) => r.matchType === 'provider'),
-    benchmark: results.filter((r) => r.matchType === 'benchmark'),
+    capability: results.filter((r) => r.matchType === 'capability'),
     description: results.filter((r) => r.matchType === 'description'),
+    all: results.filter((r) => r.matchType === 'all'),
   }
 }

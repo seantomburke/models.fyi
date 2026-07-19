@@ -7,6 +7,7 @@ import { exportComparison } from '../lib/export.ts'
 import { benchmarks, models, providers, providerById, dataSourcedAt } from '../data/index.ts'
 import type { ProviderId } from '../data/index.ts'
 import { sortModels, toggleSort, type SortConfig } from '../lib/sort.ts'
+import { searchModels } from '../lib/search.ts'
 import {
   captureFilterChange,
   captureFilterCleared,
@@ -19,6 +20,7 @@ import { SortableHeader } from '../components/SortableHeader.tsx'
 import { Breadcrumb } from '../components/Breadcrumb.tsx'
 import { BenchmarkSourceLink } from '../components/BenchmarkSourceLink.tsx'
 import { BookmarkButton } from '../components/BookmarkButton.tsx'
+import { SearchInput } from '../components/SearchInput.tsx'
 import { loadBookmarks, saveBookmarks, toggleBookmark, isBookmarked } from '../lib/bookmarks.ts'
 import { capabilityOptions, filterByCapabilities, type CapabilityFilter } from '../lib/capabilityFilters.ts'
 
@@ -51,6 +53,7 @@ export function Compare() {
   const [sort, setSort] = useState<SortConfig>({ column: null, direction: 'asc' })
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set())
   const [capabilities, setCapabilities] = useState<Set<CapabilityFilter>>(new Set())
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     setBookmarks(loadBookmarks())
@@ -99,8 +102,11 @@ export function Compare() {
     } else {
       result = models.filter((m) => m.providerId === filter)
     }
-    return filterByCapabilities(result, capabilities)
-  }, [filter, bookmarks, capabilities])
+    result = filterByCapabilities(result, capabilities)
+    const searchResults = searchModels(searchQuery, result)
+    result = searchResults.map((r) => r.model)
+    return result
+  }, [filter, bookmarks, capabilities, searchQuery])
 
   const visible = useMemo(() => {
     return sortModels(filtered, sort)
@@ -175,6 +181,8 @@ export function Compare() {
       </details>
 
       <div className="space-y-3">
+        <SearchInput value={searchQuery} onChange={setSearchQuery} placeholder="Search models, capabilities..." />
+
         <div className="flex flex-wrap gap-2 sm:gap-1.5" role="group" aria-label="Filter by provider">
           {filters.map(({ id, label }) => (
             <button

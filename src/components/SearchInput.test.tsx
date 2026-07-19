@@ -4,86 +4,54 @@ import userEvent from '@testing-library/user-event'
 import { SearchInput } from './SearchInput'
 
 describe('SearchInput', () => {
-  it('renders search input with default placeholder', () => {
-    const onSearch = vi.fn()
-    render(<SearchInput onSearch={onSearch} />)
+  it('renders with placeholder text', () => {
+    render(<SearchInput value="" onChange={() => {}} />)
+    expect(screen.getByPlaceholderText('Search models...')).toBeInTheDocument()
+  })
 
-    const input = screen.getByPlaceholderText(/search models/i)
+  it('displays the current value', () => {
+    render(<SearchInput value="claude" onChange={() => {}} />)
+    const input = screen.getByDisplayValue('claude')
     expect(input).toBeInTheDocument()
   })
 
-  it('renders search input with custom placeholder', () => {
-    const onSearch = vi.fn()
-    render(<SearchInput onSearch={onSearch} placeholder="Find a model..." />)
+  it('calls onChange when user types', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<SearchInput value="" onChange={onChange} />)
 
-    const input = screen.getByPlaceholderText(/find a model/i)
-    expect(input).toBeInTheDocument()
+    const input = screen.getByPlaceholderText('Search models...')
+    await user.type(input, 'gpt')
+
+    expect(onChange).toHaveBeenCalled()
+    expect(onChange.mock.calls.length).toBe(3)
   })
 
-  it('calls onSearch when user types', async () => {
-    const onSearch = vi.fn()
-    render(<SearchInput onSearch={onSearch} />)
-
-    const input = screen.getByPlaceholderText(/search models/i)
-    await userEvent.type(input, 'claude')
-
-    expect(onSearch).toHaveBeenCalledWith('c')
-    expect(onSearch).toHaveBeenCalledWith('cl')
-    expect(onSearch).toHaveBeenCalledWith('cla')
-    expect(onSearch).toHaveBeenCalledWith('clau')
-    expect(onSearch).toHaveBeenCalledWith('claud')
-    expect(onSearch).toHaveBeenCalledWith('claude')
+  it('shows clear button when value is present', () => {
+    render(<SearchInput value="claude" onChange={() => {}} />)
+    const clearButton = screen.getByLabelText('Clear search')
+    expect(clearButton).toBeInTheDocument()
   })
 
-  it('shows clear button when input has text', async () => {
-    const onSearch = vi.fn()
-    render(<SearchInput onSearch={onSearch} />)
-
-    const input = screen.getByPlaceholderText(/search models/i)
-    expect(screen.queryByRole('button', { name: /clear/i })).not.toBeInTheDocument()
-
-    await userEvent.type(input, 'claude')
-    expect(screen.getByRole('button', { name: /clear/i })).toBeInTheDocument()
+  it('does not show clear button when value is empty', () => {
+    render(<SearchInput value="" onChange={() => {}} />)
+    const clearButton = screen.queryByLabelText('Clear search')
+    expect(clearButton).not.toBeInTheDocument()
   })
 
-  it('clears input and calls onSearch with empty string', async () => {
-    const onSearch = vi.fn()
-    render(<SearchInput onSearch={onSearch} />)
+  it('clears the search when clear button is clicked', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<SearchInput value="claude" onChange={onChange} />)
 
-    const input = screen.getByPlaceholderText(/search models/i) as HTMLInputElement
-    await userEvent.type(input, 'claude')
+    const clearButton = screen.getByLabelText('Clear search')
+    await user.click(clearButton)
 
-    const clearButton = screen.getByRole('button', { name: /clear/i })
-    await userEvent.click(clearButton)
-
-    expect(onSearch).toHaveBeenLastCalledWith('')
-    expect(input.value).toBe('')
+    expect(onChange).toHaveBeenCalledWith('')
   })
 
-  it('applies custom className', () => {
-    const onSearch = vi.fn()
-    const { container } = render(<SearchInput onSearch={onSearch} className="custom-class" />)
-
-    const wrapper = container.querySelector('.custom-class')
-    expect(wrapper).toBeInTheDocument()
-  })
-
-  it('has proper ARIA labels', () => {
-    const onSearch = vi.fn()
-    render(<SearchInput onSearch={onSearch} />)
-
-    const input = screen.getByLabelText('Search models')
-    expect(input).toBeInTheDocument()
-  })
-
-  it('handles rapid typing correctly', async () => {
-    const onSearch = vi.fn()
-    render(<SearchInput onSearch={onSearch} />)
-
-    const input = screen.getByPlaceholderText(/search models/i) as HTMLInputElement
-    await userEvent.type(input, 'test', { delay: 1 })
-
-    expect(input.value).toBe('test')
-    expect(onSearch).toHaveBeenLastCalledWith('test')
+  it('accepts custom placeholder', () => {
+    render(<SearchInput value="" onChange={() => {}} placeholder="Find a model..." />)
+    expect(screen.getByPlaceholderText('Find a model...')).toBeInTheDocument()
   })
 })
