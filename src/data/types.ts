@@ -92,6 +92,10 @@ export interface Model {
   reasoning: boolean
   /** Whether the provider's assistant offers built-in live web access. */
   internetAccess: boolean
+  /** Whether this model can process images (vision/multimodal). */
+  vision?: boolean
+  /** Whether this model can generate images. */
+  imageGeneration?: boolean
   /** ISO date, when reliably known. */
   releaseDate?: string
   /** Benchmark scores in percent. Missing key = no published score found. */

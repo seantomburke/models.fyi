@@ -20,6 +20,7 @@ import { Breadcrumb } from '../components/Breadcrumb.tsx'
 import { BenchmarkSourceLink } from '../components/BenchmarkSourceLink.tsx'
 import { BookmarkButton } from '../components/BookmarkButton.tsx'
 import { loadBookmarks, saveBookmarks, toggleBookmark, isBookmarked } from '../lib/bookmarks.ts'
+import { capabilityOptions, filterByCapabilities, type CapabilityFilter } from '../lib/capabilityFilters.ts'
 
 type Filter = 'all' | 'open-source' | 'bookmarked' | ProviderId
 
@@ -49,6 +50,7 @@ export function Compare() {
   const [filter, setFilter] = useState<Filter>('all')
   const [sort, setSort] = useState<SortConfig>({ column: null, direction: 'asc' })
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set())
+  const [capabilities, setCapabilities] = useState<Set<CapabilityFilter>>(new Set())
 
   useEffect(() => {
     setBookmarks(loadBookmarks())
@@ -76,12 +78,29 @@ export function Compare() {
     saveBookmarks(updated)
   }
 
+  const handleToggleCapability = (cap: CapabilityFilter) => {
+    const updated = new Set(capabilities)
+    if (updated.has(cap)) {
+      updated.delete(cap)
+    } else {
+      updated.add(cap)
+    }
+    setCapabilities(updated)
+  }
+
   const filtered = useMemo(() => {
-    if (filter === 'all') return models
-    if (filter === 'open-source') return models.filter((m) => m.openSource)
-    if (filter === 'bookmarked') return models.filter((m) => isBookmarked(bookmarks, m.id))
-    return models.filter((m) => m.providerId === filter)
-  }, [filter, bookmarks])
+    let result = models
+    if (filter === 'all') {
+      result = models
+    } else if (filter === 'open-source') {
+      result = models.filter((m) => m.openSource)
+    } else if (filter === 'bookmarked') {
+      result = models.filter((m) => isBookmarked(bookmarks, m.id))
+    } else {
+      result = models.filter((m) => m.providerId === filter)
+    }
+    return filterByCapabilities(result, capabilities)
+  }, [filter, bookmarks, capabilities])
 
   const visible = useMemo(() => {
     return sortModels(filtered, sort)
@@ -181,6 +200,36 @@ export function Compare() {
               onClick={handleClearFilter}
               className="inline-flex items-center rounded-lg px-3 py-2 sm:py-1.5 text-sm font-medium text-fg-secondary transition-colors duration-150 hover:text-fg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-deep min-h-11 sm:min-h-auto"
               aria-label="Clear filter"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        {/* Capability filters */}
+        <div className="flex flex-wrap gap-2 sm:gap-1.5" role="group" aria-label="Filter by capability">
+          {capabilityOptions.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => handleToggleCapability(option.id)}
+              aria-pressed={capabilities.has(option.id)}
+              title={option.description}
+              className={`inline-flex items-center gap-1 rounded-lg px-3 py-2 sm:py-1.5 text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-deep min-h-11 sm:min-h-auto ${
+                capabilities.has(option.id)
+                  ? 'bg-accent-soft font-medium text-accent-deep'
+                  : 'border border-line text-fg-secondary hover:border-line-strong hover:text-fg'
+              }`}
+            >
+              <span aria-hidden className="text-base">{option.emoji}</span>
+              <span className="hidden sm:inline">{option.label}</span>
+            </button>
+          ))}
+          {capabilities.size > 0 && (
+            <button
+              type="button"
+              onClick={() => setCapabilities(new Set())}
+              className="inline-flex items-center rounded-lg px-3 py-2 sm:py-1.5 text-sm font-medium text-fg-secondary transition-colors duration-150 hover:text-fg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-deep min-h-11 sm:min-h-auto"
+              aria-label="Clear capability filters"
             >
               Clear
             </button>
