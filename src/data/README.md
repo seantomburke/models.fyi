@@ -31,10 +31,59 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 3. Bump `dataSourcedAt` in `index.ts`.
 4. Run `npm run validate` (schema + sanity checks; also runs in CI).
 
-Last refreshed: **2026-07-20, second pass** (HLE backfilled for five models;
-Gemini 3.5 Flash provenance corrected). Provider-published evals win over
+Last refreshed: **2026-07-20, third pass** (gap-filling sweep over the 23
+empty benchmark cells: Gemini 3.1 Pro HLE resolved and added; the other 22
+confirmed unpublished and left empty). Provider-published evals win over
 third-party harness runs; where a number is third-party or contested,
 `models.ts` carries an inline comment saying so.
+
+2026-07-20 third-pass refresh notes (empty-cell sweep):
+
+- **One cell filled of 23 attempted, and that is the correct outcome.** This
+  pass targeted every empty cell in the 5-benchmark grid. Primary sources
+  showed that 22 of them are empty because the number does not exist, not
+  because nobody had looked. Filling them would have required inventing data.
+- **Gemini 3.1 Pro HLE = 44.4**, from the DeepMind model card's explicit
+  "No tools" column. This settles the 44.4-vs-51.4 ambiguity the second pass
+  recorded as unresolvable: 51.4 is the same row's "Search (blocklist) +
+  Code" figure. Closed-book wins per the column convention, and because it is
+  provider-published it takes no `scoreProvenance` entry.
+- **Llama 4 Maverick and Scout (8 cells) are unfillable at the source.**
+  Meta's own `llama-models` MODEL_CARD.md publishes neither SWE-bench
+  Verified, SWE-bench Pro, Terminal-Bench, nor HLE for either model — its
+  instruction-tuned table tops out at LiveCodeBench. A search digest claiming
+  "Maverick 74.2 on SWE-bench Verified" is fabricated; a sibling result in
+  the same search reported Maverick at 8.0 on SWE-bench *Lite*, and Verified
+  is the easier set, so 74.2 is not merely unsourced but incoherent.
+- **Haiku 4.5 (4 cells) reconfirmed unpublished.** Anthropic's announcement
+  carries SWE-bench Verified 73.3 and a Terminal-Bench figure only. The
+  Terminal-Bench number (40.21 no-thinking / 41.75 at 32K) names no version,
+  and we track 2.1 exclusively, so it stays excluded rather than converted.
+  Circulating third-party GPQA values (74.1 / 73.0 / 67.2 / 67) still
+  conflict and still have no verifiable leaderboard entry.
+- **Grok 4.5 HLE stays omitted — near-miss worth recording.** Searches for it
+  return *Grok 4* numbers (25.4–26.9 closed-book, 41.0 with tools, 50.7
+  Heavy). Different model; using them would have been a silent substitution.
+  Artificial Analysis's HLE leaderboard has no Grok 4.5 row.
+- **Terra/Luna HLE and Terra SWE-bench Verified stay omitted.** openai.com
+  now returns HTTP 403 to fetches, and the Artificial Analysis HLE
+  leaderboard lists no Terra or Luna row. That leaderboard's three entries
+  (Fable 5 53.3, Sol 47.2, Opus 4.8 45.7) match `models.ts` exactly, which
+  re-verifies those existing values.
+- **GLM-5.2 SWE-bench Verified does not exist.** Z.AI's own docs quote only
+  "81.0 vs 62.0 on Terminal-Bench 2.1 and 62.1 vs 58.4 on SWE-bench Pro".
+- **Muse Spark 1.1 SWE-bench Verified** was not published at launch; Meta's
+  report gives SWE-bench Pro 61.5 and DeepSWE 53.3.
+- **Kimi K3 SWE-bench Pro** reconfirmed absent: Moonshot's launch table uses
+  DeepSWE, FrontierSWE, ProgramBench, and SWE Marathon instead.
+
+Sources used (2026-07-20 third pass):
+deepmind.google/models/model-cards/gemini-3-1-pro (HLE no-tools column),
+github.com/meta-llama/llama-models MODEL_CARD.md (Llama 4 eval tables),
+anthropic.com/news/claude-haiku-4-5 (Haiku eval methodology),
+docs.z.ai/guides/llm/glm-5.2 (GLM-5.2 benchmark line),
+artificialanalysis.ai/evaluations/humanitys-last-exam (HLE leaderboard
+roster), plus web searches for Muse Spark 1.1 and Kimi K3 eval tables.
 
 2026-07-20 capability-pass refresh notes (vision / imageGeneration):
 

@@ -305,6 +305,10 @@ export const models: Model[] = [
       'swe-bench-pro': 54.2, // from Anthropic's comparison table; Google published none
       'gpqa-diamond': 94.3, // Artificial Analysis independent run (July 2026)
       'terminal-bench': 70.79, // vals.ai independent run (July 16, 2026)
+      // Google-published model card, "No tools" column (2026-07-20). The same
+      // row publishes 51.4 under "Search (blocklist) + Code"; the column is
+      // closed-book across the dataset, so the 44.4 run is the comparable one.
+      'hle': 44.4,
     },
     scoreProvenance: {
       'swe-bench-pro': { source: 'independent', runner: "Anthropic's comparison table" },
