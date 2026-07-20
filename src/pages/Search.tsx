@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useCallback, useMemo } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
 import { searchModels, groupSearchResults } from '../lib/search.ts'
+import { parseSearchParams, serializeSearchParams } from '../lib/searchUrlState.ts'
 import { models, providerById } from '../data/index.ts'
 import { SearchInput } from '../components/SearchInput.tsx'
 import { Breadcrumb } from '../components/Breadcrumb.tsx'
@@ -20,7 +21,19 @@ export function Search() {
     structuredData: meta.structuredData,
   })
 
-  const [query, setQuery] = useState('')
+  // The URL is the source of truth for the query, so any search can be shared,
+  // bookmarked, or restored with the back button.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const { query } = useMemo(() => parseSearchParams(searchParams), [searchParams])
+
+  const setQuery = useCallback(
+    (next: string) => {
+      // Replace rather than push: typing a word shouldn't bury the previous
+      // page under a dozen history entries.
+      setSearchParams(serializeSearchParams({ query: next }), { replace: true })
+    },
+    [setSearchParams],
+  )
 
   const results = useMemo(() => {
     if (query) {
@@ -42,7 +55,7 @@ export function Search() {
         <p className="mt-2 text-fg-secondary">Find the right model by name, provider, or capability.</p>
       </section>
 
-      <SearchInput onSearch={setQuery} className="max-w-lg" />
+      <SearchInput value={query} onSearch={setQuery} className="max-w-lg" />
 
       {query && results.length === 0 && (
         <div className="rounded-lg border border-line bg-surface-raised p-6 text-center">
@@ -115,7 +128,7 @@ function SearchResultCard({ result }: SearchResultCardProps) {
 
   return (
     <Link
-      to="/compare"
+      to={`/models/${model.id}`}
       className="block rounded-lg border border-line bg-surface-raised p-4 transition-colors hover:border-accent-deep hover:bg-surface"
     >
       <div className="flex items-start justify-between gap-4">
