@@ -31,10 +31,40 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 3. Bump `dataSourcedAt` in `index.ts`.
 4. Run `npm run validate` (schema + sanity checks; also runs in CI).
 
-Last refreshed: **2026-07-20** (GPT-5.6 GPQA and independent coding evals
-backfilled). Provider-published evals win over third-party harness
-runs; where a number is third-party or contested, `models.ts` carries an
-inline comment saying so.
+Last refreshed: **2026-07-20, second pass** (HLE backfilled for five models;
+Gemini 3.5 Flash provenance corrected). Provider-published evals win over
+third-party harness runs; where a number is third-party or contested,
+`models.ts` carries an inline comment saying so.
+
+2026-07-20 second-pass refresh notes:
+
+- **HLE column filled for five models**, all closed-book to match the
+  existing entries: Gemini 3.5 Flash 40.2 (Google model card), GLM-5.2 40.5
+  (Z.AI), DeepSeek V4 Pro 37.7 (tech report), Qwen3.6-35B-A3B 21.4 (BenchLM),
+  and Inkling's 46.0 kept as published.
+- **Protocol trap avoided on two models.** Z.AI reports GLM-5.2 at 54.7 *with
+  tools* and 40.5 closed-book; DeepSeek reports 48.2 with tools and 37.7
+  closed-book. The aggregators quote the headline tool-assisted numbers,
+  which would have overstated GLM by 14 points against closed-book neighbours
+  like Opus 4.8 (45.7). Both closed-book figures were used instead.
+- **Gemini 3.5 Flash GPQA re-attributed.** The 92.2 carried a
+  "Google-published" comment, but the official model card publishes no GPQA
+  at all — the number is an Artificial Analysis run, now marked independent.
+  The same card confirms its Terminal-Bench 76.2 *is* a 2.1 result
+  (Terminus-2 harness), contradicting secondary coverage that called it 2.0,
+  so the score stands and the convention is not violated.
+- **Terminal-Bench divergences recorded** from the July 16 Vals AI Terminus 2
+  run for Gemini 3.5 Flash (74.16), GLM-5.2 (67.79), DeepSeek V4 Pro (50.19),
+  and Inkling (47.57). Provider numbers stay per the convention.
+- **Rejected leads:** Gemini 3.1 Pro's HLE is quoted as both 44.4 and 51.4 by
+  different sources with no provider figure to settle it, so it stays
+  omitted. Grok 4.5 has no isolated HLE score — only its position in
+  Artificial Analysis's composite index — so it stays omitted too. Kimi K3's
+  "95.10 SWE-bench Verified" is the Vals *Index subset*, a different harness
+  from the 93.4 mini-swe-agent run already recorded, not an update to it.
+- Checked and unchanged: no new frontier releases July 17–20 (llm-stats
+  release feed); Gemini 3.5 Pro still not GA (still no model card or pricing;
+  now rumoured to August); Kimi K3 open weights still promised for 07-27.
 
 2026-07-20 refresh notes:
 

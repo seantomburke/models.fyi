@@ -1,5 +1,5 @@
 import { models, providerById } from '../data/index.ts'
-import type { Model, ProviderId } from '../data/index.ts'
+import type { BenchmarkId, Model, ProviderId } from '../data/index.ts'
 import { withArticle } from './format.ts'
 
 // ─── Quiz vocabulary ───────────────────────────────────────────
@@ -105,9 +105,35 @@ export interface Recommendation {
   why: string[]
 }
 
+/**
+ * Mean difficulty of each benchmark across every model that has a score for
+ * it. Benchmarks are not equally hard — nearly everyone clears 80 on
+ * SWE-bench Verified, while HLE tops out in the 60s — so a plain mean over
+ * whichever benchmarks a model happens to have punishes the well-measured
+ * ones. Llama 4 Maverick, scored only on GPQA, would otherwise outrank
+ * GLM-5.2, which carries four scores including a hard one.
+ */
+const benchmarkAverages: ReadonlyMap<BenchmarkId, number> = (() => {
+  const totals = new Map<BenchmarkId, { sum: number; n: number }>()
+  for (const m of models) {
+    for (const [id, score] of Object.entries(m.scores) as Array<[BenchmarkId, number]>) {
+      const t = totals.get(id) ?? { sum: 0, n: 0 }
+      totals.set(id, { sum: t.sum + score, n: t.n + 1 })
+    }
+  }
+  return new Map([...totals].map(([id, t]) => [id, t.sum / t.n]))
+})()
+
+/**
+ * How far above or below the field a model sits, averaged over the
+ * benchmarks it has been measured on. Returns a percentage-point delta, so 0
+ * means "average model" and +5 means "five points better than typical".
+ */
 const avgScore = (m: Model): number => {
-  const s = Object.values(m.scores)
-  return s.length > 0 ? s.reduce((a, b) => a + b, 0) / s.length : 0
+  const deltas = (Object.entries(m.scores) as Array<[BenchmarkId, number]>).map(
+    ([id, score]) => score - (benchmarkAverages.get(id) ?? score),
+  )
+  return deltas.length > 0 ? deltas.reduce((a, b) => a + b, 0) / deltas.length : 0
 }
 
 const tierRank: Record<Model['tier'], number> = { flagship: 3, balanced: 2, fast: 1 }
@@ -129,8 +155,11 @@ function capabilityScore(m: Model, needs: TaskNeeds): number {
   if (needs.agentic) {
     return m.scores['terminal-bench'] ?? tierRank[m.tier] * 20
   }
-  const avg = avgScore(m)
-  return avg > 0 ? avg : tierRank[m.tier] * 20
+  // Re-centre the delta on 60 (a mid-field model) so this branch returns a
+  // positive 0-100-ish figure like the others, and so capability-per-dollar
+  // stays meaningful.
+  if (Object.keys(m.scores).length === 0) return tierRank[m.tier] * 20
+  return Math.max(0, 60 + avgScore(m))
 }
 
 export function recommend(role: Role, task: Task, budget: Budget, pref: CompanyPref): Recommendation {

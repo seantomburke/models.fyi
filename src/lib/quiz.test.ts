@@ -47,6 +47,20 @@ test('premium coding lands on a top coding model', () => {
   expect(score).toBe(bestScore)
 })
 
+test('a sparsely-benchmarked model does not outrank a well-measured one', () => {
+  // Scores are averaged as a delta against each benchmark's field average.
+  // A plain mean would rank Llama 4 Maverick (measured only on GPQA) above
+  // GLM-5.2, which carries four scores including hard ones that drag a raw
+  // mean down.
+  const rec = recommend(role('marketer'), task('write-email'), 'free', 'open-source')
+  expect(rec.pick.id).toBe('glm-5-2')
+})
+
+test('premium open-ended work picks a flagship, not a budget tier', () => {
+  const rec = recommend(role('writer'), task('write-book'), 'premium', 'any')
+  expect(rec.pick.tier).toBe('flagship')
+})
+
 test('simple tasks favor cheap models over flagships', () => {
   const rec = recommend(role('everyday'), task('write-email'), 'value', 'any')
   expect(rec.pick.tier).not.toBe('flagship')

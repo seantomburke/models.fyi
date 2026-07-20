@@ -1,7 +1,7 @@
 import type { Model } from './types.ts'
 
 /**
- * Model facts researched 2026-07-18. Scores are provider-published evals
+ * Model facts researched 2026-07-20. Scores are provider-published evals
  * where available, otherwise independent leaderboard runs (noted below).
  * A missing score means no reliable published number was found, not zero.
  * Sources are listed in src/data/README.md.
@@ -322,8 +322,17 @@ export const models: Model[] = [
     scores: {
       'swe-bench-verified': 78.0, // Google-published (announced at Google I/O 2026)
       'swe-bench-pro': 55.1, // Google-published (single attempt)
-      'gpqa-diamond': 92.2, // Google-published (July 2026)
-      'terminal-bench': 76.2, // Google-published (July 2026)
+      'gpqa-diamond': 92.2, // Artificial Analysis independent run (the model card publishes no GPQA)
+      'terminal-bench': 76.2, // Google-published (Terminus-2 harness); Vals independent run lands 74.16
+      'hle': 40.2, // Google-published (model card, full set text + multimodal)
+    },
+    scoreProvenance: {
+      'gpqa-diamond': { source: 'independent', runner: 'Artificial Analysis' },
+      'terminal-bench': {
+        source: 'provider',
+        independentScore: 74.16,
+        independentRunner: 'Vals AI (Terminus 2)',
+      },
     },
     blurb:
       'Google\'s speed tier that punches above its weight. Beats 3.1 Pro on coding at about 25% lower cost.',
@@ -503,8 +512,15 @@ export const models: Model[] = [
       'swe-bench-verified': 77.6,
       'swe-bench-pro': 54.3, // SWE-bench Pro public subset
       'gpqa-diamond': 87.2,
-      'terminal-bench': 63.8,
+      'terminal-bench': 63.8, // Vals independent run lands 47.57
       'hle': 46.0, // with tools
+    },
+    scoreProvenance: {
+      'terminal-bench': {
+        source: 'provider',
+        independentScore: 47.57,
+        independentRunner: 'Vals AI (Terminus 2)',
+      },
     },
     blurb:
       "Thinking Machines' first model: a 975B-parameter open-weights multimodal flagship under Apache 2.0. The leading US open model on real-world coding.",
@@ -532,7 +548,18 @@ export const models: Model[] = [
     scores: {
       'swe-bench-pro': 62.1,
       'gpqa-diamond': 91.2,
-      'terminal-bench': 81.0,
+      'terminal-bench': 81.0, // Z.AI-published; Vals independent run lands 67.79
+      // Z.AI publishes both protocols: 54.7 with tools, 40.5 closed-book. The
+      // column is closed-book across the dataset, so the 40.5 run is the
+      // comparable one.
+      'hle': 40.5,
+    },
+    scoreProvenance: {
+      'terminal-bench': {
+        source: 'provider',
+        independentScore: 67.79,
+        independentRunner: 'Vals AI (Terminus 2)',
+      },
     },
     blurb:
       'The current #1 open-source model. Frontier-level science reasoning you can download and run yourself, MIT-licensed.',
@@ -562,13 +589,21 @@ export const models: Model[] = [
       'swe-bench-verified': 80.6,
       'swe-bench-pro': 55.4,
       'gpqa-diamond': 90.1, // independently reproduced by NIST/CAISI
-      'terminal-bench': 67.9, // DeepSeek-published (max reasoning) (July 2026)
+      'terminal-bench': 67.9, // DeepSeek-published (max reasoning); Vals independent run lands 50.19
+      // Tech report gives 37.7 closed-book and 48.2 with tools; the column is
+      // closed-book across the dataset.
+      'hle': 37.7,
     },
     scoreProvenance: {
       'gpqa-diamond': {
         source: 'provider',
         independentScore: 90.1,
         independentRunner: 'NIST CAISI',
+      },
+      'terminal-bench': {
+        source: 'provider',
+        independentScore: 50.19,
+        independentRunner: 'Vals AI (Terminus 2)',
       },
     },
     blurb:
@@ -600,6 +635,10 @@ export const models: Model[] = [
       'swe-bench-pro': 49.5,
       'gpqa-diamond': 86.0,
       'terminal-bench': 61.6, // Alibaba-published (Qwen 3.6 Plus) (July 2026)
+      'hle': 21.4, // BenchLM independent run for Qwen3.6-35B-A3B (July 2026)
+    },
+    scoreProvenance: {
+      'hle': { source: 'independent', runner: 'BenchLM' },
     },
     blurb:
       'The leading open model for multilingual work, under the business-friendly Apache 2.0 license.',
