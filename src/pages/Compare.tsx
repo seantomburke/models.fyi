@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { usePostHog } from '@posthog/react/slim'
+import { usePostHog } from '../lib/posthog-react.ts'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
 import { formatPrice, formatTokens, formatDateForDisplay } from '../lib/format.ts'

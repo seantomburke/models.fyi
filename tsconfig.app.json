@@ -8,6 +8,14 @@
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
 
+    /* `@posthog/react` ships no exports map, so src/lib/posthog-react.ts has to
+       import the slim build by its full file path for plain Node ESM (the
+       prerender step) to resolve it. TypeScript can't find the types from that
+       path on its own — point it at the declarations that ship alongside. */
+    "paths": {
+      "@posthog/react/dist/esm/slim/index.js": ["./node_modules/@posthog/react/dist/types/slim/index.d.ts"]
+    },
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,

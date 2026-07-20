@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { PostHogProvider } from '@posthog/react/slim'
+import { PostHogProvider } from './lib/posthog-react.ts'
 import './index.css'
 import App from './App.tsx'
 import { getAnalyticsClient, loadAnalytics } from './lib/analytics.ts'
