@@ -95,15 +95,31 @@ export function FAQ() {
                       </svg>
                     </button>
 
-                    {/* Accordion content */}
-                    {isExpanded && (
-                      <div
-                        id={`${itemId}-content`}
-                        className="border-t border-line px-5 py-4 text-fg-secondary leading-relaxed"
-                      >
+                    {/* Accordion content.
+                        The answer is ALWAYS mounted and collapsed with a max-height
+                        clip, never unmounted and never `display: none`. Unmounting
+                        it kept all 23 answers out of the prerendered HTML, so
+                        crawlers, LLM scrapers, and readers without JS saw a list of
+                        questions with no answers — and `hidden`/`display: none`
+                        would have the same effect on Ctrl-F. A clip keeps the text
+                        in the layout, so in-page find still reaches it.
+                        `hidden="until-found"` would be the tidier fix, but React 19
+                        coerces `hidden` to a boolean and emits `hidden=""`, which is
+                        plain `display: none` — hence the clip.
+                        `inert` keeps collapsed answers out of keyboard/AT reach. */}
+                    <div
+                      id={`${itemId}-content`}
+                      role="region"
+                      aria-labelledby={itemId}
+                      inert={!isExpanded}
+                      className={`overflow-hidden transition-all ${
+                        isExpanded ? 'max-h-[1000px] border-t border-line' : 'max-h-0'
+                      }`}
+                    >
+                      <div className="px-5 py-4 text-fg-secondary leading-relaxed">
                         {faq.answer}
                       </div>
-                    )}
+                    </div>
                   </div>
                 )
               })}

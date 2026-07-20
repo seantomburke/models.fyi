@@ -7,7 +7,7 @@
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
-import { render, routeMeta, canonicalUrl } from '../dist-server/entry-server.js'
+import { render, routeMeta, canonicalUrl, faqs } from '../dist-server/entry-server.js'
 
 const esc = (s) =>
   s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
@@ -112,6 +112,28 @@ for (const meta of routeMeta) {
   }
   if (main.includes('Loading…')) {
     throw new Error(`prerender emitted the loading fallback inside <main> for ${path}`)
+  }
+  // A collapsed accordion must still SHIP its answers. /faq rendered each answer
+  // as `{isExpanded && ...}`, so the prerendered page carried all 23 questions
+  // and zero answers: the page's entire substance was invisible to crawlers and
+  // to anyone without JS, and it contradicted the JSON-LD, which did carry them.
+  // Collapse must be a CSS concern, never an unmount.
+  // Compare against decoded text: React escapes text nodes differently than
+  // esc() escapes attributes (apostrophes become &#x27;), so matching the raw
+  // HTML would report false failures.
+  if (path === '/faq') {
+    const decoded = main
+      .replaceAll('&#x27;', "'")
+      .replaceAll('&quot;', '"')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&amp;', '&')
+    const missing = faqs.filter((faq) => !decoded.includes(faq.answer))
+    if (missing.length > 0) {
+      throw new Error(
+        `prerender left ${missing.length} of ${faqs.length} FAQ answers out of <main> — collapsed accordion content must stay mounted and be hidden with CSS. First missing: ${missing[0].question}`,
+      )
+    }
   }
   const metadata = structuredData
     ? `${socialHead(meta)}\n    ${jsonLd(structuredData)}`
