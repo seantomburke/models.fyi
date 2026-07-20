@@ -10,15 +10,10 @@ import {
 import { DigitFeatureHeatmaps } from './DigitFeatureHeatmaps'
 import { DigitOutputWeights } from './DigitOutputWeights'
 import { DigitNetworkDiagram } from './DigitNetworkDiagram'
+import { PixelGrid } from './PixelGrid'
 
 export function DigitClassifier() {
   const [pixels, setPixels] = useState<boolean[]>(Array(PIXEL_COUNT).fill(false))
-
-  const handlePixelClick = (index: number) => {
-    const updated = [...pixels]
-    updated[index] = !updated[index]
-    setPixels(updated)
-  }
 
   const handleClear = () => {
     setPixels(Array(PIXEL_COUNT).fill(false))
@@ -33,29 +28,14 @@ export function DigitClassifier() {
       <div className="rounded-lg border border-line bg-bg-secondary p-6">
         <h3 className="text-lg font-semibold">Draw a digit: 0–9</h3>
         <p className="mt-2 text-sm text-fg-secondary">
-          Click pixels to draw any digit. A two-layer network, 64 inputs, {SEGMENT_COUNT} stroke
-          detectors, 10 outputs, will read it.
+          Click a pixel, or drag across the grid to draw a stroke at once. On a phone, draw with
+          your finger. A two-layer network, 64 inputs, {SEGMENT_COUNT} stroke detectors, 10
+          outputs, will read it.
         </p>
 
         {/* Pixel Grid */}
         <div className="mt-6 w-full max-w-80">
-          <div
-            className="grid gap-1 rounded border border-line p-3 sm:p-4"
-            style={{
-              gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))`,
-            }}
-          >
-            {pixels.map((isActive, i) => (
-              <button
-                key={i}
-                onClick={() => handlePixelClick(i)}
-                className={`aspect-square w-full touch-manipulation rounded-sm border transition-colors ${
-                  isActive ? 'border-accent bg-accent' : 'border-line bg-bg-primary hover:bg-bg-secondary'
-                }`}
-                aria-label={`Pixel ${i}`}
-              />
-            ))}
-          </div>
+          <PixelGrid pixels={pixels} onChange={setPixels} gridSize={GRID_SIZE} />
         </div>
 
         {/* Controls */}

@@ -2,15 +2,10 @@ import { useState } from 'react'
 import { GRID_SIZE, PIXEL_COUNT, classify, patternE, patternThree } from './pixelClassifierModel'
 import { WeightHeatmap } from './WeightHeatmap'
 import { PixelNetworkDiagram } from './PixelNetworkDiagram'
+import { PixelGrid } from './PixelGrid'
 
 export function PixelClassifier() {
   const [pixels, setPixels] = useState<boolean[]>(Array(PIXEL_COUNT).fill(false))
-
-  const handlePixelClick = (index: number) => {
-    const updated = [...pixels]
-    updated[index] = !updated[index]
-    setPixels(updated)
-  }
 
   const handleClear = () => {
     setPixels(Array(PIXEL_COUNT).fill(false))
@@ -25,28 +20,13 @@ export function PixelClassifier() {
       <div className="rounded-lg border border-line bg-bg-secondary p-6">
         <h3 className="text-lg font-semibold">Draw a digit: 3 or letter: E</h3>
         <p className="mt-2 text-sm text-fg-secondary">
-          Click pixels to draw. The classifier will predict if it's a "3" or an "E".
+          Click a pixel, or drag across the grid to draw a whole stroke at once. On a phone,
+          draw with your finger. The classifier will predict if it's a "3" or an "E".
         </p>
 
         {/* Pixel Grid */}
         <div className="mt-6 w-full max-w-80">
-          <div
-            className="grid gap-1 rounded border border-line p-3 sm:p-4"
-            style={{
-              gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))`,
-            }}
-          >
-            {pixels.map((isActive, i) => (
-              <button
-                key={i}
-                onClick={() => handlePixelClick(i)}
-                className={`aspect-square w-full touch-manipulation rounded-sm border transition-colors ${
-                  isActive ? 'border-accent bg-accent' : 'border-line bg-bg-primary hover:bg-bg-secondary'
-                }`}
-                aria-label={`Pixel ${i}`}
-              />
-            ))}
-          </div>
+          <PixelGrid pixels={pixels} onChange={setPixels} gridSize={GRID_SIZE} />
         </div>
 
         {/* Controls */}
