@@ -46,7 +46,7 @@ export function WeightsExplainer() {
     <div className="space-y-8">
       {/* Simple Dot Product Visualization */}
       <div className="rounded-lg border border-line bg-bg-secondary p-6">
-        <h3 className="text-lg font-semibold">Interactive Dot Product</h3>
+        <h2 className="text-lg font-semibold">Interactive Dot Product</h2>
         <p className="mt-2 text-sm text-fg-secondary">
           Adjust the inputs and weights to see how they multiply and add up to create the output.
         </p>
@@ -131,7 +131,7 @@ export function WeightsExplainer() {
 
       {/* Weight → Output Graph */}
       <div className="rounded-lg border border-line bg-bg-secondary p-6">
-        <h3 className="text-lg font-semibold">How one weight moves the output</h3>
+        <h2 className="text-lg font-semibold">How one weight moves the output</h2>
         <p className="mt-2 text-sm text-fg-secondary">
           Pick a weight, then drag its slider above. The dot slides along the line: the output changes in a
           straight line as the weight turns, and the line's steepness is that weight's input value.
@@ -212,7 +212,7 @@ export function WeightsExplainer() {
 
       {/* Neural Network Visualization */}
       <div className="rounded-lg border border-line bg-bg-secondary p-6">
-        <h3 className="text-lg font-semibold">Neural Network Visualization</h3>
+        <h2 className="text-lg font-semibold">Neural Network Visualization</h2>
         <p className="mt-2 text-sm text-fg-secondary">
           This is what's happening inside a neural network layer. Inputs flow through, get multiplied by
           weights, then sum up to create outputs.
@@ -273,10 +273,10 @@ export function WeightsExplainer() {
 
       {/* Explanation */}
       <div className="space-y-4 rounded-lg border border-line bg-bg-secondary p-6">
-        <h3 className="text-lg font-semibold">What's Happening?</h3>
+        <h2 className="text-lg font-semibold">What's Happening?</h2>
 
         <div>
-          <h4 className="font-medium">Inputs</h4>
+          <h3 className="font-medium">Inputs</h3>
           <p className="mt-1 text-sm text-fg-secondary">
             Each input is a number (0 to 1 in this example). In a real neural network, inputs might be pixels
             in an image, words in a sentence, or features of data.
@@ -284,7 +284,7 @@ export function WeightsExplainer() {
         </div>
 
         <div>
-          <h4 className="font-medium">Weights</h4>
+          <h3 className="font-medium">Weights</h3>
           <p className="mt-1 text-sm text-fg-secondary">
             Weights are "dials" the network learned during training. They control how much each input matters.
             If a weight is 0, that input doesn't affect the output. If it's high, that input has a big effect.
@@ -292,7 +292,7 @@ export function WeightsExplainer() {
         </div>
 
         <div>
-          <h4 className="font-medium">The Calculation</h4>
+          <h3 className="font-medium">The Calculation</h3>
           <p className="mt-1 text-sm text-fg-secondary">
             For each input, we multiply it by its weight. Then we add all those products together. That sum is
             the output of this layer.
@@ -300,7 +300,7 @@ export function WeightsExplainer() {
         </div>
 
         <div>
-          <h4 className="font-medium">Why It Matters</h4>
+          <h3 className="font-medium">Why It Matters</h3>
           <p className="mt-1 text-sm text-fg-secondary">
             During training, the network adjusts millions of weights until they're "just right" for the task.
             Better weights = better predictions. That's the whole game.

@@ -21,9 +21,14 @@ writeFileSync('dist/404.html', template)
 // Social crawlers (Slack, iMessage, X, Facebook) never run JS, so OG/Twitter
 // tags and the canonical URL must be in the static head, not just set by
 // usePageMeta at runtime.
+// The description is INJECTED, not substituted: Vite strips the template's
+// <meta name="description"> during the client build, so a replace-in-place
+// regex silently matched nothing and every page shipped without a search
+// snippet. Emit the tag here and assert it below.
 const socialHead = ({ path, title, description, type, image }) => {
   const url = canonicalUrl(path)
   return [
+    `<meta name="description" content="${esc(description)}" />`,
     `<link rel="canonical" href="${url}" />`,
     `<meta property="og:title" content="${esc(title)}" />`,
     `<meta property="og:description" content="${esc(description)}" />`,
@@ -55,12 +60,15 @@ for (const meta of routeMeta) {
     : socialHead(meta)
   const out = template
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
-    .replace(/(name="description"[\s\S]*?content=")[^"]*(")/, `$1${esc(description)}$2`)
     .replace('</head>', `  ${headExtras}\n  </head>`)
     .replace('<div id="root"></div>', `<div id="root">${body}</div>`)
+  // Assert every injection landed. The description check earns its keep: its
+  // absence is invisible in the browser and in social previews, so only a
+  // build-time guard catches it.
   if (
     !out.includes(`<div id="root">${body}</div>`) ||
     !out.includes(esc(title)) ||
+    !out.includes(`<meta name="description" content="${esc(description)}" />`) ||
     !out.includes('og:image') ||
     (structuredData && !out.includes('application/ld+json'))
   ) {
