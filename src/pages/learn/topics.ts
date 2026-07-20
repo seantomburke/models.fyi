@@ -7,8 +7,10 @@ import type { ComponentType } from 'react'
 import { WeightsExplainer } from './components/WeightsExplainer'
 import { PixelClassifier } from '../../components/learn/PixelClassifier'
 import { DigitClassifier } from '../../components/learn/DigitClassifier'
+import { DeepDigitClassifier } from '../../components/learn/DeepDigitClassifier'
 import { MultiLayerNetwork } from '../../components/learn/MultiLayerNetwork'
 import { NextWordPredictor } from '../../components/learn/NextWordPredictor'
+import { GradientDescentDemo } from '../../components/learn/GradientDescentDemo'
 
 import { TokenVisualization } from '../../components/learn/TokenVisualization'
 
@@ -40,7 +42,7 @@ export const levels: Array<{ id: TopicLevel; title: string; blurb: string }> = [
   {
     id: 'lab',
     title: 'The model lab',
-    blurb: 'Real models small enough to see through, running in your browser. Meet Doodle-64, Doodle-525, and Parrot-43, then scale the same ideas up to billion-parameter LLMs.',
+    blurb: 'Real models small enough to see through, running in your browser. Meet Doodle-64, Doodle-525, Doodle-918, and Parrot-43, then scale the same ideas up to billion-parameter LLMs.',
   },
 ]
 
@@ -948,12 +950,83 @@ const authored: Topic[] = [
         paragraphs: [
           'Real image models are this demo scaled up. Their early layers learn edge and color detectors, middle layers combine edges into textures and shapes, and late layers combine shapes into "cat ear" or "handwritten 7". Nobody programs those features. Training finds them, the way our stroke detectors were chosen by hand here.',
           '"Deep" in deep learning just means many hidden layers stacked, each reasoning about the patterns the previous one found. Two layers read seven strokes; a hundred layers can read a photograph.',
+          'If you want to see the next rung of that ladder, Doodle-918 does this same job with a second hidden layer that turns strokes into shapes — loops, curves and spines — before naming a digit. It is the same demo, one layer deeper, and it reads every digit at over 99% confidence.',
         ],
       },
       {
         heading: 'Try it yourself',
         paragraphs: [
           'Use the example buttons to load a clean digit, then vandalize it. Erase one stroke, add another, and watch the stroke detectors switch on and off and the probabilities slide between the digits that share those strokes. Then press play on the network animation to watch the whole forward pass: pixels light detectors, detectors vote on digits.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'what-is-gradient-descent',
+    level: 'lab',
+    question: 'What is gradient descent?',
+    metaTitle: 'What is gradient descent? Watch 64 weights train - Models.fyi',
+    metaDescription:
+      'Gradient descent explained by watching it happen: 64 weights start at random and converge on their trained values, live. Learning rate, loss curves, and local minima, in plain language.',
+    hook: 'Watch Doodle-64\'s 64 weights start as pure noise and slide into place, one downhill step at a time.',
+    interactive: GradientDescentDemo,
+    sections: [
+      {
+        heading: 'Nobody chooses the weights',
+        paragraphs: [
+          'Every model in this lab so far arrived with its weights already set. Doodle-64 got its 64 numbers from a rule we wrote by hand: positive where a 3 has ink, negative where an E does. That was honest teaching but dishonest engineering, because no real model is built that way. Nobody at OpenAI sat down and picked a value for weight number 4,000,000,001.',
+          'Real weights are found, not chosen, and the finding procedure is gradient descent. It is the single algorithm behind essentially every model on this site. Once you have watched it work on 64 weights, you have watched what happens to a trillion.',
+        ],
+      },
+      {
+        heading: 'Start with a shrug',
+        paragraphs: [
+          'Training starts by filling every weight with a small random number. That feels like cheating, or at least like a waste of a good first guess, but it is the right move. The model has no information yet, so any confident starting point would be a lie. Small random values say "I have no idea", which is exactly true.',
+          'There is a second, subtler reason. If you set every weight to the same number, every weight would receive the same correction on every step and they would stay identical forever — 64 copies of one weight, which is a much dumber model. Randomness breaks that tie and lets each weight specialize. In the demo below, epoch 0 is that shrug: the heatmap is static, the loss is high, and the model is guessing.',
+        ],
+      },
+      {
+        heading: 'One number for "how wrong are we?"',
+        paragraphs: [
+          'Before you can improve, you need a score. That score is the loss. Show the model a training drawing, let it produce a probability that the drawing is a 3, and compare that against the truth. A confident right answer scores near zero. A confident wrong answer scores enormously. Average that over every training example and you have one number summarizing the model\'s badness.',
+          'Now the whole of training has a shape: change the weights so the loss goes down. Nothing else. Every trick in modern machine learning is a variation on that one sentence.',
+        ],
+      },
+      {
+        heading: 'The slope tells you which way is downhill',
+        paragraphs: [
+          'Picture the loss as a landscape. Each of the 64 weights is a direction you can walk, and your altitude is how wrong you are. You want the valley. The catch is that you cannot see the landscape — you only feel the ground under your feet.',
+          'That is enough. Calculus hands you the slope in each direction: if I nudge this one weight up, does the loss rise or fall, and how steeply? The collection of all 64 slopes is called the gradient. Take a small step against it — downhill in every direction at once — and your loss is a little lower than before. Do it again. That is gradient descent, all of it.',
+          'For our classifier the slope works out to something almost suspiciously simple: for each training image, take the model\'s prediction, subtract the true answer, and multiply by the pixel. Predicted 0.9 when the answer was 1? Barely wrong, tiny nudge. Predicted 0.9 when the answer was 0? Very wrong, big nudge, and every pixel that was lit takes the blame.',
+        ],
+      },
+      {
+        heading: 'The learning rate is the size of your stride',
+        paragraphs: [
+          'The gradient says which way to go. It does not say how far. That is the learning rate, and it is the one dial that most reliably ruins a training run.',
+          'Set it too small and training crawls: correct direction, thousands of tiny steps, a bill to match. Set it too large and you leap clean over the valley and land higher up the far slope, then overcorrect back, bouncing wider and wider until the loss goes to infinity. Practitioners call that diverging, and it is spectacular to watch once and miserable to debug twice. The demo uses a middling rate, so the descent is quick but stays smooth.',
+        ],
+      },
+      {
+        heading: 'Watch 64 weights find their values',
+        paragraphs: [
+          'The animation below is a real training run, not a stylized one. Sixty-four weights begin as a random scatter, and every line is one of them being pulled toward the value that helps most. The curves bow like thrown balls: fast and steep at first, when the model is very wrong and the slope is steep, then flattening as the corrections shrink and the weights settle. Convergence is what that flattening is called.',
+          'Play it, then scrub back and forth. Watch the 8x8 heatmap alongside: it starts as television static and, without anyone telling it where a 3 or an E lives, resolves into the same left-edge and right-curve template Doodle-64 was handed for free. That is the moment worth staring at. The structure was never in the code. It was in the data, and the gradient dug it out.',
+        ],
+      },
+      {
+        heading: 'Valleys that are not the valley',
+        paragraphs: [
+          'Our little model has an easy landscape: one valley, a straight walk down, the same answer every time. Big models are not so lucky. Their loss landscapes are mountain ranges in millions of dimensions, full of features that can strand you.',
+          'A local minimum is a dip that is lower than everything immediately around it but not the lowest place on the map. Gradient descent only feels the ground beneath it, so at the bottom of a local dip the slope is flat and training stops improving — with weights that work, but not as well as they could have. A plateau is worse company: a wide flat stretch where the gradient is nearly zero and training seems to have stalled, sometimes for a very long time, even though better ground lies just ahead. Saddle points are flat in one direction and downhill in another, and in high dimensions they outnumber true local minima by a lot.',
+          'The escapes are mostly nudges. Noise helps: real training computes the gradient on a small random batch of examples at a time, so the path jitters and can rattle out of shallow dips. Momentum helps: keep some velocity from the last step so you roll across flat ground instead of stopping on it. And multiple random restarts help, which is the deepest reason those starting weights are random — different starting points explore different parts of the landscape.',
+        ],
+      },
+      {
+        heading: 'This is how every model on this site was made',
+        paragraphs: [
+          'Scale is the only difference between the animation above and the training of a frontier model. Swap 64 weights for hundreds of billions. Swap ten pixel drawings for a large fraction of the public internet. Swap "is this a 3?" for "what token comes next?". Swap 120 epochs on your laptop for months on tens of thousands of GPUs.',
+          'The loop does not change: guess, measure how wrong you are, follow the slope downhill, repeat. When a lab says a model cost hundreds of millions of dollars to train, this is the thing that cost the money — an unfathomable number of very small steps down a hill nobody can see.',
         ],
       },
     ],
@@ -1003,6 +1076,79 @@ const authored: Topic[] = [
         heading: 'Where the hallucinations come from',
         paragraphs: [
           'Parrot-43 also demonstrates the famous LLM failure mode in miniature. Ask it to continue "my" and it says "cat" or "homework". Neither is true. They\'re just the likeliest continuations of its training data. Likely and true are different things. An LLM with billions of parameters blurs that line much more convincingly, but the gap never fully closes. That\'s a hallucination, and now you\'ve watched one get built.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'why-neural-networks-need-more-layers',
+    level: 'lab',
+    question: 'Why do neural networks need more than one hidden layer?',
+    metaTitle: 'Why neural networks need more layers - Interactive three-layer digit demo - Models.fyi',
+    metaDescription:
+      'Draw a digit and watch a three-layer neural network turn pixels into strokes, strokes into shapes, and shapes into an answer. See exactly what the extra layer buys you.',
+    hook: 'Meet Doodle-918: it doesn\'t just count strokes, it sees loops and curves. Draw a digit and watch parts become shapes become an answer.',
+    interactive: DeepDigitClassifier,
+    modelSpec: {
+      name: 'Doodle-918',
+      type: 'Three-layer feed-forward neural network with a skip connection',
+      parameters: '918 — 640 pixel-to-primitive weights + 10 primitive biases + 80 primitive-to-shape weights + 8 shape biases + 80 shape-to-digit weights + 100 skip weights',
+      layers: '3 (64 pixels → 10 stroke primitives → 8 shape detectors → 10 digits)',
+      inputs: '64 numbers: the 8×8 grid, 1 where you drew ink and 0 where you didn\'t',
+      outputs: '10 probabilities, one per digit 0–9, summing to 100%',
+      scale: 'Doodle-525\'s job with one more layer in the middle. It reads every canonical digit at over 99% confidence where the two-layer model manages 94%, and it stays right when a stroke is smudged — the payoff for features that compose.',
+    },
+    sections: [
+      {
+        heading: 'Meet Doodle-918',
+        paragraphs: [
+          'Doodle-918 reads the same 8×8 grid as Doodle-525 and answers the same question. The difference is entirely in the middle. Where Doodle-525 goes pixels → strokes → digits, this one goes pixels → stroke primitives → shapes → digits, and that one extra stop is worth 393 parameters and a jump from 94% confidence on its worst digit to over 99%.',
+          'This is the third and last model in our vision lab, and the three of them together are the whole story of depth in about a thousand parameters. Doodle-64 maps pixels straight to an answer. Doodle-525 puts one layer of parts in between. Doodle-918 puts two, and the second one is where the model stops counting and starts seeing.',
+        ],
+      },
+      {
+        heading: 'What the two-layer model can\'t say',
+        paragraphs: [
+          'Doodle-525 works, and its stroke detectors are genuinely useful features. But look at what its output layer actually does: it tallies which of seven strokes are lit. To that model, a 0 is "six particular strokes present, one absent". It has no way to represent the fact that those six strokes form a closed loop, because "closed loop" is not a stroke.',
+          'That matters the moment a drawing gets messy. A checklist degrades one item at a time — smudge a stroke and the tally drifts toward whatever digit has the next-most-similar checklist. A model that knows the loop is still closed does not care that the line making it is thin.',
+        ],
+      },
+      {
+        heading: 'Layer 1: smaller parts than before',
+        paragraphs: [
+          'The first change is counterintuitive: Doodle-918\'s first layer finds smaller features than Doodle-525\'s, not bigger ones. Each horizontal bar is cut into a left half and a right half, giving 10 primitives instead of 7.',
+          'The reason is composition. You cannot build a loop out of pieces that are already loop-sized. If a "top bar" is atomic, the network can never notice that the left end of it joins the upper-left line while the right end joins the upper-right one. Finer parts give the next layer something to combine. Real convolutional networks make the same trade: their first layer finds tiny oriented edges, the least interesting features in the whole model, precisely because everything else is assembled from them.',
+        ],
+      },
+      {
+        heading: 'Layer 2: where shapes live',
+        paragraphs: [
+          'The second layer is the new one, and it holds eight shape detectors: a top loop, a bottom loop, a waist, two open curves, a straight right spine, a flat base and a flat cap. Each is an AND over primitives — it wants all of a specific set, and some of them also refuse to fire if a particular primitive is present.',
+          'That veto is what separates a circle from a corner. "Top loop" and "open curve, left gap" want the same cap and the same right-hand side; the only difference is that the loop requires the upper-left line and the curve requires its absence. One weight, negative instead of positive, and the model can tell a closed shape from an open one. This is exactly the pattern the issue behind this page asked for: circular tops in 8, 9 and 0, circular bottoms in 8, 6 and 0, open curves in 2, 5 and 3, straight lines in 1, 4 and 7.',
+          'And these shapes are shared. A top loop is reused by three digits, a flat base by seven. Reuse is the whole economic argument for a hidden layer: eight shapes are cheaper than ten separate digit templates, and they generalize better, because a smudged loop is still a loop.',
+        ],
+      },
+      {
+        heading: 'Layer 3: a very short argument',
+        paragraphs: [
+          'By the time the signal reaches the output layer, the hard work is done. Every digit has its own distinct fingerprint across those eight shapes, so the last layer is just a vote: +1 for each shape the digit shows, −1 for each it doesn\'t. Eighty weights to name ten digits.',
+          'Those weights aren\'t typed in by hand, either. The model runs its own first two layers over the reference drawing of each digit and reads off which shapes light up. That is the closest a hand-built model gets to training: show it the examples, and let the answer fall out.',
+          'One honest wrinkle: a 0 is an 8 without the waist, and a 2 is a 3 leaning the other way, so a few pairs sit a single shape apart. Layer 3 therefore keeps a quiet direct line back to layer 1, consulting the raw primitives at about a third of the volume it gives the shapes. Real vision models do the same thing, and call it a skip connection. When an abstraction throws away something a later layer still needs, you let that layer look back.',
+        ],
+      },
+      {
+        heading: 'What depth actually buys',
+        paragraphs: [
+          'Load an 8 and rub out its lower-left line. Watch the bottom loop switch off, and the model read a 9 — because that is what a 9 is, an 8 with the bottom loop opened up. Rub out the middle bar instead and the waist goes quiet, so it reads a 0. Doodle-525 reaches the same answers, but by tallying strokes. Doodle-918 gets there by noticing a loop is gone, which is why it stays confident when the drawing is imperfect and the two-layer model wavers.',
+          'That difference is the entire reason deep learning is deep. Every layer you add lets the model describe its input in a vocabulary the previous layer couldn\'t reach: pixels, then edges, then shapes, then objects. A modern image model stacks dozens of these, and nobody writes the middle vocabularies down — training discovers them, the same way ours were chosen by hand here so you could read them.',
+          'If you haven\'t yet, run the two-layer model on the same digits and compare. The interesting comparison isn\'t which one is right; both are. It\'s how sure each of them is, and what it takes to confuse them.',
+        ],
+      },
+      {
+        heading: 'Try it yourself',
+        paragraphs: [
+          'Draw a digit, or load one with the example buttons, then start vandalizing it. Erase half a stroke and watch a primitive dim without any shape switching off. Erase the whole stroke and watch a shape collapse, taking a digit\'s score down with it. Add a stroke that a shape forbids and watch that shape veto itself even though everything it needs is drawn.',
+          'Then press play on the network animation and watch all three hops in order: pixels wake the primitives they belong to, primitives assemble into shapes, shapes vote on digits. Four columns, three layers, 918 numbers, and no magic anywhere in it.',
         ],
       },
     ],
