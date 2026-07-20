@@ -3,6 +3,8 @@ import { prerender } from 'react-dom/static'
 import { vi } from 'vitest'
 import { preloadInitialRoute } from './routePreload.ts'
 import { renderRoot } from './rootRender.tsx'
+import { GraphScatter } from './components/GraphScatter.tsx'
+import type { AxisOption, GraphRow } from './lib/graph.ts'
 
 const hydrationMessages = (consoleError: ReturnType<typeof vi.spyOn>) =>
   consoleError.mock.calls
@@ -54,6 +56,54 @@ test('matching prerendered route markup is hydrated without recovery', async () 
   })
 
   expect(container).toHaveTextContent('See it on a graph')
+  expect(hydrationMessages(consoleError)).toEqual([])
+
+  await act(async () => root?.unmount())
+  consoleError.mockRestore()
+  container.remove()
+})
+
+test('the responsive graph preserves its server markup during hydration', async () => {
+  const xAxis: AxisOption = {
+    id: 'price',
+    label: 'Price',
+    axisTitle: 'Price ($)',
+    getValue: () => undefined,
+  }
+  const yAxis: AxisOption = {
+    id: 'score',
+    label: 'Score',
+    axisTitle: 'Score (%)',
+    getValue: () => undefined,
+  }
+  const rows: GraphRow[] = [
+    { model: 'Alpha', provider: 'OpenAI', family: 'Alpha', series: 'OpenAI', x: 2, y: 80 },
+    { model: 'Beta', provider: 'OpenAI', family: 'Beta', series: 'OpenAI', x: 4, y: 90 },
+  ]
+  const graph = (
+    <GraphScatter
+      rows={rows}
+      xAxis={xAxis}
+      yAxis={yAxis}
+      connections="provider"
+      onPointSelected={() => {}}
+    />
+  )
+  const { prelude } = await prerender(graph)
+  const container = document.createElement('div')
+  container.id = 'root'
+  container.dataset.prerenderPath = '/graph'
+  container.innerHTML = await new Response(prelude as ReadableStream).text()
+  const serverMarkup = container.innerHTML
+  document.body.append(container)
+
+  const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+  let root: ReturnType<typeof renderRoot> | undefined
+  await act(async () => {
+    root = renderRoot(container, graph, '/models.fyi/graph/', '/models.fyi/')
+  })
+
+  expect(container.innerHTML).toBe(serverMarkup)
   expect(hydrationMessages(consoleError)).toEqual([])
 
   await act(async () => root?.unmount())

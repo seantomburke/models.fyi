@@ -1,11 +1,10 @@
 import { useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { usePostHog } from '../lib/posthog-react.ts'
-import '@opendata-ai/openchart-react/styles.css'
-import { ThemeAwareChart } from '../components/ThemeAwareChart.tsx'
+import { GraphModelSelector, GraphScatter } from '../components/GraphScatter.tsx'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
-import { axisOptions, buildGraphRows, buildGraphSpec, providerColor } from '../lib/graph.ts'
+import { axisOptions, buildGraphRows, providerColor } from '../lib/graph.ts'
 import type { AxisOption, GraphConnections, GraphRow } from '../lib/graph.ts'
 import {
   graphPresets,
@@ -271,11 +270,6 @@ export function Graph() {
     [xAxis, yAxis, state.connections],
   )
 
-  const spec = useMemo(
-    () => buildGraphSpec(xAxis, yAxis, rows, state.connections),
-    [rows, xAxis, yAxis, state.connections],
-  )
-
   return (
     <div className="space-y-6">
       <Breadcrumb
@@ -313,11 +307,20 @@ export function Graph() {
         {rows.length > 0 ? (
           <>
             <div style={{ height: 480 }}>
-              <ThemeAwareChart<GraphRow>
-                spec={spec}
-                onMarkClick={(e) => handlePointSelected(e.datum as GraphRow)}
+              <GraphScatter
+                rows={rows}
+                xAxis={xAxis}
+                yAxis={yAxis}
+                connections={state.connections}
+                onPointSelected={handlePointSelected}
               />
             </div>
+            <GraphModelSelector
+              rows={rows}
+              xAxis={xAxis}
+              yAxis={yAxis}
+              onPointSelected={handlePointSelected}
+            />
             <SelectedPoint row={selected} xAxis={xAxis} yAxis={yAxis} onDismiss={() => setSelected(null)} />
           </>
         ) : (

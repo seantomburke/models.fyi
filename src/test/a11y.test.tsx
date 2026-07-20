@@ -10,6 +10,7 @@ import { Learn } from '../pages/learn/Learn.tsx'
 import { LearnTopic } from '../pages/learn/LearnTopic.tsx'
 import { ModelDetail } from '../pages/models/ModelDetail.tsx'
 import { Quiz } from '../pages/Quiz.tsx'
+import { Graph } from '../pages/Graph.tsx'
 import { Layout } from '../components/Layout.tsx'
 import { models } from '../data/index.ts'
 
@@ -65,6 +66,12 @@ test.each(themes)('Home has no accessibility violations in %s mode', async (them
 test.each(themes)('Compare has no accessibility violations in %s mode', async (theme) => {
   setTheme(theme)
   const { container } = renderAt('/compare', <Compare />)
+  await expectNoViolations(container)
+})
+
+test.each(themes)('Graph has no accessibility violations in %s mode', async (theme) => {
+  setTheme(theme)
+  const { container } = renderAt('/graph', <Graph />)
   await expectNoViolations(container)
 })
 

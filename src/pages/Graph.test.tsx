@@ -7,14 +7,6 @@ import { axisOptions } from '../lib/graph.ts'
 import type { GraphRow } from '../lib/graph.ts'
 import { graphPresets } from '../lib/graphUrlState.ts'
 
-// The chart engine needs real layout, which jsdom doesn't provide. The spec
-// itself is validated against the engine in src/lib/graph.test.ts; these
-// tests cover the controls around it.
-vi.mock('@opendata-ai/openchart-react', () => ({
-  Chart: () => <div data-testid="chart" />,
-}))
-vi.mock('@opendata-ai/openchart-react/styles.css', () => ({}))
-
 const xAxis = axisOptions.find((o) => o.id === 'price-input')!
 const yAxis = axisOptions.find((o) => o.id === 'swe-bench-pro')!
 
@@ -46,6 +38,28 @@ const search = () => screen.getByTestId('location').textContent!.split('?')[1] ?
 test('shows a hint until a point is tapped', () => {
   render(<SelectedPoint row={null} xAxis={xAxis} yAxis={yAxis} onDismiss={() => {}} />)
   expect(screen.getByText(/tap or click a point/i)).toBeInTheDocument()
+})
+
+test('the native graph is immediately interactive and pins a selected model', async () => {
+  const user = userEvent.setup()
+  renderGraph()
+  const point = screen.getByRole('button', { name: /^claude opus 4\.8, anthropic/i })
+
+  await user.click(point)
+
+  expect(screen.getAllByText('Claude Opus 4.8')).toHaveLength(2)
+  expect(screen.getByRole('button', { name: /clear pinned point/i })).toBeInTheDocument()
+})
+
+test('the compact model chooser can select a point hidden by an overlapping target', async () => {
+  const user = userEvent.setup()
+  renderGraph()
+
+  await user.click(screen.getByText(/can’t tap a point.*choose a model/i))
+  await user.click(screen.getByRole('button', { name: /select gpt-5\.6 sol, openai/i }))
+
+  expect(screen.getAllByText('GPT-5.6 Sol')).toHaveLength(2)
+  expect(screen.getByRole('button', { name: /clear pinned point/i })).toBeInTheDocument()
 })
 
 test('shows the tapped model with both axis values, labeled with units', () => {
