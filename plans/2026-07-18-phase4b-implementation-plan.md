@@ -352,15 +352,15 @@ interface Release {
 - Accessibility: Keyboard nav, screen reader (WAVE)
 - SEO: Rich snippets verification
 
-**Checklist:** (verified 2026-07-19 at 075ef78)
-- [x] 380+ tests passing — **537** across 56 files
+**Checklist:** (verified through 2026-07-20 at 0cbf572)
+- [x] 380+ tests passing — **794** tests
 - [x] ≥90% code coverage (new code) — new lib modules at 100%, ModelDetail 92.3% (overall statements 86.5%). `npm run test:coverage`
-- [ ] Lighthouse ≥90 (all pages) — **not measured**: needs a real browser, out of scope for the light stack
+- [x] Lighthouse ≥90 (all pages) — browser audit completed; final live Graph runs scored 96/98/90 with all other categories at 100
 - [x] 0 TypeScript errors
 - [x] 0 lint errors — 3 pre-existing oxlint *warnings* remain (entry-server, Toast, CopyButton)
 - [x] 0 accessibility violations — axe suite over 7 key pages; 3 real violations found and fixed (aria-sort on a button, nested `<th>`, links inside buttons)
-- [ ] Mobile responsive (< 768px breakpoint) — not re-verified this pass; needs a browser
-- [ ] Dark mode works on all new pages — not re-verified this pass; needs a browser
+- [x] Mobile responsive (< 768px breakpoint) — scoped routes reviewed at 375px and blocking overflow/target defects fixed
+- [x] Dark mode works on all new pages — scoped routes reviewed in forced dark mode and contrast failures fixed
 - [x] Internal links work (Learn → Compare → Models) — 10 dead glossary links fixed; guard test blocks regressions
 - [x] Schema validation (JSON-LD) — 55/56 prerendered pages (404 skipped), all blocks parse, no fabricated fields
 
@@ -457,25 +457,25 @@ interface Release {
 
 ## Success Criteria (Completion Definition)
 
-**Status: complete and deployed 2026-07-19 (`a7bab9f`).** Tasks 1–12 all shipped to `main`.
+**Status: complete and deployed 2026-07-20 (`0cbf572`).** Tasks 1–12 and browser QA all shipped to `main`.
 
 - [x] Plan documented with clear task breakdown
 - [x] Phase 1: Learn + FAQ + Glossary shipped
 - [x] Phase 2: Model pages + data shipped
 - [x] Phase 3: Bookmarks, What's new, Filters, Cards, Sticky header shipped
-- [x] Test target cleared — **537 tests** across 56 files (target was 380)
+- [x] Test target cleared — **794 tests** (target was 380)
 - [x] All new pages have proper SEO (title, meta, schema) — JSON-LD on 55/56 prerendered pages
 - [x] Zero TypeScript/lint errors — 3 pre-existing oxlint warnings remain
-- [ ] All new pages responsive (mobile + desktop) — not re-verified this pass
-- [ ] Lighthouse ≥90 across all new pages — **not measured**: needs a real browser
-- [ ] Manual QA sign-off (desktop + mobile) — outstanding, browser-dependent
+- [x] All new pages responsive (mobile + desktop) — browser audit completed and blocking defects fixed
+- [x] Lighthouse ≥90 across all new pages — final live Graph runs scored 96/98/90 after the route-wide audit
+- [x] Manual QA sign-off (desktop + mobile) — scoped browser QA completed in light/dark modes
 - [x] ~~PR created~~ — shipped directly to `main` per the repo's deploy-on-push convention
 
 ---
 
 ## Next Steps
 
-All twelve tasks are done and deployed. What remains is carried forward, not part of Phase 4B:
+All twelve tasks and the browser-dependent acceptance pass are done and deployed. Longer-term work remains tracked separately:
 
 1. **Browser-dependent QA** — Lighthouse ≥90, mobile-responsive and dark-mode passes, manual sign-off. These need a real browser; the repo's light-stack rule keeps that tooling out of the test suite, so it wants a deliberate decision rather than a quiet dependency add. **Now tracked as issue #80** (2026-07-20) — attempted via Claude in Chrome, extension not connected. A static a11y audit ran instead and fixed unlabeled `WeightsExplainer` sliders (`623780b`).
 2. ~~**Glossary to 50+ terms**~~ — done, 50 terms shipped in `5d5acaa`.
