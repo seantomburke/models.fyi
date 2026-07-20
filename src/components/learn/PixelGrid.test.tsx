@@ -80,6 +80,22 @@ describe('PixelGrid', () => {
     expect(isOn(0)).toBe(false)
   })
 
+  // A real mouse click is pointerdown -> pointerup -> click, and both pointerdown
+  // and click reach the cell. It must come out toggled once, not twice.
+  it('toggles exactly once for a full pointer click sequence', () => {
+    render(<Harness />)
+
+    fireEvent.pointerDown(pixel(0), { button: 0, ...centerOf(0) })
+    fireEvent.pointerUp(window)
+    fireEvent.click(pixel(0))
+    expect(isOn(0)).toBe(true)
+
+    fireEvent.pointerDown(pixel(0), { button: 0, ...centerOf(0) })
+    fireEvent.pointerUp(window)
+    fireEvent.click(pixel(0))
+    expect(isOn(0)).toBe(false)
+  })
+
   it('paints every cell a drag passes over', () => {
     render(<Harness />)
     drag([0, 1, 2, 3])
@@ -131,6 +147,45 @@ describe('PixelGrid', () => {
 
     expect(isOn(0)).toBe(true)
     expect(isOn(5)).toBe(false)
+  })
+
+  // The click that follows a pointerdown must be suppressed, but only for the cell
+  // pointerdown actually painted. A click never fires when the pointer is released
+  // somewhere other than the cell it went down on, so any suppression that outlives
+  // the stroke eats the user's next real click instead.
+  it('registers a fresh click after a stroke released off the grid', () => {
+    render(<Harness />)
+
+    fireEvent.pointerDown(pixel(0), { button: 0, ...centerOf(0) })
+    fireEvent.pointerUp(window)
+
+    fireEvent.click(pixel(2))
+    expect(isOn(2)).toBe(true)
+  })
+
+  it('registers a fresh click after a multi-cell drag', () => {
+    render(<Harness />)
+
+    drag([0, 1, 2])
+    fireEvent.click(pixel(8))
+
+    expect(isOn(8)).toBe(true)
+  })
+
+  it('still suppresses the phantom click when a drag ends back on its origin cell', () => {
+    render(<Harness />)
+    const grid = pixel(0).parentElement as HTMLElement
+
+    // Out to a neighbour and back, then released over the starting cell: the browser
+    // does fire a click here, and it must not toggle cell 0 back off.
+    fireEvent.pointerDown(pixel(0), { button: 0, ...centerOf(0) })
+    fireEvent.pointerMove(grid, centerOf(1))
+    fireEvent.pointerMove(grid, centerOf(0))
+    fireEvent.pointerUp(window)
+    fireEvent.click(pixel(0))
+
+    expect(isOn(0)).toBe(true)
+    expect(isOn(1)).toBe(true)
   })
 
   it('toggles a pixel from the keyboard', () => {

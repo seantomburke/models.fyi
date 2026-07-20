@@ -22,8 +22,15 @@ export function PixelGrid({ pixels, onChange, gridSize }: PixelGridProps) {
   const isDrawingRef = useRef(false)
   // A pointer click fires pointerdown then click on the same cell. pointerdown has
   // already painted it, so the click that follows must be ignored; only keyboard
-  // activation reaches click with this flag unset.
-  const handledByPointerRef = useRef(false)
+  // activation reaches click without a preceding pointerdown.
+  //
+  // This records WHICH cell the pointer handled rather than a bare "handled" flag.
+  // A click only fires when the pointer is released over the cell it went down on,
+  // so a drag that ends anywhere else - across cells, off the grid, off the window -
+  // produces no click at all. A sticky boolean would survive that stroke and swallow
+  // the user's next genuine click; an index only ever suppresses its own cell, and
+  // the next pointerdown overwrites it.
+  const pointerHandledIndexRef = useRef<number | null>(null)
   const workingPixelsRef = useRef(pixels)
   workingPixelsRef.current = pixels
 
@@ -72,7 +79,7 @@ export function PixelGrid({ pixels, onChange, gridSize }: PixelGridProps) {
     // Let the browser handle keyboard-driven activation as a plain click.
     if (event.button !== 0) return
     isDrawingRef.current = true
-    handledByPointerRef.current = true
+    pointerHandledIndexRef.current = index
     paintValueRef.current = !workingPixelsRef.current[index]
     paint(index)
   }
@@ -97,10 +104,12 @@ export function PixelGrid({ pixels, onChange, gridSize }: PixelGridProps) {
   }, [])
 
   const handleClick = (index: number) => {
-    if (handledByPointerRef.current) {
-      handledByPointerRef.current = false
+    // Only the exact cell pointerdown already painted is suppressed.
+    if (pointerHandledIndexRef.current === index) {
+      pointerHandledIndexRef.current = null
       return
     }
+    pointerHandledIndexRef.current = null
     paintValueRef.current = !workingPixelsRef.current[index]
     paint(index)
   }
