@@ -55,12 +55,13 @@ export function WeightsExplainer() {
           {inputs.map((inp, i) => (
             <div key={i} className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">
+                <label htmlFor={`weights-input-${i}`} className="text-sm font-medium">
                   Input {i + 1} (a{i + 1})
                 </label>
                 <span className="text-sm font-mono text-accent">{inp.value.toFixed(2)}</span>
               </div>
               <input
+                id={`weights-input-${i}`}
                 type="range"
                 min="0"
                 max="1"
@@ -71,12 +72,13 @@ export function WeightsExplainer() {
               />
 
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">
+                <label htmlFor={`weights-weight-${i}`} className="text-sm font-medium">
                   Weight {i + 1} (w{i + 1})
                 </label>
                 <span className="text-sm font-mono text-accent">{inp.weight.toFixed(2)}</span>
               </div>
               <input
+                id={`weights-weight-${i}`}
                 type="range"
                 min="0"
                 max="1"
