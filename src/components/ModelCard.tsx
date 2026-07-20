@@ -10,6 +10,7 @@ interface ModelCardProps {
   onBookmarkToggle: (modelId: string) => void
   bestScores?: Partial<Record<string, number>>
   onViewDetails?: (modelId: string) => void
+  headingLevel?: 2 | 3
 }
 
 export function ModelCard({
@@ -18,20 +19,22 @@ export function ModelCard({
   onBookmarkToggle,
   bestScores = {},
   onViewDetails,
+  headingLevel = 3,
 }: ModelCardProps) {
   const provider = providerById.get(model.providerId)
   const topBenchmarks = Object.entries(model.scores)
     .sort(([, a], [, b]) => (b ?? 0) - (a ?? 0))
     .slice(0, 3)
+  const Heading = headingLevel === 2 ? 'h2' : 'h3'
 
   return (
     <div className="rounded-lg border border-line bg-surface-raised p-4 transition-all duration-200 hover:border-line-strong hover:shadow-sm">
       {/* Header with bookmark */}
       <div className="flex items-start justify-between gap-2 mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-fg text-base leading-tight truncate">{model.name}</h3>
+          <Heading className="font-semibold text-fg text-base leading-tight truncate">{model.name}</Heading>
           {model.releaseDate && (
-            <p className="mt-1 text-xs text-fg-faint">
+            <p className="mt-1 text-xs text-fg-muted">
               Released {new Date(model.releaseDate).toLocaleDateString()}
             </p>
           )}

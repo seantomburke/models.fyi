@@ -90,14 +90,14 @@ function ModelCard({ model }: { model: Model }) {
         to={`/models/${model.id}`}
         className="flex h-full flex-col rounded-lg border border-line bg-surface-raised p-4 transition-colors duration-150 hover:border-line-strong focus:outline-none focus:ring-2 focus:ring-accent"
       >
-        <span className="flex flex-wrap items-center gap-2">
-          <span className="font-medium text-fg">{model.name}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="font-medium text-fg">{model.name}</h3>
           {model.openSource && (
             <span className="rounded-lg bg-accent-soft px-1.5 py-0.5 text-xs text-accent-deep">
               Open source
             </span>
           )}
-        </span>
+        </div>
         <span className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-fg-secondary">
           {model.blurb}
         </span>

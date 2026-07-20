@@ -33,8 +33,20 @@ describe('ModelCard', () => {
         onBookmarkToggle={vi.fn()}
       />
     )
-    expect(screen.getByText('Test Model Pro')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 3, name: 'Test Model Pro' })).toBeInTheDocument()
     expect(screen.getByText('flagship')).toBeInTheDocument()
+  })
+
+  it('uses the heading level supplied by its page context', () => {
+    render(
+      <ModelCard
+        model={mockModel}
+        isBookmarked={false}
+        onBookmarkToggle={vi.fn()}
+        headingLevel={2}
+      />,
+    )
+    expect(screen.getByRole('heading', { level: 2, name: 'Test Model Pro' })).toBeInTheDocument()
   })
 
   it('displays context window and price', () => {

@@ -73,7 +73,7 @@ export function Layout() {
             className="mr-4 text-base font-semibold tracking-tight text-fg transition-colors duration-150 hover:text-accent-deep focus:outline-none focus:ring-2 focus:ring-accent rounded-lg"
             title="Home (go to compare)"
           >
-            models<span className="text-accent">.fyi</span>
+            models<span className="text-accent-deep">.fyi</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -213,7 +213,7 @@ export function Layout() {
                 to="/learn"
                 className="text-accent-deep underline underline-offset-1 focus:outline-none focus:ring-2 focus:ring-accent rounded-lg"
               >
-                Learn more
+                Learn how AI models work
               </Link>
             </p>
           </div>

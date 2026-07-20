@@ -128,7 +128,7 @@ export function Home() {
         </p>
         <Link
           to="/learn"
-          className="mt-4 inline-block rounded-lg bg-accent-deep px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-accent"
+          className="mt-4 inline-block rounded-lg bg-accent-deep px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-accent-deep/90 dark:text-surface"
         >
           Learn the basics
         </Link>

@@ -36,6 +36,17 @@ describe('ModelsIndex page', () => {
     }
   })
 
+  test('nests model headings below provider headings', () => {
+    renderIndex()
+    const provider = providers.find((candidate) =>
+      models.some((model) => model.providerId === candidate.id),
+    )!
+    const model = models.find((candidate) => candidate.providerId === provider.id)!
+
+    expect(screen.getByRole('heading', { level: 2, name: provider.name })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 3, name: model.name })).toBeInTheDocument()
+  })
+
   test('names self-hosted pricing instead of a footnote-less "Free*"', () => {
     renderIndex()
 

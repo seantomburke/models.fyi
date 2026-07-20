@@ -1,6 +1,6 @@
 import type { ChartProps } from '@opendata-ai/openchart-react'
 import type { DataRow } from '@opendata-ai/openchart-core'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useDarkMode } from '../lib/darkMode'
 
 type OpenChartComponent = typeof import('@opendata-ai/openchart-react')['Chart']
@@ -9,6 +9,26 @@ type ChartListener = (component: OpenChartComponent) => void
 let chartComponent: OpenChartComponent | null = null
 let chartComponentPromise: Promise<OpenChartComponent> | null = null
 const chartListeners = new Set<ChartListener>()
+const LABELED_POINT_SELECTOR = 'svg.oc-chart circle[data-mark-id][aria-label]'
+const LABELED_RULE_SELECTOR =
+  'svg.oc-chart line.oc-mark-rule[data-mark-id^="rule-"][aria-label]'
+
+/**
+ * OpenChart labels primitive SVG marks without assigning roles that permit an
+ * accessible name. Points represent selectable data, so retain their names
+ * with an image role. Connection rules are decorative grouping hints and are
+ * hidden instead of adding dozens of meaningless announcements.
+ */
+function normalizeChartMarkAccessibility(root: HTMLElement) {
+  root.querySelectorAll<SVGCircleElement>(LABELED_POINT_SELECTOR).forEach((point) => {
+    point.setAttribute('role', 'img')
+  })
+
+  root.querySelectorAll<SVGLineElement>(LABELED_RULE_SELECTOR).forEach((rule) => {
+    rule.removeAttribute('aria-label')
+    rule.setAttribute('aria-hidden', 'true')
+  })
+}
 
 function loadChartComponent(): Promise<OpenChartComponent> {
   if (chartComponent) return Promise.resolve(chartComponent)
@@ -44,6 +64,7 @@ export function ThemeAwareChart<TData extends DataRow = DataRow>({
   const [Chart, setChart] = useState<OpenChartComponent | null>(() => chartComponent)
   const [loadError, setLoadError] = useState(false)
   const mountedRef = useRef(true)
+  const chartRootRef = useRef<HTMLDivElement>(null)
 
   const beginLoad = useCallback(() => {
     if (Chart) return
@@ -82,6 +103,21 @@ export function ThemeAwareChart<TData extends DataRow = DataRow>({
     return () => window.removeEventListener('scroll', beginLoad)
   }, [beginLoad, Chart, deferUntilInteraction, loadError])
 
+  useLayoutEffect(() => {
+    const root = chartRootRef.current
+    if (!root || !Chart) return
+
+    normalizeChartMarkAccessibility(root)
+    const observer = new MutationObserver(() => normalizeChartMarkAccessibility(root))
+    observer.observe(root, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['aria-label', 'class', 'data-mark-id'],
+    })
+    return () => observer.disconnect()
+  }, [Chart, isDark])
+
   if (!Chart) {
     return (
       <div
@@ -103,5 +139,9 @@ export function ThemeAwareChart<TData extends DataRow = DataRow>({
     )
   }
 
-  return <Chart<TData> {...props} darkMode={isDark ? 'force' : 'off'} />
+  return (
+    <div ref={chartRootRef} className="h-full w-full">
+      <Chart<TData> {...props} darkMode={isDark ? 'force' : 'off'} />
+    </div>
+  )
 }

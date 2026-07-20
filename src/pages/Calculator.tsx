@@ -147,7 +147,7 @@ function SortHeader({ label, sortKey, sort, onSort, align = 'right', title }: So
         type="button"
         onClick={() => onSort(sortKey)}
         title={title}
-        className="inline-flex items-center gap-1 transition-colors duration-150 hover:text-fg"
+        className="inline-flex min-h-6 items-center gap-1 transition-colors duration-150 hover:text-fg"
       >
         {label}
         <span aria-hidden className="w-3 text-xs">

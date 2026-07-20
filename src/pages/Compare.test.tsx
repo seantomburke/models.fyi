@@ -46,6 +46,11 @@ test('renders a row for every model in the dataset', () => {
   }
 })
 
+test('card model names are level-two headings under the page heading', () => {
+  renderCompare('/compare?view=cards')
+  expect(screen.getByRole('heading', { level: 2, name: models[0].name })).toBeInTheDocument()
+})
+
 test('provider filter narrows the table', async () => {
   const user = userEvent.setup()
   renderCompare()

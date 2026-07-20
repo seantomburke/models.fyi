@@ -409,6 +409,7 @@ export function Compare() {
             <div key={m.id} role="listitem">
               <ModelCard
                 model={m}
+                headingLevel={2}
                 isBookmarked={isBookmarked(bookmarks, m.id)}
                 onBookmarkToggle={handleToggleBookmark}
                 bestScores={bestScores}

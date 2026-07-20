@@ -131,7 +131,7 @@ export function WhatsNew() {
                           href={release.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm font-medium text-accent-deep hover:text-accent-deep/80 transition-colors duration-150"
+                          className="inline-flex min-h-6 items-center text-sm font-medium text-accent-deep hover:text-accent-deep/80 transition-colors duration-150"
                         >
                           Read more →
                         </a>

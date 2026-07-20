@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { vi } from 'vitest'
 import App from './App'
@@ -12,11 +12,13 @@ vi.mock('@opendata-ai/openchart-react', () => ({
 
 async function renderAt(path: string) {
   await preloadInitialRoute(path)
-  render(
-    <MemoryRouter initialEntries={[path]}>
-      <App />
-    </MemoryRouter>,
-  )
+  await act(async () => {
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <App />
+      </MemoryRouter>,
+    )
+  })
 }
 
 test('home page renders the value proposition', async () => {

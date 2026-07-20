@@ -1,54 +1,62 @@
+import { createElement, lazy } from 'react'
+import type { ComponentType } from 'react'
+
 type RouteModule = Record<string, unknown>
-export type RetryableRouteLoader<T extends RouteModule = RouteModule> = (() => Promise<T>) & {
-  loaded: () => T | undefined
-}
+export type RetryableRouteLoader<T extends RouteModule = RouteModule> = () => Promise<T>
 type RouteLoader = RetryableRouteLoader
 
-function retryable<T extends RouteModule>(loader: () => Promise<T>): RetryableRouteLoader<T> {
+export function createRetryableRouteLoader<T extends RouteModule>(
+  loader: () => Promise<T>,
+): RetryableRouteLoader<T> {
   let pending: Promise<T> | undefined
-  let value: T | undefined
 
   const load = () => {
     pending ??= loader().catch((error: unknown) => {
       pending = undefined
       throw error
     })
-    return pending.then((module) => {
-      value = module
-      return module
-    })
+    return pending
   }
 
-  load.loaded = () => value
   return load
 }
 
+/** Keep the lazy element identity stable even when its promise was preloaded. */
+export function createPreloadedRoute(
+  loader: RetryableRouteLoader<{ default: ComponentType }>,
+) {
+  const LazyRoute = lazy(loader)
+  return function PreloadedRoute() {
+    return createElement(LazyRoute)
+  }
+}
+
 export const routeLoaders = {
-  graph: retryable(() => import('./pages/Graph.tsx').then((m) => ({ default: m.Graph }))),
-  calculator: retryable(() =>
+  graph: createRetryableRouteLoader(() => import('./pages/Graph.tsx').then((m) => ({ default: m.Graph }))),
+  calculator: createRetryableRouteLoader(() =>
     import('./pages/Calculator.tsx').then((m) => ({ default: m.Calculator })),
   ),
-  search: retryable(() => import('./pages/Search.tsx').then((m) => ({ default: m.Search }))),
-  compare: retryable(() => import('./pages/Compare.tsx').then((m) => ({ default: m.Compare }))),
-  quiz: retryable(() => import('./pages/Quiz.tsx').then((m) => ({ default: m.Quiz }))),
-  learn: retryable(() => import('./pages/learn/Learn.tsx').then((m) => ({ default: m.Learn }))),
-  learnTopic: retryable(() =>
+  search: createRetryableRouteLoader(() => import('./pages/Search.tsx').then((m) => ({ default: m.Search }))),
+  compare: createRetryableRouteLoader(() => import('./pages/Compare.tsx').then((m) => ({ default: m.Compare }))),
+  quiz: createRetryableRouteLoader(() => import('./pages/Quiz.tsx').then((m) => ({ default: m.Quiz }))),
+  learn: createRetryableRouteLoader(() => import('./pages/learn/Learn.tsx').then((m) => ({ default: m.Learn }))),
+  learnTopic: createRetryableRouteLoader(() =>
     import('./pages/learn/LearnTopic.tsx').then((m) => ({ default: m.LearnTopic })),
   ),
-  faq: retryable(() => import('./pages/FAQ.tsx').then((m) => ({ default: m.FAQ }))),
-  glossary: retryable(() =>
+  faq: createRetryableRouteLoader(() => import('./pages/FAQ.tsx').then((m) => ({ default: m.FAQ }))),
+  glossary: createRetryableRouteLoader(() =>
     import('./pages/Glossary.tsx').then((m) => ({ default: m.Glossary })),
   ),
-  whatsNew: retryable(() =>
+  whatsNew: createRetryableRouteLoader(() =>
     import('./pages/WhatsNew.tsx').then((m) => ({ default: m.WhatsNew })),
   ),
-  models: retryable(() =>
+  models: createRetryableRouteLoader(() =>
     import('./pages/models/ModelsIndex.tsx').then((m) => ({ default: m.ModelsIndex })),
   ),
-  modelDetail: retryable(() =>
+  modelDetail: createRetryableRouteLoader(() =>
     import('./pages/models/ModelDetail.tsx').then((m) => ({ default: m.ModelDetail })),
   ),
-  notFound: retryable(() =>
+  notFound: createRetryableRouteLoader(() =>
     import('./pages/NotFound.tsx').then((m) => ({ default: m.NotFound })),
   ),
 } as const
@@ -81,9 +89,9 @@ export function routeLoaderFor(pathname: string, baseUrl = '/'): RouteLoader | u
 /**
  * Keep prerendered content on screen until the current route chunk is ready.
  *
- * The app intentionally client-renders instead of hydrating. Mounting before a
- * lazy route resolves would therefore replace the complete static page with a
- * tiny Suspense fallback and cause a large layout shift on every direct visit.
+ * Hydration starts only after the initial lazy route resolves. React.lazy still
+ * owns the route element on both the server and client, so preloading avoids a
+ * fallback without changing the component identity React hydrates.
  */
 export async function preloadInitialRoute(pathname: string, baseUrl = '/'): Promise<void> {
   await routeLoaderFor(pathname, baseUrl)?.()

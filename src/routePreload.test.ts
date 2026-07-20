@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { preloadInitialRoute, routeLoaderFor, routeLoaders } from './routePreload.ts'
+import {
+  createRetryableRouteLoader,
+  preloadInitialRoute,
+  routeLoaderFor,
+  routeLoaders,
+} from './routePreload.ts'
 
 describe('route preloading', () => {
   it.each([
@@ -18,5 +23,18 @@ describe('route preloading', () => {
 
   it('loads a direct-entry route before the app mounts', async () => {
     await expect(preloadInitialRoute('/models.fyi/faq/', '/models.fyi/')).resolves.toBeUndefined()
+  })
+
+  it('retries a route loader after a rejected preload', async () => {
+    const transientError = new Error('temporary chunk failure')
+    const module = { default: () => null }
+    const importRoute = vi.fn()
+      .mockRejectedValueOnce(transientError)
+      .mockResolvedValueOnce(module)
+    const loader = createRetryableRouteLoader(importRoute)
+
+    await expect(loader()).rejects.toBe(transientError)
+    await expect(loader()).resolves.toBe(module)
+    expect(importRoute).toHaveBeenCalledTimes(2)
   })
 })

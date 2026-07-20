@@ -1,5 +1,4 @@
-import { lazy, useState, useCallback } from 'react'
-import type { ComponentType } from 'react'
+import { useState, useCallback } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import { Layout, ClientSuspense } from './components/Layout.tsx'
@@ -14,23 +13,12 @@ import { usePostHog } from './lib/posthog-react.ts'
 import { exportComparison, EXPORT_SHORTCUT_EVENT } from './lib/export.ts'
 import { captureExport, captureExportFailed } from './lib/posthog-events.ts'
 import { models } from './data/index.ts'
-import { routeLoaders } from './routePreload.ts'
-import type { RetryableRouteLoader } from './routePreload.ts'
+import { createPreloadedRoute, routeLoaders } from './routePreload.ts'
 
 // Every route but Home is lazy. Home stays static because it is the most
 // common landing route, and splitting it would only buy a round-trip.
 // Everything else was riding along in the entry bundle — a visitor landing on
 // Home was downloading the Learn labs' neural nets before the page could paint.
-function createPreloadedRoute(
-  loader: RetryableRouteLoader<{ default: ComponentType }>,
-) {
-  const LazyRoute = lazy(loader)
-  return function PreloadedRoute() {
-    const Route = loader.loaded()?.default ?? LazyRoute
-    return <Route />
-  }
-}
-
 const Graph = createPreloadedRoute(routeLoaders.graph)
 const Calculator = createPreloadedRoute(routeLoaders.calculator)
 const Search = createPreloadedRoute(routeLoaders.search)

@@ -9,6 +9,8 @@ import { Glossary } from '../pages/Glossary.tsx'
 import { Learn } from '../pages/learn/Learn.tsx'
 import { LearnTopic } from '../pages/learn/LearnTopic.tsx'
 import { ModelDetail } from '../pages/models/ModelDetail.tsx'
+import { Quiz } from '../pages/Quiz.tsx'
+import { Layout } from '../components/Layout.tsx'
 import { models } from '../data/index.ts'
 
 // axe needs a real element in the document to resolve colour and ancestry rules;
@@ -33,14 +35,35 @@ function renderAt(path: string, element: React.ReactElement, routePath = path) {
 
 beforeEach(() => {
   localStorage.clear()
+  document.documentElement.classList.remove('dark')
 })
 
-test('Home has no accessibility violations', async () => {
+const themes = ['light', 'dark'] as const
+
+function setTheme(theme: (typeof themes)[number]) {
+  const dark = theme === 'dark'
+  localStorage.setItem('models-fyi-dark-mode', String(dark))
+  document.documentElement.classList.toggle('dark', dark)
+}
+
+test.each(themes)('Layout has no accessibility violations in %s mode', async (theme) => {
+  setTheme(theme)
+  const { container } = render(
+    <MemoryRouter>
+      <Layout />
+    </MemoryRouter>,
+  )
+  await expectNoViolations(container)
+})
+
+test.each(themes)('Home has no accessibility violations in %s mode', async (theme) => {
+  setTheme(theme)
   const { container } = renderAt('/', <Home />)
   await expectNoViolations(container)
 })
 
-test('Compare has no accessibility violations', async () => {
+test.each(themes)('Compare has no accessibility violations in %s mode', async (theme) => {
+  setTheme(theme)
   const { container } = renderAt('/compare', <Compare />)
   await expectNoViolations(container)
 })
@@ -55,13 +78,21 @@ test('FAQ has no accessibility violations', async () => {
   await expectNoViolations(container)
 })
 
-test('Learn index has no accessibility violations', async () => {
+test.each(themes)('Learn index has no accessibility violations in %s mode', async (theme) => {
+  setTheme(theme)
   const { container } = renderAt('/learn', <Learn />)
   await expectNoViolations(container)
 })
 
-test('a Learn topic has no accessibility violations', async () => {
+test.each(themes)('a Learn topic has no accessibility violations in %s mode', async (theme) => {
+  setTheme(theme)
   const { container } = renderAt('/learn/what-is-a-token', <LearnTopic />, '/learn/:slug')
+  await expectNoViolations(container)
+})
+
+test.each(themes)('Quiz has no accessibility violations in %s mode', async (theme) => {
+  setTheme(theme)
+  const { container } = renderAt('/quiz', <Quiz />)
   await expectNoViolations(container)
 })
 

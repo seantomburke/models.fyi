@@ -49,7 +49,7 @@ function Chip({
 function StepHeading({ step, children }: { step: number; children: React.ReactNode }) {
   return (
     <h2 className="text-lg font-semibold tracking-tight">
-      <span className="mr-2 text-fg-faint">{step}.</span>
+      <span className="mr-2 text-fg-muted">{step}.</span>
       {children}
     </h2>
   )

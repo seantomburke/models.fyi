@@ -50,7 +50,7 @@ export function Learn() {
                     to={`/learn/${t.slug}`}
                     className="group rounded-xl border border-line bg-surface-raised p-5 transition-colors duration-150 hover:border-line-strong"
                   >
-                    <span className="flex items-baseline justify-between text-xs font-medium uppercase tracking-wide text-fg-faint">
+                    <span className="flex items-baseline justify-between text-xs font-medium uppercase tracking-wide text-fg-muted">
                       <span>
                         {level.title} · Part {i + 1}
                       </span>

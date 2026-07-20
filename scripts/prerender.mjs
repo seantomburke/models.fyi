@@ -121,12 +121,15 @@ for (const meta of routeMeta) {
   const out = template
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
     .replace('</head>', `  ${headExtras}\n  </head>`)
-    .replace('<div id="root"></div>', `<div id="root">${body}</div>`)
+    .replace(
+      '<div id="root"></div>',
+      `<div id="root" data-prerender-path="${esc(path)}">${body}</div>`,
+    )
   // Assert every injection landed. The description check earns its keep: its
   // absence is invisible in the browser and in social previews, so only a
   // build-time guard catches it.
   if (
-    !out.includes(`<div id="root">${body}</div>`) ||
+    !out.includes(`<div id="root" data-prerender-path="${esc(path)}">${body}</div>`) ||
     !out.includes(esc(title)) ||
     !out.includes(`<meta name="description" content="${esc(description)}" />`) ||
     !out.includes('og:image') ||

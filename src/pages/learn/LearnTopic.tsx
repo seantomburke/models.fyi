@@ -65,7 +65,7 @@ export function LearnTopic() {
         className="mb-4"
       />
       {level && (
-        <p className="mt-3 text-xs font-medium uppercase tracking-wide text-fg-faint">
+        <p className="mt-3 text-xs font-medium uppercase tracking-wide text-fg-muted">
           {level.title} · Part {levelIndex + 1}
         </p>
       )}
@@ -79,7 +79,7 @@ export function LearnTopic() {
         >
           <div className="flex items-baseline justify-between gap-3">
             <h2 className="text-lg font-semibold tracking-tight">{spec.name}</h2>
-            <span className="text-xs font-medium uppercase tracking-wide text-fg-faint">Model card</span>
+            <span className="text-xs font-medium uppercase tracking-wide text-fg-muted">Model card</span>
           </div>
           <dl className="mt-3 space-y-2.5 text-sm">
             {[
