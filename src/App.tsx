@@ -1,7 +1,7 @@
-import { lazy, Suspense, useState, useCallback } from 'react'
+import { lazy, useState, useCallback } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
-import { Layout } from './components/Layout.tsx'
+import { Layout, ClientSuspense } from './components/Layout.tsx'
 import { ShortcutsDialog } from './components/ShortcutsDialog.tsx'
 import { Home } from './pages/Home.tsx'
 import { GraphSkeleton } from './components/GraphSkeleton.tsx'
@@ -94,10 +94,12 @@ function App() {
         shortcuts={shortcuts}
       />
       <Routes>
-      {/* Layout already wraps <Outlet /> in a Suspense boundary, so the lazy
-          routes below need no per-route one. Graph and Calculator keep theirs
-          because their skeletons mirror the real layout, which the generic
-          fallback cannot. */}
+      {/* Layout wraps <Outlet /> in a Suspense boundary, so the lazy routes
+          below need no per-route one. Graph and Calculator keep theirs because
+          their skeletons mirror the real layout, which the generic fallback
+          cannot — but only in the browser: a boundary during prerender makes
+          React flush a shell instead of the finished page (see ClientSuspense
+          in Layout.tsx). */}
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="search" element={<Search />} />
@@ -105,17 +107,17 @@ function App() {
         <Route
           path="graph"
           element={
-            <Suspense fallback={<GraphSkeleton />}>
+            <ClientSuspense fallback={<GraphSkeleton />}>
               <Graph />
-            </Suspense>
+            </ClientSuspense>
           }
         />
         <Route
           path="calculator"
           element={
-            <Suspense fallback={<CalculatorSkeleton />}>
+            <ClientSuspense fallback={<CalculatorSkeleton />}>
               <Calculator />
-            </Suspense>
+            </ClientSuspense>
           }
         />
         <Route path="quiz" element={<Quiz />} />

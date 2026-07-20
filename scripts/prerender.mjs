@@ -55,6 +55,22 @@ let count = 0
 for (const meta of routeMeta) {
   const { path, title, description, structuredData } = meta
   const body = await render(path)
+  // The point of prerendering is that a crawler reading raw HTML sees the real
+  // page. An unresolved Suspense boundary defeats that completely: React emits
+  // the shell with a `<!--$?-->` marker and the fallback, then streams the
+  // actual content as trailing <template> blobs that only a browser splices in.
+  // This shipped on 32 of 57 pages without anyone noticing, because the file
+  // still *contained* the content — just after </main>, where no crawler looks.
+  // Fail the build instead.
+  const main = body.match(/<main[^>]*>([\s\S]*?)<\/main>/)?.[1] ?? ''
+  if (body.includes('<!--$?-->') || body.includes('<template id="B:')) {
+    throw new Error(
+      `prerender left an unresolved Suspense boundary in ${path} — the page ships its fallback, not its content. See ClientSuspense in src/components/Layout.tsx.`,
+    )
+  }
+  if (main.includes('Loading…')) {
+    throw new Error(`prerender emitted the loading fallback inside <main> for ${path}`)
+  }
   const headExtras = structuredData
     ? `${socialHead(meta)}\n    ${jsonLd(structuredData)}`
     : socialHead(meta)

@@ -1,4 +1,5 @@
 import { useState, Suspense } from 'react'
+import type { ReactNode } from 'react'
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import { dataSourcedAt } from '../data/index.ts'
 import { DarkModeToggle } from './DarkModeToggle'
@@ -14,6 +15,34 @@ const navItems = [
   { to: '/faq', label: 'FAQ' },
   { to: '/whats-new', label: 'What\'s new' },
 ]
+
+/**
+ * A Suspense boundary in the browser, and nothing at all during prerender.
+ *
+ * Having a boundary server-side is what broke SSG. react-dom/static resolves a
+ * lazy child inline when nothing can show a fallback, but as soon as a boundary
+ * exists it may flush the shell the moment its buffer fills (~12kB) and stream
+ * the remainder as trailing <template> blobs plus a $RC() script. Those only
+ * splice in under a real browser, so crawlers — the whole reason this site
+ * prerenders — saw a <main> holding nothing but the fallback on every page big
+ * enough to cross that threshold. Smaller pages fit in the shell and looked
+ * fine, which is why this shipped unnoticed.
+ *
+ * Dropping the boundary server-side costs nothing: prerender awaits the lazy
+ * module and emits finished markup, so there is no loading state to show
+ * anyway. The client keeps its fallback, and hydration still matches because it
+ * hydrates against fully-rendered content.
+ */
+export function ClientSuspense({
+  fallback,
+  children,
+}: {
+  fallback: ReactNode
+  children: ReactNode
+}) {
+  if (import.meta.env.SSR) return <>{children}</>
+  return <Suspense fallback={fallback}>{children}</Suspense>
+}
 
 export function Layout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -129,9 +158,9 @@ export function Layout() {
 
       <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">
         <ErrorBoundary>
-          <Suspense fallback={<p className="text-sm text-fg-muted">Loading…</p>}>
+          <ClientSuspense fallback={<p className="text-sm text-fg-muted">Loading…</p>}>
             <Outlet />
-          </Suspense>
+          </ClientSuspense>
         </ErrorBoundary>
       </main>
 

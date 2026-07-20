@@ -8,9 +8,13 @@ export { routeMeta, SITE_URL, canonicalUrl } from './lib/routeMeta.ts'
 
 /**
  * Render the app for one route. `path` excludes the base (e.g. "/compare").
- * Uses react-dom/static's prerender — the React 19 SSG API whose output is
- * built to pair with hydrateRoot (and which waits for lazy chunks, so the
- * graph page prerenders real content instead of its Suspense fallback).
+ * Uses react-dom/static's prerender — the React 19 SSG API.
+ *
+ * It resolves lazy route chunks inline only while no Suspense boundary is
+ * mounted; with one, it may flush a shell and stream the rest as trailing
+ * <template> blobs no crawler executes. Layout's ClientSuspense therefore
+ * renders no boundary under SSR, and scripts/prerender.mjs fails the build if
+ * an unresolved boundary ever reaches the output.
  */
 export async function render(path: string): Promise<string> {
   const base = import.meta.env.BASE_URL
