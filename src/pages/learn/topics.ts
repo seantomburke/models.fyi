@@ -967,22 +967,22 @@ const authored: Topic[] = [
     question: 'What is gradient descent?',
     metaTitle: 'What is gradient descent? Watch 64 weights train - Models.fyi',
     metaDescription:
-      'Gradient descent explained by watching it happen: 64 weights start at random and converge on their trained values, live. Learning rate, loss curves, and local minima, in plain language.',
-    hook: 'Watch Doodle-64\'s 64 weights start as pure noise and slide into place, one downhill step at a time.',
+      'Train a real 64-weight classifier in your browser, test its predictions, and explore gradient descent on accessible 2D and 3D loss views.',
+    hook: 'Choose the starting noise, train Doodle-64 in your browser, then test the weights it learned.',
     interactive: GradientDescentDemo,
     sections: [
       {
         heading: 'Nobody chooses the weights',
         paragraphs: [
           'Every model in this lab so far arrived with its weights already set. Doodle-64 got its 64 numbers from a rule we wrote by hand: positive where a 3 has ink, negative where an E does. That was honest teaching but dishonest engineering, because no real model is built that way. Nobody at OpenAI sat down and picked a value for weight number 4,000,000,001.',
-          'Real weights are found, not chosen, and the finding procedure is gradient descent. It is the single algorithm behind essentially every model on this site. Once you have watched it work on 64 weights, you have watched what happens to a trillion.',
+          'Real weights are found, not chosen, and gradient descent is the basic procedure behind the models on this site. Doodle-64 makes that training loop small enough to inspect.',
         ],
       },
       {
         heading: 'Start with a shrug',
         paragraphs: [
-          'Training starts by filling every weight with a small random number. That feels like cheating, or at least like a waste of a good first guess, but it is the right move. The model has no information yet, so any confident starting point would be a lie. Small random values say "I have no idea", which is exactly true.',
-          'There is a second, subtler reason. If you set every weight to the same number, every weight would receive the same correction on every step and they would stay identical forever — 64 copies of one weight, which is a much dumber model. Randomness breaks that tie and lets each weight specialize. In the demo below, epoch 0 is that shrug: the heatmap is static, the loss is high, and the model is guessing.',
+          'This training run starts by filling every weight with a small random number. The model has no information yet, so the values stay close to zero and its first predictions stay cautious. It begins with an honest "I have no idea" instead of a confident guess.',
+          'Doodle-64 could also learn from zero weights. Its pixels appear in different training examples, so they receive different updates even when they start equal. We use a random start because real training runs often begin that way, and because changing the seed lets you compare several downhill paths. A seed also makes any one path exactly reproducible.',
         ],
       },
       {
@@ -1010,14 +1010,15 @@ const authored: Topic[] = [
       {
         heading: 'Watch 64 weights find their values',
         paragraphs: [
-          'The animation below is a real training run, not a stylized one. Sixty-four weights begin as a random scatter, and every line is one of them being pulled toward the value that helps most. The curves bow like thrown balls: fast and steep at first, when the model is very wrong and the slope is steep, then flattening as the corrections shrink and the weights settle. Convergence is what that flattening is called.',
-          'Play it, then scrub back and forth. Watch the 8x8 heatmap alongside: it starts as television static and, without anyone telling it where a 3 or an E lives, resolves into the same left-edge and right-curve template Doodle-64 was handed for free. That is the moment worth staring at. The structure was never in the code. It was in the data, and the gradient dug it out.',
+          'The animation above records a real training run. Sixty-four weights begin as random scatter, while a bias starts at zero. The lines move quickly when the model is wrong, then flatten as its corrections shrink.',
+          'Generate a seed, train, and scrub through the result. The 8x8 heatmap resolves into useful evidence for the familiar examples in its training set. Then draw in the test panel and see those learned numbers make a prediction.',
         ],
       },
       {
         heading: 'Valleys that are not the valley',
         paragraphs: [
-          'Our little model has an easy landscape: one valley, a straight walk down, the same answer every time. Big models are not so lucky. Their loss landscapes are mountain ranges in millions of dimensions, full of features that can strand you.',
+          'Doodle-64 has 65 adjustable numbers: 64 pixel weights and one bias. Its logistic loss is convex, so it does not contain the local valleys shown in the 2D and 3D teaching views above. Those polynomial views make slopes, basins, and starting points visible.',
+          'Deep networks have non-convex loss surfaces in millions or billions of dimensions. No screen can show all of them at once, but a two-dimensional surface can still show what it means to follow a local slope.',
           'A local minimum is a dip that is lower than everything immediately around it but not the lowest place on the map. Gradient descent only feels the ground beneath it, so at the bottom of a local dip the slope is flat and training stops improving — with weights that work, but not as well as they could have. A plateau is worse company: a wide flat stretch where the gradient is nearly zero and training seems to have stalled, sometimes for a very long time, even though better ground lies just ahead. Saddle points are flat in one direction and downhill in another, and in high dimensions they outnumber true local minima by a lot.',
           'The escapes are mostly nudges. Noise helps: real training computes the gradient on a small random batch of examples at a time, so the path jitters and can rattle out of shallow dips. Momentum helps: keep some velocity from the last step so you roll across flat ground instead of stopping on it. And multiple random restarts help, which is the deepest reason those starting weights are random — different starting points explore different parts of the landscape.',
         ],

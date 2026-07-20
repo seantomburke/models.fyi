@@ -91,6 +91,8 @@ export interface EpochSnapshot {
   loss: number
   /** How many training images the model gets right, 0–1. */
   accuracy: number
+  /** The intercept learned alongside the 64 pixel weights. */
+  bias: number
 }
 
 export interface TrainingRun {
@@ -128,6 +130,36 @@ function evaluate(
   return { loss: loss / data.length, accuracy: correct / data.length }
 }
 
+function validateTrainingOptions(
+  seed: number,
+  epochs: number,
+  learningRate: number,
+  data: TrainingExample[]
+): void {
+  if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) {
+    throw new RangeError('Seed must be an integer from 0 to 4,294,967,295')
+  }
+  if (!Number.isFinite(epochs) || !Number.isInteger(epochs) || epochs < 0) {
+    throw new RangeError('Epochs must be a non-negative integer')
+  }
+  if (!Number.isFinite(learningRate) || learningRate <= 0) {
+    throw new RangeError('Learning rate must be a positive finite number')
+  }
+  if (data.length === 0) throw new RangeError('Training data must not be empty')
+
+  for (const example of data) {
+    if (example.pixels.length !== PIXEL_COUNT) {
+      throw new RangeError(`Training example "${example.label}" must have ${PIXEL_COUNT} pixels`)
+    }
+    if (example.target !== 0 && example.target !== 1) {
+      throw new RangeError(`Training example "${example.label}" must target 0 or 1`)
+    }
+    if (example.pixels.some((pixel) => typeof pixel !== 'boolean')) {
+      throw new TypeError(`Training example "${example.label}" pixels must be booleans`)
+    }
+  }
+}
+
 /**
  * Train the 64 weights with full-batch gradient descent and record every epoch.
  *
@@ -145,6 +177,7 @@ export function trainGradientDescent(options: {
   const epochs = options.epochs ?? EPOCHS
   const learningRate = options.learningRate ?? LEARNING_RATE
   const data = options.data ?? TRAINING_SET
+  validateTrainingOptions(seed, epochs, learningRate, data)
 
   // Step 1: guess. Small random numbers around zero — the model knows nothing.
   const rand = makeRandom(seed)
@@ -154,7 +187,13 @@ export function trainGradientDescent(options: {
 
   const history: EpochSnapshot[] = []
   const first = evaluate(weights, bias, data)
-  history.push({ epoch: 0, weights: weights.slice(), loss: first.loss, accuracy: first.accuracy })
+  history.push({
+    epoch: 0,
+    weights: weights.slice(),
+    loss: first.loss,
+    accuracy: first.accuracy,
+    bias,
+  })
 
   for (let epoch = 1; epoch <= epochs; epoch++) {
     const grad = new Array<number>(PIXEL_COUNT).fill(0)
@@ -176,7 +215,7 @@ export function trainGradientDescent(options: {
     bias -= (learningRate * biasGrad) / data.length
 
     const { loss, accuracy } = evaluate(weights, bias, data)
-    history.push({ epoch, weights: weights.slice(), loss, accuracy })
+    history.push({ epoch, weights: weights.slice(), loss, accuracy, bias })
   }
 
   return {
@@ -193,5 +232,34 @@ export const TRAINING_RUN: TrainingRun = trainGradientDescent()
 
 /** Classify a drawing with a given set of learned weights. */
 export function predictWith(weights: number[], bias: number, pixels: boolean[]): number {
+  if (weights.length !== PIXEL_COUNT || pixels.length !== PIXEL_COUNT) {
+    throw new RangeError(`Prediction requires ${PIXEL_COUNT} weights and pixels`)
+  }
+  if (!Number.isFinite(bias) || weights.some((weight) => !Number.isFinite(weight))) {
+    throw new RangeError('Prediction weights and bias must be finite')
+  }
   return forward(weights, bias, pixels)
+}
+
+export interface LearnedClassification {
+  prediction: '3' | 'E'
+  confidence: number
+  probThree: number
+  probE: number
+}
+
+/** Turn learned weights into the two-class result shown beside the drawing grid. */
+export function classifyWithLearnedWeights(
+  weights: number[],
+  bias: number,
+  pixels: boolean[]
+): LearnedClassification {
+  const probThree = predictWith(weights, bias, pixels)
+  const probE = 1 - probThree
+  return {
+    prediction: probThree >= probE ? '3' : 'E',
+    confidence: Math.max(probThree, probE),
+    probThree,
+    probE,
+  }
 }

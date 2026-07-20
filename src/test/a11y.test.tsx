@@ -65,6 +65,15 @@ test('a Learn topic has no accessibility violations', async () => {
   await expectNoViolations(container)
 })
 
+test('the gradient descent lab has no accessibility violations', async () => {
+  const { container } = renderAt(
+    '/learn/what-is-gradient-descent',
+    <LearnTopic />,
+    '/learn/:slug',
+  )
+  await expectNoViolations(container)
+})
+
 test('a model detail page has no accessibility violations', async () => {
   const { container } = renderAt(`/models/${models[0].id}`, <ModelDetail />, '/models/:id')
   await expectNoViolations(container)

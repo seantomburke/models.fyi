@@ -5,6 +5,7 @@ import {
   TRAINING_RUN,
   TRAINING_SET,
   makeRandom,
+  classifyWithLearnedWeights,
   predictWith,
   trainGradientDescent,
 } from './gradientDescent'
@@ -48,8 +49,10 @@ describe('trainGradientDescent', () => {
       expect(Number.isFinite(snap.loss)).toBe(true)
       expect(snap.accuracy).toBeGreaterThanOrEqual(0)
       expect(snap.accuracy).toBeLessThanOrEqual(1)
+      expect(Number.isFinite(snap.bias)).toBe(true)
     })
     expect(TRAINING_RUN.finalWeights).toEqual(TRAINING_RUN.history[EPOCHS].weights)
+    expect(TRAINING_RUN.bias).toBe(TRAINING_RUN.history[EPOCHS].bias)
   })
 
   it('starts from small random weights, not from the answer', () => {
@@ -80,6 +83,18 @@ describe('trainGradientDescent', () => {
     expect(TRAINING_RUN.history[EPOCHS].accuracy).toBe(1)
   })
 
+  it('turns the learned run into drawable E-vs-3 predictions', () => {
+    const three = TRAINING_SET.find((example) => example.label === 'Clean 3')!
+    const e = TRAINING_SET.find((example) => example.label === 'Clean E')!
+    expect(
+      classifyWithLearnedWeights(TRAINING_RUN.finalWeights, TRAINING_RUN.bias, three.pixels)
+        .prediction
+    ).toBe('3')
+    expect(
+      classifyWithLearnedWeights(TRAINING_RUN.finalWeights, TRAINING_RUN.bias, e.pixels).prediction
+    ).toBe('E')
+  })
+
   it('converges: the weights stop moving much by the end', () => {
     const { history } = TRAINING_RUN
     const move = (a: number, b: number) =>
@@ -103,5 +118,19 @@ describe('trainGradientDescent', () => {
     const slow = trainGradientDescent({ epochs: 25, learningRate: 0.05 })
     const fast = trainGradientDescent({ epochs: 25, learningRate: 0.5 })
     expect(fast.lossCurve[25]).toBeLessThan(slow.lossCurve[25])
+  })
+
+  it('rejects invalid training and prediction inputs with useful boundaries', () => {
+    expect(() => trainGradientDescent({ seed: Number.NaN })).toThrow(/Seed/)
+    expect(() => trainGradientDescent({ seed: Number.MAX_VALUE })).toThrow(/Seed/)
+    expect(() => trainGradientDescent({ epochs: -1 })).toThrow(/Epochs/)
+    expect(() => trainGradientDescent({ learningRate: 0 })).toThrow(/Learning rate/)
+    expect(() => trainGradientDescent({ data: [] })).toThrow(/must not be empty/)
+    expect(() =>
+      trainGradientDescent({
+        data: [{ label: 'broken', pixels: [true], target: 1 }],
+      })
+    ).toThrow(/64 pixels/)
+    expect(() => classifyWithLearnedWeights([1], 0, [true])).toThrow(/64 weights and pixels/)
   })
 })
