@@ -1,6 +1,6 @@
 import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals'
 import type { Metric } from 'web-vitals'
-import { usePostHog } from '@posthog/react'
+import { usePostHog } from '@posthog/react/slim'
 import { EVENTS, captureWebVital } from './posthog-events.ts'
 
 /**

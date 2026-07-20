@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { usePostHog } from '@posthog/react'
+import { usePostHog } from '@posthog/react/slim'
 import { Chart } from '@opendata-ai/openchart-react'
 import '@opendata-ai/openchart-react/styles.css'
 import { usePageMeta } from '../lib/meta.ts'

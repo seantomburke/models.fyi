@@ -1,4 +1,4 @@
-import { usePostHog } from '@posthog/react'
+import { usePostHog } from '@posthog/react/slim'
 
 /**
  * Centralized PostHog event tracking system for models.fyi.

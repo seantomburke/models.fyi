@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { usePostHog } from '@posthog/react'
+import { usePostHog } from '@posthog/react/slim'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
 import { describePricing, formatTokens, withArticle } from '../lib/format.ts'

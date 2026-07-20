@@ -1,22 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import posthog from 'posthog-js'
-import { PostHogProvider } from '@posthog/react'
+import { PostHogProvider } from '@posthog/react/slim'
 import './index.css'
 import App from './App.tsx'
-
-posthog.init(import.meta.env.VITE_POSTHOG_PROJECT_TOKEN, {
-  api_host: import.meta.env.VITE_POSTHOG_HOST,
-  defaults: '2026-05-30',
-
-  // Enable comprehensive tracking
-  capture_pageleave: true,
-  disable_session_recording: false,
-
-  // Enable debug mode in development
-  debug: import.meta.env.DEV,
-})
+import { getAnalyticsClient, loadAnalytics } from './lib/analytics.ts'
 
 // Routes are prerendered to static HTML for crawlers and first paint
 // (scripts/prerender.mjs). We deliberately client-render over that markup
@@ -26,10 +14,20 @@ posthog.init(import.meta.env.VITE_POSTHOG_PROJECT_TOKEN, {
 const container = document.getElementById('root')!
 createRoot(container).render(
   <StrictMode>
-    <PostHogProvider client={posthog}>
+    <PostHogProvider client={getAnalyticsClient()}>
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <App />
       </BrowserRouter>
     </PostHogProvider>
   </StrictMode>,
 )
+
+// Analytics is not load-bearing for anything on screen, so keep it off the
+// critical path: fetch the SDK once the browser is idle after first paint.
+// Events fired before it lands are queued and replayed (see lib/analytics.ts).
+const startAnalytics = () => void loadAnalytics()
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(startAnalytics, { timeout: 3000 })
+} else {
+  setTimeout(startAnalytics, 1000)
+}

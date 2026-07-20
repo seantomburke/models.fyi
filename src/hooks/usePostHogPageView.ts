@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import posthog from 'posthog-js'
+import { capture } from '../lib/analytics.ts'
 
 export const usePostHogPageView = () => {
   const location = useLocation()
 
   useEffect(() => {
-    posthog.capture('$pageview')
+    capture('$pageview')
   }, [location])
 }

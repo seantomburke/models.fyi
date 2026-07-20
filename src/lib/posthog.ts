@@ -1,7 +1,7 @@
-import posthog from 'posthog-js'
+import { capture } from './analytics.ts'
 
 export const trackPageView = (pageName: string, properties?: Record<string, unknown>) => {
-  posthog.capture('page_view', {
+  capture('page_view', {
     page_name: pageName,
     ...properties,
   })
@@ -12,14 +12,14 @@ export const trackModelInteraction = (
   modelName: string,
   properties?: Record<string, unknown>,
 ) => {
-  posthog.capture(`model_${action}`, {
+  capture(`model_${action}`, {
     model_name: modelName,
     ...properties,
   })
 }
 
 export const trackSearch = (query: string, resultCount: number) => {
-  posthog.capture('search_executed', {
+  capture('search_executed', {
     query,
     result_count: resultCount,
   })
@@ -29,25 +29,25 @@ export const trackQuizInteraction = (
   action: 'start' | 'answer' | 'complete',
   properties?: Record<string, unknown>,
 ) => {
-  posthog.capture(`quiz_${action}`, properties)
+  capture(`quiz_${action}`, properties)
 }
 
 export const trackCalculatorUsage = (
   action: 'open' | 'calculate' | 'change_model',
   properties?: Record<string, unknown>,
 ) => {
-  posthog.capture(`calculator_${action}`, properties)
+  capture(`calculator_${action}`, properties)
 }
 
 export const trackGraphInteraction = (
   action: 'view' | 'filter' | 'interact',
   properties?: Record<string, unknown>,
 ) => {
-  posthog.capture(`graph_${action}`, properties)
+  capture(`graph_${action}`, properties)
 }
 
 export const trackLearnAccess = (topicSlug: string) => {
-  posthog.capture('learn_topic_viewed', {
+  capture('learn_topic_viewed', {
     topic_slug: topicSlug,
   })
 }
@@ -57,7 +57,7 @@ export const trackUIError = (
   message: string,
   context?: Record<string, unknown>,
 ) => {
-  posthog.capture('ui_error', {
+  capture('ui_error', {
     error_type: errorType,
     error_message: message,
     ...context,
@@ -69,7 +69,7 @@ export const trackPerformance = (
   duration: number,
   properties?: Record<string, unknown>,
 ) => {
-  posthog.capture('performance_metric', {
+  capture('performance_metric', {
     metric_name: metricName,
     duration_ms: duration,
     ...properties,
