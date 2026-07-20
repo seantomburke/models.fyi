@@ -85,6 +85,70 @@ test('renders finite positions for a degenerate zero-value domain', () => {
   expect(container.innerHTML).not.toMatch(/NaN|Infinity/)
 })
 
+/** Percent value the component wrote into an inline style, as a number. */
+const pct = (value: string) => Number(value.replace('%', ''))
+
+test('points project onto a cropped linear domain, not a zero-anchored one', () => {
+  // The scores sit in an 80-90 band; a zero-anchored axis put them all in the
+  // top 10% of the plot and hid the differences (issue #81).
+  renderScatter({ connections: 'off' })
+  const top = (name: RegExp) => pct(screen.getByRole('button', { name }).style.top)
+  const alpha = top(/alpha/i) // y = 80, the lowest score
+  const beta = top(/beta/i) // y = 90, the highest
+  expect(alpha).toBeGreaterThan(beta) // higher score sits higher on the plot
+  // A 0-100 domain would separate them by only 10% of the plot height.
+  expect(alpha - beta).toBeGreaterThan(50)
+  // Every point stays inside the plot area.
+  for (const point of screen.getAllByRole('button')) {
+    expect(pct(point.style.top)).toBeGreaterThanOrEqual(0)
+    expect(pct(point.style.top)).toBeLessThanOrEqual(100)
+  }
+})
+
+test('a wide-ratio axis projects points and ticks logarithmically', () => {
+  // 0.5 to 50 is a 100x spread, past the log threshold.
+  const wide: GraphRow[] = [
+    { model: 'Cheap', provider: 'OpenAI', family: 'Cheap', series: 'OpenAI', x: 0.5, y: 80 },
+    { model: 'Mid', provider: 'OpenAI', family: 'Mid', series: 'OpenAI', x: 5, y: 85 },
+    { model: 'Dear', provider: 'OpenAI', family: 'Dear', series: 'OpenAI', x: 50, y: 90 },
+  ]
+  renderScatter({ rows: wide, connections: 'off' })
+  const left = (name: RegExp) => pct(screen.getByRole('button', { name }).style.left)
+  // Equal 10x ratios, so equal spacing — the property a linear axis lacks.
+  expect(left(/mid,/i) - left(/cheap/i)).toBeCloseTo(left(/dear/i) - left(/mid,/i), 4)
+
+  // The axis title has to say it's a log scale or the reader is misled. It
+  // appears on the axis and again in the cropped-baseline notice.
+  expect(screen.getAllByText(/price \(\$, log scale\)/i).length).toBeGreaterThan(0)
+  // And the accessible name of a point uses the same annotated title.
+  expect(screen.getByRole('button', { name: /cheap.*log scale/i })).toBeInTheDocument()
+})
+
+test('a cropped axis is called out so a reader cannot assume a zero baseline', () => {
+  renderScatter({ connections: 'off' })
+  const notice = screen.getByText(/zoomed in to the data/i)
+  expect(notice).toHaveTextContent(/score \(%\) starts at/i)
+  expect(notice).toHaveTextContent(/not zero/i)
+})
+
+test('an axis that genuinely starts at zero gets no cropped-baseline notice', () => {
+  const fromZero: GraphRow[] = [
+    { model: 'Alpha', provider: 'OpenAI', family: 'Alpha', series: 'OpenAI', x: 0, y: 0 },
+    { model: 'Beta', provider: 'OpenAI', family: 'Beta', series: 'OpenAI', x: 4, y: 90 },
+  ]
+  renderScatter({ rows: fromZero, connections: 'off' })
+  expect(screen.queryByText(/zoomed in to the data/i)).not.toBeInTheDocument()
+})
+
+test('points carry an accessible name but no duplicate native tooltip', () => {
+  renderScatter({ connections: 'off' })
+  for (const point of screen.getAllByRole('button')) {
+    // A `title` here would paint a browser tooltip over the styled UI (#81).
+    expect(point).not.toHaveAttribute('title')
+    expect(point.getAttribute('aria-label')).toMatch(/price.*score/i)
+  }
+})
+
 test('uses semantic theme classes without reading browser theme state', () => {
   const { container } = renderScatter()
   document.documentElement.classList.add('dark')

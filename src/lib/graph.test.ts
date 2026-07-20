@@ -1,5 +1,5 @@
 import { validateSpec } from '@opendata-ai/openchart-react'
-import { axisOptions, buildGraphRows, buildGraphSpec, connectionSegments, defaultYAxisId, familyOf, paddedDomain, paletteFor, paletteForSeries, providerColor } from './graph'
+import { axisOptions, axisScale, buildGraphRows, buildGraphSpec, connectionSegments, defaultYAxisId, familyOf, LOG_SCALE_RATIO, paddedDomain, paletteFor, paletteForSeries, providerColor, scaledAxisTitle, scaleFraction, scaleTicks } from './graph'
 import { benchmarks, models, providers } from '../data/index.ts'
 
 const byId = (id: string) => axisOptions.find((o) => o.id === id)!
@@ -73,25 +73,186 @@ test('every non-empty axis combination produces a spec the chart engine accepts'
   expect(validated).toBeGreaterThan(20) // most combos should be plottable
 })
 
-test('paddedDomain gives headroom above the data but respects the cap', () => {
-  expect(paddedDomain([10, 50])).toEqual([0, 54])
-  expect(paddedDomain([95], 100)).toEqual([0, 100]) // 95 * 1.08 = 102.6, capped
-  expect(paddedDomain([50], 100)).toEqual([0, 54]) // under the cap, pad applies
-  expect(paddedDomain([], 100)).toEqual([0, 100])
+test('paddedDomain crops to the data instead of anchoring at zero', () => {
+  // Issue #81: a 73-96 benchmark spread on a 0-100 axis used 23% of the plot.
+  const [low, high] = paddedDomain([73.3, 96.2], 100)
+  expect(low).toBeGreaterThan(50)
+  expect(low).toBeLessThanOrEqual(73.3)
+  expect(high).toBeGreaterThanOrEqual(96.2)
+  expect(high).toBeLessThanOrEqual(100) // percentage axes never read past 100
+  // The data must fill most of the axis, which is the whole point of the fix.
+  expect((96.2 - 73.3) / (high - low)).toBeGreaterThan(0.6)
 })
 
-test('spec pads both domains past the data, pins the legend on top, and draws no trendline', () => {
+test('paddedDomain pads both ends and never invents room below zero', () => {
+  const [low, high] = paddedDomain([10, 50])
+  expect(low).toBeGreaterThan(0)
+  expect(low).toBeLessThan(10)
+  expect(high).toBeGreaterThan(50)
+  // Data that starts at zero keeps its true baseline.
+  expect(paddedDomain([0, 50])[0]).toBe(0)
+  // Values close to zero must not pad into negative territory: a price axis
+  // reading below $0 would be a lie.
+  expect(paddedDomain([0.2, 1])[0]).toBeGreaterThanOrEqual(0)
+})
+
+test('paddedDomain survives empty, single-value, and all-zero inputs', () => {
+  expect(paddedDomain([], 100)).toEqual([0, 100])
+  expect(paddedDomain([])).toEqual([0, 1])
+  const single = paddedDomain([42])
+  expect(single[1]).toBeGreaterThan(single[0])
+  expect(single[0]).toBeLessThanOrEqual(42)
+  expect(single[1]).toBeGreaterThanOrEqual(42)
+  const zeros = paddedDomain([0, 0])
+  expect(zeros[1]).toBeGreaterThan(zeros[0])
+  for (const n of [...single, ...zeros]) expect(Number.isFinite(n)).toBe(true)
+})
+
+test('axisScale switches to log exactly at the documented ratio threshold', () => {
+  // Just under the threshold stays linear; at it, log takes over.
+  expect(axisScale([1, LOG_SCALE_RATIO - 1]).type).toBe('linear')
+  expect(axisScale([1, LOG_SCALE_RATIO]).type).toBe('log')
+  expect(axisScale([0.5, 50]).type).toBe('log') // price-output, 100x spread
+  expect(axisScale([73.3, 96.2], 100).type).toBe('linear') // benchmarks, 1.3x
+  // Log needs a strictly positive domain, so a zero forces linear even at a
+  // huge spread — Math.log10(0) would otherwise poison every projection.
+  expect(axisScale([0, 1000]).type).toBe('linear')
+  expect(axisScale([-5, 1000]).type).toBe('linear')
+})
+
+test('a log domain brackets the data with strictly positive bounds', () => {
+  const scale = axisScale([0.5, 50])
+  expect(scale.type).toBe('log')
+  expect(scale.domain[0]).toBeGreaterThan(0)
+  expect(scale.domain[0]).toBeLessThanOrEqual(0.5)
+  expect(scale.domain[1]).toBeGreaterThanOrEqual(50)
+  expect(scale.zeroBased).toBe(false)
+})
+
+test('scaleFraction projects a value to its position on either scale type', () => {
+  const linear = axisScale([0, 100])
+  expect(scaleFraction(linear, linear.domain[0])).toBe(0)
+  expect(scaleFraction(linear, linear.domain[1])).toBe(1)
+  // A log scale puts the geometric midpoint halfway along, which is the
+  // property that unsquashes the cheap majority of a 100x price range.
+  const log = axisScale([0.1, 100])
+  expect(log.type).toBe('log')
+  const [low, high] = log.domain
+  expect(scaleFraction(log, Math.sqrt(low * high))).toBeCloseTo(0.5, 6)
+  // Non-positive input has no log position; it pins to the low edge rather
+  // than emitting -Infinity into a style attribute.
+  expect(scaleFraction(log, 0)).toBe(0)
+})
+
+test('scaleTicks lands on readable stops inside the domain', () => {
+  const linear = axisScale([73.3, 96.2], 100)
+  const linearTicks = scaleTicks(linear, 5)
+  expect(linearTicks.length).toBeGreaterThan(1)
+  for (const tick of linearTicks) {
+    expect(tick).toBeGreaterThanOrEqual(linear.domain[0])
+    expect(tick).toBeLessThanOrEqual(linear.domain[1])
+    // No 58.125 or 1.6500000000000001 reaching a label.
+    expect(String(tick).replace('-', '').replace('.', '').length).toBeLessThanOrEqual(4)
+  }
+  // Log ticks are 1/2/5 x 10^n stops, never an even slice of the domain.
+  const log = axisScale([0.2, 10])
+  const logTicks = scaleTicks(log, 5)
+  expect(logTicks.length).toBeGreaterThan(2)
+  for (const tick of logTicks) {
+    const normalized = tick / 10 ** Math.floor(Math.log10(tick))
+    expect([1, 2, 5]).toContain(Math.round(normalized))
+  }
+})
+
+test('a log axis says so in its title, a linear one leaves it alone', () => {
+  const price = byId('price-output')
+  expect(scaledAxisTitle(price, axisScale([0.5, 50]))).toBe(
+    'Output price ($ per 1M tokens, log scale)',
+  )
+  expect(scaledAxisTitle(price, axisScale([5, 50]))).toBe(price.axisTitle)
+  // A title with no trailing unit clause still gets the note appended.
+  const bare = { ...price, axisTitle: 'Output price' }
+  expect(scaledAxisTitle(bare, axisScale([0.5, 50]))).toBe('Output price (log scale)')
+})
+
+test('every axis pairing produces a finite, ordered domain', () => {
+  for (const x of axisOptions) {
+    for (const y of axisOptions) {
+      const { rows } = buildGraphRows(x, y)
+      if (rows.length === 0) continue
+      for (const [axis, values] of [
+        [x, rows.map((r) => r.x)],
+        [y, rows.map((r) => r.y)],
+      ] as const) {
+        const scale = axisScale(values, axis.domainCap)
+        const [low, high] = scale.domain
+        expect(Number.isFinite(low) && Number.isFinite(high)).toBe(true)
+        expect(high).toBeGreaterThan(low)
+        // Every plotted point has to sit inside its own axis.
+        for (const value of values) {
+          expect(value).toBeGreaterThanOrEqual(low)
+          expect(value).toBeLessThanOrEqual(high)
+        }
+        if (axis.domainCap !== undefined) expect(high).toBeLessThanOrEqual(axis.domainCap)
+        if (scale.type === 'log') expect(low).toBeGreaterThan(0)
+      }
+    }
+  }
+})
+
+test('the price and context axes go log while every benchmark stays linear', () => {
+  const price = byId('price-input')
+  const typeOf = (axis: (typeof axisOptions)[number], other: (typeof axisOptions)[number]) => {
+    const { rows } = buildGraphRows(axis, other)
+    return axisScale(rows.map((r) => r.x), axis.domainCap).type
+  }
+  // Priced models span 50-100x, so pairing the money axes against each other
+  // (which keeps every priced model in the view) puts them all on log.
+  expect(typeOf(price, byId('price-output'))).toBe('log')
+  expect(typeOf(byId('price-output'), price)).toBe('log')
+  // Context windows run 0.2M to 10M once the view isn't narrowed to priced
+  // models, which is the 50x spread that earns a log axis.
+  expect(typeOf(byId('context'), byId('gpqa-diamond'))).toBe('log')
+  // Benchmark scores cluster far too tightly for a log axis to help.
+  for (const b of benchmarks) {
+    expect(typeOf(byId(b.id), price)).toBe('linear')
+  }
+})
+
+test('spec crops both domains to the data, pins the legend on top, and draws no trendline', () => {
   const x = byId('price-input')
   const y = byId('swe-bench-pro')
   const { rows } = buildGraphRows(x, y)
   const spec = asChartSpec(buildGraphSpec(x, y, rows))
   expect(spec.mark).toMatchObject({ trendline: false })
   expect(spec.legend).toMatchObject({ position: 'top' })
-  const xDomain = spec.encoding.x?.scale?.domain as [number, number]
   const yDomain = spec.encoding.y?.scale?.domain as [number, number]
-  expect(xDomain[1]).toBeGreaterThan(Math.max(...rows.map((r) => r.x)))
+  const yMin = Math.min(...rows.map((r) => r.y))
   expect(yDomain[1]).toBeGreaterThanOrEqual(Math.max(...rows.map((r) => r.y)))
   expect(yDomain[1]).toBeLessThanOrEqual(100) // percentage axis never reads past 100
+  // Cropped, not zero-anchored — the readability fix in issue #81.
+  expect(yDomain[0]).toBeGreaterThan(0)
+  expect(yDomain[0]).toBeLessThanOrEqual(yMin)
+})
+
+test('a log axis carries its scale type and title into the spec', () => {
+  const x = byId('price-output')
+  const y = byId('price-input')
+  const { rows } = buildGraphRows(x, y)
+  const spec = asChartSpec(buildGraphSpec(x, y, rows))
+  const scale = spec.encoding.x?.scale as { type?: string }
+  expect(scale.type).toBe('log')
+  // The engine renders the axis title verbatim, so the note has to live there.
+  expect((spec.encoding.x?.axis as { title?: string }).title).toMatch(/log scale/)
+  expect(spec.encoding.x?.title).toMatch(/log scale/)
+  // A linear axis must not claim a scale type it doesn't have.
+  const benchmark = byId('swe-bench-verified')
+  const linearRows = buildGraphRows(benchmark, byId('gpqa-diamond')).rows
+  const linearSpec = asChartSpec(buildGraphSpec(benchmark, byId('gpqa-diamond'), linearRows))
+  const linearScale = linearSpec.encoding.x?.scale as { domain?: unknown; type?: string }
+  expect(linearScale.domain).toBeDefined()
+  expect(linearScale.type).toBeUndefined()
+  expect((linearSpec.encoding.x?.axis as { title?: string }).title).not.toMatch(/log scale/)
 })
 
 test('providerColor resolves brand colors by display name with a neutral fallback', () => {
@@ -209,13 +370,19 @@ test('connections on layer dotted lines UNDER the points', () => {
   expect(encoding.opacity?.field).toBe('lineOpacity')
 })
 
-test('the line layer shares the point layer domains so lines sit on their points', () => {
-  const x = byId('price-input')
-  const y = byId('swe-bench-verified')
-  const { rows } = buildGraphRows(x, y, 'provider')
-  const layers = asLayerSpec(buildGraphSpec(x, y, rows, 'provider'))
-  expect(layers[0].encoding!.x.scale?.domain).toEqual(layers[1].encoding!.x.scale?.domain)
-  expect(layers[0].encoding!.y.scale?.domain).toEqual(layers[1].encoding!.y.scale?.domain)
+test('the line layer shares the point layer scales so lines sit on their points', () => {
+  // Every pairing, because a log x with a linear rule layer would slide the
+  // connections clean off the points they join.
+  for (const x of axisOptions) {
+    for (const y of axisOptions) {
+      const { rows } = buildGraphRows(x, y, 'provider')
+      const spec = buildGraphSpec(x, y, rows, 'provider')
+      if (!('layer' in spec)) continue
+      const layers = asLayerSpec(spec)
+      expect(layers[0].encoding!.x.scale).toEqual(layers[1].encoding!.x.scale)
+      expect(layers[0].encoding!.y.scale).toEqual(layers[1].encoding!.y.scale)
+    }
+  }
 })
 
 test('every connection mode produces a spec the chart engine accepts', () => {

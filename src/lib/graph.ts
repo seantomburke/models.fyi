@@ -142,14 +142,172 @@ export function defaultYAxisId(): string {
   return bestId
 }
 
+/** Scale kind an axis is drawn on, decided from the data's dynamic range. */
+export type AxisScaleType = 'linear' | 'log'
+
+export interface AxisScale {
+  type: AxisScaleType
+  /** Bounds the axis is drawn between, already padded and rounded. */
+  domain: [number, number]
+  /** True when the axis starts at 0 and so needs no cropped-baseline notice. */
+  zeroBased: boolean
+}
+
 /**
- * Domain with headroom above the data so points never sit on the plot edge,
- * clamped to `cap` when given (percentage axes must not read past 100).
+ * Ratio between the largest and smallest value at which a linear axis stops
+ * being readable: the small values all collapse onto the low edge and the
+ * differences the reader came for disappear (issue #81). Prices and context
+ * windows span 50-100x, benchmarks span well under 2x, so a data-driven
+ * threshold sorts them without a per-axis flag that would rot as data changes.
+ */
+export const LOG_SCALE_RATIO = 20
+
+/** Fraction of the data span added as breathing room on each end. */
+const PADDING_FRACTION = 0.08
+
+/** 1, 2, 2.5 and 5 x 10^n — the step sizes people read fluently. */
+function niceStep(rough: number): number {
+  const magnitude = 10 ** Math.floor(Math.log10(rough))
+  const normalized = rough / magnitude
+  const step = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 2.5 ? 2.5 : normalized <= 5 ? 5 : 10
+  return step * magnitude
+}
+
+/** The 1/2/5 x 10^n stops a log axis is bounded and ticked on. */
+const LOG_MULTIPLIERS = [1, 2, 5]
+
+/** Nearest 1/2/5 x 10^n stop at or beyond `value` in the given direction. */
+function logStop(value: number, direction: 'up' | 'down'): number {
+  const exponent = Math.floor(Math.log10(value))
+  const normalized = value / 10 ** exponent
+  if (direction === 'up') {
+    const m = LOG_MULTIPLIERS.find((candidate) => candidate >= normalized - 1e-9) ?? 10
+    return Number((m * 10 ** exponent).toPrecision(12))
+  }
+  const m = [...LOG_MULTIPLIERS].reverse().find((candidate) => candidate <= normalized + 1e-9) ?? 1
+  return Number((m * 10 ** exponent).toPrecision(12))
+}
+
+/**
+ * Axis bounds and scale type derived from the values actually plotted.
+ *
+ * Cropping matters more than a zero baseline here: every benchmark axis holds
+ * scores in a 20-45 point band, so anchoring at 0 spent more than half the
+ * axis on empty space and squashed the differences (issue #81). The bounds are
+ * padded on BOTH ends and snapped outward to round numbers so the ticks read
+ * cleanly, then clamped to `cap` (percentage axes must not read past 100).
+ *
+ * A wide dynamic range switches the axis to log instead, which is the only way
+ * a $0.20 model and a $50 model can share a readable axis. Log needs a strictly
+ * positive domain, so a zero or negative value forces linear.
+ */
+export function axisScale(values: number[], cap?: number): AxisScale {
+  if (values.length === 0) return { type: 'linear', domain: [0, cap ?? 1], zeroBased: true }
+
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+
+  if (min > 0 && max / min >= LOG_SCALE_RATIO) {
+    // Pad in log space so the proportional margin is even at both ends, then
+    // snap each bound out to the nearest 1/2/5 x 10^n stop — the same stops
+    // scaleTicks labels, so the axis begins and ends on a printed tick.
+    const span = Math.log10(max) - Math.log10(min)
+    const low = logStop(10 ** (Math.log10(min) - span * PADDING_FRACTION), 'down')
+    const highRaw = logStop(10 ** (Math.log10(max) + span * PADDING_FRACTION), 'up')
+    const high = cap === undefined ? highRaw : Math.min(highRaw, cap)
+    return { type: 'log', domain: [low, high > low ? high : low * 10], zeroBased: false }
+  }
+
+  // A single repeated value has no span to pad, so invent one around it;
+  // otherwise the domain collapses and every projection divides by zero.
+  const rawSpan = max - min
+  const span = rawSpan > 0 ? rawSpan : Math.abs(max) || 1
+  const step = niceStep(span * PADDING_FRACTION)
+  // toPrecision trims the drift a fractional step leaves behind (0.1 * 3
+  // is 0.30000000000000004), which would otherwise reach a tick label.
+  const snap = (n: number) => Number(n.toPrecision(12))
+  let low = snap(Math.floor((min - span * PADDING_FRACTION) / step) * step)
+  let high = snap(Math.ceil((max + span * PADDING_FRACTION) / step) * step)
+  // Never invent room below zero for data that has none — a negative price
+  // axis is a lie, and the extra space is exactly what issue #81 is about.
+  if (min >= 0 && low < 0) low = 0
+  if (cap !== undefined && high > cap) high = cap
+  if (high <= low) high = low + step
+  return { type: 'linear', domain: [low, high], zeroBased: low === 0 }
+}
+
+/**
+ * Domain only, for callers that just need bounds for a chart spec.
+ * Bar charts pass through here too, which is why the zero-anchoring rule above
+ * survives for data that starts at zero.
  */
 export function paddedDomain(values: number[], cap?: number): [number, number] {
-  if (values.length === 0) return [0, cap ?? 1]
-  const padded = Math.max(...values) * 1.08
-  return [0, cap === undefined ? padded : Math.min(padded, cap)]
+  return axisScale(values, cap).domain
+}
+
+/**
+ * Position of `value` within a scale, as a 0-1 fraction of the axis length.
+ * Shared by both renderers so the DOM scatter and the chart spec agree.
+ */
+export function scaleFraction(scale: AxisScale, value: number): number {
+  const [low, high] = scale.domain
+  if (scale.type === 'log') {
+    // A non-positive value has no log position; pin it to the low edge rather
+    // than emitting -Infinity into a style attribute.
+    if (value <= 0) return 0
+    const lo = Math.log10(low)
+    return (Math.log10(value) - lo) / (Math.log10(high) - lo)
+  }
+  return (value - low) / (high - low)
+}
+
+/**
+ * Tick values for a scale: whole decades on log axes, `count` evenly spaced
+ * stops on linear ones. Log axes with a single decade of range get intermediate
+ * 2/5 steps so the axis is not left with two lonely labels.
+ */
+export function scaleTicks(scale: AxisScale, count: number): number[] {
+  const [low, high] = scale.domain
+  if (scale.type === 'log') {
+    // Over a wide range the 2/5 stops crowd the axis, so drop to bare decades.
+    // Three decades is the widest any current axis reaches, and 1/2/5 stops
+    // still fit there; beyond that the labels start colliding.
+    const decades = Math.log10(high) - Math.log10(low)
+    const multipliers = decades <= 3 ? LOG_MULTIPLIERS : [1]
+    const ticks: number[] = []
+    for (let e = Math.floor(Math.log10(low)); e <= Math.ceil(Math.log10(high)); e++) {
+      for (const m of multipliers) {
+        const tick = Number((m * 10 ** e).toPrecision(12))
+        if (tick >= low * (1 - 1e-9) && tick <= high * (1 + 1e-9)) ticks.push(tick)
+      }
+    }
+    return ticks
+  }
+  // Snap to a nice step rather than slicing the domain into `count` equal
+  // parts: an arbitrary domain width divided by 4 yields labels like 58.125,
+  // and floating-point remainders like 1.6500000000000001.
+  const step = niceStep((high - low) / (count - 1))
+  const ticks: number[] = []
+  for (let tick = Math.ceil(low / step) * step; tick <= high + step * 1e-9; tick += step) {
+    // Re-round each stop: repeated addition of a fractional step drifts.
+    ticks.push(Number((Math.round(tick / step) * step).toPrecision(12)))
+  }
+  return ticks
+}
+
+/** Axis title with the scale spelled out, so a log axis can't be misread. */
+export function scaledAxisTitle(axis: AxisOption, scale: AxisScale): string {
+  if (scale.type !== 'log') return axis.axisTitle
+  // The unit already sits in parentheses, so extend that clause rather than
+  // stacking a second pair of brackets on the end.
+  return axis.axisTitle.endsWith(')')
+    ? `${axis.axisTitle.slice(0, -1)}, log scale)`
+    : `${axis.axisTitle} (log scale)`
+}
+
+/** Scale encoding for the chart engine: domain plus, on log axes, the type. */
+function scaleSpec(scale: AxisScale): { domain: [number, number]; type?: AxisScaleType } {
+  return scale.type === 'log' ? { domain: scale.domain, type: 'log' } : { domain: scale.domain }
 }
 
 /**
@@ -188,18 +346,18 @@ export function buildGraphSpec(
         // would just duplicate it.
         legend: { show: false },
         encoding: {
-          // Domains are duplicated from the point layer, not inherited: this
-          // layer holds derived rows, so letting it pick its own scale would
-          // slide the connections off the points they join.
+          // Domains AND scale types are duplicated from the point layer, not
+          // inherited: this layer holds derived rows, so letting it pick its
+          // own scale would slide the connections off the points they join.
           x: {
             field: 'x',
             type: 'quantitative',
-            scale: { domain: paddedDomain(rows.map((r) => r.x), xAxis.domainCap) },
+            scale: scaleSpec(axisScale(rows.map((r) => r.x), xAxis.domainCap)),
           },
           y: {
             field: 'y',
             type: 'quantitative',
-            scale: { domain: paddedDomain(rows.map((r) => r.y), yAxis.domainCap) },
+            scale: scaleSpec(axisScale(rows.map((r) => r.y), yAxis.domainCap)),
           },
           x2: { field: 'x2', type: 'quantitative' },
           y2: { field: 'y2', type: 'quantitative' },
@@ -221,6 +379,10 @@ export function buildGraphSpec(
 
 /** The plain scatter layer: one point per model, colored by company. */
 function buildScatterSpec(xAxis: AxisOption, yAxis: AxisOption, rows: GraphRow[]): ChartSpec<GraphRow> {
+  const xScale = axisScale(rows.map((r) => r.x), xAxis.domainCap)
+  const yScale = axisScale(rows.map((r) => r.y), yAxis.domainCap)
+  const xTitle = scaledAxisTitle(xAxis, xScale)
+  const yTitle = scaledAxisTitle(yAxis, yScale)
   return {
     // No trendline: a regression line on price-vs-benchmark scatter would
     // imply a relationship claim the site doesn't make.
@@ -229,21 +391,21 @@ function buildScatterSpec(xAxis: AxisOption, yAxis: AxisOption, rows: GraphRow[]
     legend: { position: 'top', maxRows: 2 },
     encoding: {
       // The engine skips its nice/zero adjustments whenever an explicit
-      // domain is set, so paddedDomain (which anchors at 0) is the whole
-      // story for both scales.
+      // domain is set, so axisScale is the whole story for both scales — and
+      // the title carries the scale type so a log axis can't be misread.
       x: {
         field: 'x',
         type: 'quantitative',
-        title: xAxis.axisTitle,
-        axis: { title: xAxis.axisTitle },
-        scale: { domain: paddedDomain(rows.map((r) => r.x), xAxis.domainCap) },
+        title: xTitle,
+        axis: { title: xTitle },
+        scale: scaleSpec(xScale),
       },
       y: {
         field: 'y',
         type: 'quantitative',
-        title: yAxis.axisTitle,
-        axis: { title: yAxis.axisTitle },
-        scale: { domain: paddedDomain(rows.map((r) => r.y), yAxis.domainCap) },
+        title: yTitle,
+        axis: { title: yTitle },
+        scale: scaleSpec(yScale),
       },
       color: { field: 'provider', type: 'nominal', title: 'Company' },
       detail: { field: 'model', type: 'nominal' },

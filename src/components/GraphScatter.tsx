@@ -1,6 +1,14 @@
-import { connectionSegments, paddedDomain, providerColor } from '../lib/graph.ts'
+import {
+  axisScale,
+  connectionSegments,
+  providerColor,
+  scaleFraction,
+  scaledAxisTitle,
+  scaleTicks,
+} from '../lib/graph.ts'
 import type {
   AxisOption,
+  AxisScale,
   GraphConnections,
   GraphRow,
 } from '../lib/graph.ts'
@@ -22,13 +30,15 @@ interface GraphModelSelectorProps {
 
 const TICK_COUNT = 5
 
-function usableMaximum(values: number[], cap?: number): number {
-  const [, maximum] = paddedDomain(values, cap)
-  return maximum > 0 && Number.isFinite(maximum) ? maximum : 1
-}
-
-function tickValues(maximum: number): number[] {
-  return Array.from({ length: TICK_COUNT }, (_, index) => (maximum * index) / (TICK_COUNT - 1))
+/**
+ * Percentage offset for a value along a scale, clamped to the plot area.
+ * A domain that somehow collapses would otherwise emit NaN into a style
+ * attribute, which React happily renders and the browser silently drops.
+ */
+function percentOf(scale: AxisScale, value: number): number {
+  const fraction = scaleFraction(scale, value)
+  if (!Number.isFinite(fraction)) return 0
+  return Math.min(100, Math.max(0, fraction * 100))
 }
 
 /** Compact, locale-independent labels keep server and client markup identical. */
@@ -40,8 +50,8 @@ function formatValue(value: number): string {
   return value.toFixed(3).replace(/\.?0+$/, '')
 }
 
-function pointName(row: GraphRow, xAxis: AxisOption, yAxis: AxisOption): string {
-  return `${row.model}, ${row.provider}. ${xAxis.axisTitle}: ${formatValue(row.x)}. ${yAxis.axisTitle}: ${formatValue(row.y)}.`
+function pointName(row: GraphRow, xTitle: string, yTitle: string): string {
+  return `${row.model}, ${row.provider}. ${xTitle}: ${formatValue(row.x)}. ${yTitle}: ${formatValue(row.y)}.`
 }
 
 /**
@@ -57,18 +67,26 @@ export function GraphScatter({
   connections,
   onPointSelected,
 }: GraphScatterProps) {
-  const xMaximum = usableMaximum(rows.map((row) => row.x), xAxis.domainCap)
-  const yMaximum = usableMaximum(rows.map((row) => row.y), yAxis.domainCap)
-  const xTicks = tickValues(xMaximum)
-  const yTicks = tickValues(yMaximum)
+  const xScale = axisScale(rows.map((row) => row.x), xAxis.domainCap)
+  const yScale = axisScale(rows.map((row) => row.y), yAxis.domainCap)
+  const xTitle = scaledAxisTitle(xAxis, xScale)
+  const yTitle = scaledAxisTitle(yAxis, yScale)
+  const xTicks = scaleTicks(xScale, TICK_COUNT)
+  const yTicks = scaleTicks(yScale, TICK_COUNT)
   const providers = [...new Set(rows.map((row) => row.provider))]
   const segments = connections === 'off' ? [] : connectionSegments(rows)
-  const xPercent = (value: number) => (value / xMaximum) * 100
-  const yPercent = (value: number) => 100 - (value / yMaximum) * 100
+  const xPercent = (value: number) => percentOf(xScale, value)
+  const yPercent = (value: number) => 100 - percentOf(yScale, value)
+  // A cropped axis is only honest if the reader is told: without this a
+  // baseline of 70% reads exactly like a baseline of 0 (issue #81).
+  const cropped = [
+    !xScale.zeroBased ? xTitle : null,
+    !yScale.zeroBased ? yTitle : null,
+  ].filter((title): title is string => title !== null)
 
   return (
     <figure
-      aria-label={`${xAxis.axisTitle} compared with ${yAxis.axisTitle}`}
+      aria-label={`${xTitle} compared with ${yTitle}`}
       className="relative h-full min-h-96 w-full text-fg-muted"
     >
       <figcaption className="sr-only">
@@ -129,13 +147,15 @@ export function GraphScatter({
         )}
 
         {rows.map((row) => {
-          const name = pointName(row, xAxis, yAxis)
+          // No `title` alongside the aria-label: the browser would paint its
+          // own tooltip on top of the styled detail panel (issue #81). The
+          // accessible name still carries the same text.
+          const name = pointName(row, xTitle, yTitle)
           return (
             <button
               key={row.model}
               type="button"
               aria-label={name}
-              title={name}
               onClick={() => onPointSelected(row)}
               className="group absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised"
               style={{ left: `${xPercent(row.x)}%`, top: `${yPercent(row.y)}%` }}
@@ -172,13 +192,29 @@ export function GraphScatter({
       </div>
 
       <div aria-hidden="true" className="absolute inset-x-14 bottom-1 text-center text-xs font-medium text-fg-secondary sm:left-16">
-        {xAxis.axisTitle}
+        {xTitle}
       </div>
       <div aria-hidden="true" className="absolute bottom-14 left-0 top-14 flex w-4 items-center justify-center">
         <span className="whitespace-nowrap text-xs font-medium text-fg-secondary [writing-mode:vertical-rl] rotate-180">
-          {yAxis.axisTitle}
+          {yTitle}
         </span>
       </div>
+
+      {cropped.length > 0 && (
+        <p className="absolute inset-x-14 top-6 text-[11px] text-fg-muted sm:left-16">
+          Zoomed in to the data:{' '}
+          {cropped.map((title, index) => (
+            <span key={title}>
+              {index > 0 ? ' and ' : ''}
+              {title} starts at{' '}
+              <span className="tabular-nums">
+                {formatValue((title === xTitle ? xScale : yScale).domain[0])}
+              </span>
+            </span>
+          ))}
+          , not zero.
+        </p>
+      )}
     </figure>
   )
 }
@@ -194,6 +230,9 @@ export function GraphModelSelector({
   yAxis,
   onPointSelected,
 }: GraphModelSelectorProps) {
+  // Same scale decision as the plot, so the spoken values match the labels.
+  const xTitle = scaledAxisTitle(xAxis, axisScale(rows.map((row) => row.x), xAxis.domainCap))
+  const yTitle = scaledAxisTitle(yAxis, axisScale(rows.map((row) => row.y), yAxis.domainCap))
   return (
     <details className="mt-2 border-t border-line pt-2">
       <summary className="flex min-h-11 cursor-pointer items-center rounded px-2 text-sm font-medium text-fg-secondary transition-colors duration-150 hover:bg-black/[0.04] hover:text-fg dark:hover:bg-white/[0.04]">
@@ -204,7 +243,7 @@ export function GraphModelSelector({
           <button
             key={row.model}
             type="button"
-            aria-label={`Select ${pointName(row, xAxis, yAxis)}`}
+            aria-label={`Select ${pointName(row, xTitle, yTitle)}`}
             onClick={() => onPointSelected(row)}
             className="flex min-h-11 items-center gap-2 rounded px-2 py-1.5 text-left text-sm text-fg-secondary transition-colors duration-150 hover:bg-black/[0.04] hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:hover:bg-white/[0.04]"
           >
