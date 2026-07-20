@@ -42,7 +42,9 @@ test('every nav destination renders with a heading and page title', async () => 
   }
 })
 
-test('unknown routes show the not-found page', () => {
+test('unknown routes show the not-found page', async () => {
   renderAt('/nope')
-  expect(screen.getByRole('heading', { level: 1, name: /page not found/i })).toBeInTheDocument()
+  expect(
+    await screen.findByRole('heading', { level: 1, name: /page not found/i }), // lazy-loaded
+  ).toBeInTheDocument()
 })

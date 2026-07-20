@@ -4,16 +4,6 @@ import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import { Layout } from './components/Layout.tsx'
 import { ShortcutsDialog } from './components/ShortcutsDialog.tsx'
 import { Home } from './pages/Home.tsx'
-import { Compare } from './pages/Compare.tsx'
-import { Quiz } from './pages/Quiz.tsx'
-import { Learn } from './pages/learn/Learn.tsx'
-import { LearnTopic } from './pages/learn/LearnTopic.tsx'
-import { FAQ } from './pages/FAQ.tsx'
-import { Glossary } from './pages/Glossary.tsx'
-import { Search } from './pages/Search.tsx'
-import { WhatsNew } from './pages/WhatsNew.tsx'
-import { ModelDetail } from './pages/models/ModelDetail.tsx'
-import { NotFound } from './pages/NotFound.tsx'
 import { GraphSkeleton } from './components/GraphSkeleton.tsx'
 import { CalculatorSkeleton } from './components/CalculatorSkeleton.tsx'
 import { useDarkMode } from './lib/darkMode'
@@ -24,12 +14,28 @@ import { exportComparison, EXPORT_SHORTCUT_EVENT } from './lib/export.ts'
 import { captureExport, captureExportFailed } from './lib/posthog-events.ts'
 import { models } from './data/index.ts'
 
-// These pages pull in the charting library (and the calculator a tokenizer) —
-// keep them off the main bundle.
+// Every route but Home is lazy. Home stays static because it is the most
+// common landing route, and splitting it would only buy a round-trip.
+// Everything else was riding along in the entry bundle — a visitor landing on
+// Home was downloading the Learn labs' neural nets before the page could paint.
 const Graph = lazy(() => import('./pages/Graph.tsx').then((m) => ({ default: m.Graph })))
 const Calculator = lazy(() =>
   import('./pages/Calculator.tsx').then((m) => ({ default: m.Calculator })),
 )
+const Search = lazy(() => import('./pages/Search.tsx').then((m) => ({ default: m.Search })))
+const Compare = lazy(() => import('./pages/Compare.tsx').then((m) => ({ default: m.Compare })))
+const Quiz = lazy(() => import('./pages/Quiz.tsx').then((m) => ({ default: m.Quiz })))
+const Learn = lazy(() => import('./pages/learn/Learn.tsx').then((m) => ({ default: m.Learn })))
+const LearnTopic = lazy(() =>
+  import('./pages/learn/LearnTopic.tsx').then((m) => ({ default: m.LearnTopic })),
+)
+const FAQ = lazy(() => import('./pages/FAQ.tsx').then((m) => ({ default: m.FAQ })))
+const Glossary = lazy(() => import('./pages/Glossary.tsx').then((m) => ({ default: m.Glossary })))
+const WhatsNew = lazy(() => import('./pages/WhatsNew.tsx').then((m) => ({ default: m.WhatsNew })))
+const ModelDetail = lazy(() =>
+  import('./pages/models/ModelDetail.tsx').then((m) => ({ default: m.ModelDetail })),
+)
+const NotFound = lazy(() => import('./pages/NotFound.tsx').then((m) => ({ default: m.NotFound })))
 
 function App() {
   usePostHogPageView()
@@ -88,6 +94,10 @@ function App() {
         shortcuts={shortcuts}
       />
       <Routes>
+      {/* Layout already wraps <Outlet /> in a Suspense boundary, so the lazy
+          routes below need no per-route one. Graph and Calculator keep theirs
+          because their skeletons mirror the real layout, which the generic
+          fallback cannot. */}
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="search" element={<Search />} />
