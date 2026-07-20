@@ -1,11 +1,12 @@
+import type { ReactNode } from 'react'
 import type { SortConfig } from '../lib/sort.ts'
 
 interface SortableHeaderProps {
   /** Column identifier (e.g., 'name', 'inputPrice', benchmark ID) */
   column: string
-  /** Display text for the header */
+  /** Display text for the header. Keep it short enough to stay on one line. */
   label: string
-  /** Optional tooltip title */
+  /** Longer explanation, shown as a tooltip on the header button */
   title?: string
   /** Current sort configuration */
   sort: SortConfig
@@ -15,6 +16,29 @@ interface SortableHeaderProps {
   className?: string
   /** Align right (for numeric columns) */
   textAlign?: 'left' | 'right'
+  /**
+   * Rendered after the sort button — e.g. a source link. Kept outside the
+   * button so it stays reachable by keyboard.
+   */
+  trailing?: ReactNode
+}
+
+/**
+ * Paired chevrons showing sort state. Both are always visible so the column
+ * reads as sortable before anyone clicks it; the active direction is
+ * highlighted and the inactive one fades back.
+ */
+function SortArrows({ state }: { state: 'asc' | 'desc' | 'none' }) {
+  return (
+    <span aria-hidden className="ml-1 inline-flex shrink-0 flex-col leading-none">
+      <span className={`text-[8px] ${state === 'asc' ? 'text-accent-deep' : 'text-fg-faint'}`}>
+        ▲
+      </span>
+      <span className={`text-[8px] ${state === 'desc' ? 'text-accent-deep' : 'text-fg-faint'}`}>
+        ▼
+      </span>
+    </span>
+  )
 }
 
 /**
@@ -29,30 +53,39 @@ export function SortableHeader({
   onSort,
   className = '',
   textAlign = 'left',
+  trailing,
 }: SortableHeaderProps) {
   const isActive = sort.column === column
   const isAscending = sort.direction === 'asc'
+  const state = isActive ? (isAscending ? 'asc' : 'desc') : 'none'
+  const nextDirection = isActive && isAscending ? 'descending' : 'ascending'
+  const alignRight = textAlign === 'right'
 
   return (
     <th
-      title={title}
+      scope="col"
       // aria-sort belongs on the columnheader itself, not the button inside it —
       // it is not a supported attribute on a generic button role.
       aria-sort={isActive ? (isAscending ? 'ascending' : 'descending') : 'none'}
-      className={`${textAlign === 'right' ? 'text-right' : 'text-left'} font-medium text-fg-muted px-2 sm:px-3 py-3 ${className}`}
+      className={`${alignRight ? 'text-right' : 'text-left'} whitespace-nowrap px-2 sm:px-3 py-3 font-medium text-fg-muted ${className}`}
     >
-      <button
-        type="button"
-        onClick={() => onSort(column)}
-        className={`flex cursor-pointer items-center ${textAlign === 'right' ? 'justify-end' : 'justify-start'} gap-1 ${textAlign === 'right' ? 'w-full' : ''} transition-colors hover:text-fg focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-accent-deep`}
+      <span
+        className={`inline-flex items-center gap-1 ${alignRight ? 'w-full justify-end' : 'justify-start'}`}
       >
-        {label}
-        {isActive && (
-          <span aria-hidden className="text-accent-deep">
-            {isAscending ? '↑' : '↓'}
+        <button
+          type="button"
+          onClick={() => onSort(column)}
+          title={title ? `${label} — ${title}` : undefined}
+          aria-label={`${label}${title ? `. ${title}` : ''}. Sort ${nextDirection}`}
+          className="inline-flex cursor-pointer items-center whitespace-nowrap rounded transition-colors hover:text-fg focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-deep"
+        >
+          <span className={title ? 'underline decoration-dotted underline-offset-2' : ''}>
+            {label}
           </span>
-        )}
-      </button>
+          <SortArrows state={state} />
+        </button>
+        {trailing}
+      </span>
     </th>
   )
 }

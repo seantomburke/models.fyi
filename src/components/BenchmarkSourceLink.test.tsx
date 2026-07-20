@@ -153,6 +153,30 @@ describe('BenchmarkSourceLink', () => {
     expect(screen.getByText('85.2%')).toBeInTheDocument()
   })
 
+  it('renders the icon variant as an arrow-only link for tight headers', () => {
+    render(
+      <BenchmarkSourceLink
+        sourceUrl="https://example.com"
+        benchmarkName="GPQA Diamond"
+        variant="icon"
+      />,
+    )
+
+    const link = screen.getByRole('link', { name: 'View GPQA Diamond source' })
+    expect(link).toHaveTextContent('↗')
+    expect(link).not.toHaveTextContent('source ')
+    expect(link.getAttribute('href')).toContain('utm_source=www.models.fyi')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
+  it('renders nothing for the icon variant without a sourceUrl', () => {
+    const { container } = render(
+      <BenchmarkSourceLink benchmarkName="GPQA Diamond" variant="icon" />,
+    )
+    expect(container.firstChild).toBeNull()
+  })
+
   it('adds utm_source parameter to various source URLs', () => {
     const { rerender } = render(
       <BenchmarkSourceLink

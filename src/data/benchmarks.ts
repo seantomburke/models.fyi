@@ -10,6 +10,7 @@ export const benchmarks: Benchmark[] = [
   {
     id: 'swe-bench-verified',
     name: 'SWE-bench Verified',
+    shortName: 'SWE-bench',
     eli5: 'Hands the AI bugs from actual software projects and counts how many it fixes. Like a coding job interview, but with real work.',
     unit: '%',
     category: 'Software Engineering',
@@ -19,6 +20,7 @@ export const benchmarks: Benchmark[] = [
   {
     id: 'swe-bench-pro',
     name: 'SWE-bench Pro',
+    shortName: 'SWE Pro',
     eli5: 'The harder version of the coding test. Bigger codebases, trickier bugs. Scores drop for everyone, so the gaps between models become clearer.',
     unit: '%',
     category: 'Software Engineering',
@@ -28,6 +30,7 @@ export const benchmarks: Benchmark[] = [
   {
     id: 'gpqa-diamond',
     name: 'GPQA Diamond',
+    shortName: 'GPQA',
     eli5: 'PhD-level science questions written so you cannot just Google the answer. Tests whether the model can reason about hard science.',
     unit: '%',
     category: 'Knowledge',
@@ -37,6 +40,7 @@ export const benchmarks: Benchmark[] = [
   {
     id: 'terminal-bench',
     name: 'Terminal-Bench 2.1',
+    shortName: 'Terminal',
     eli5: 'Puts the AI in front of a computer terminal and asks it to finish multi-step tasks on its own. Measures how good an "AI agent" it is.',
     unit: '%',
     category: 'Software Engineering',
@@ -46,6 +50,7 @@ export const benchmarks: Benchmark[] = [
   {
     id: 'hle',
     name: "Humanity's Last Exam",
+    shortName: 'HLE',
     eli5: 'PhD-level questions across many subjects. Tests deep reasoning on the hardest questions humans can ask.',
     unit: '%',
     category: 'Knowledge',

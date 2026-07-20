@@ -139,22 +139,25 @@ test('clear filter button resets to "all" and shows all models', async () => {
 test('table headers are clickable and show sort direction', async () => {
   const user = userEvent.setup()
   renderCompare()
-  const modelHeader = screen.getByRole('button', { name: 'Model' })
+  const modelHeader = screen.getByRole('button', { name: /^Model\./ })
   expect(modelHeader).toBeInTheDocument()
-  // Initial state: no sort indicator
-  expect(modelHeader.textContent).not.toMatch(/[↑↓]/)
+  // Both arrows always render so the column reads as sortable; the accessible
+  // name is what announces the direction the next click applies.
+  expect(modelHeader.textContent).toMatch(/▲/)
+  expect(modelHeader.textContent).toMatch(/▼/)
+  expect(modelHeader).toHaveAccessibleName('Model. Sort ascending')
   // Click to sort ascending
   await user.click(modelHeader)
-  expect(modelHeader.textContent).toMatch(/↑/)
+  expect(modelHeader).toHaveAccessibleName('Model. Sort descending')
   // Click again to sort descending
   await user.click(modelHeader)
-  expect(modelHeader.textContent).toMatch(/↓/)
+  expect(modelHeader).toHaveAccessibleName('Model. Sort ascending')
 })
 
 test('sorting by name reorders models alphabetically', async () => {
   const user = userEvent.setup()
   renderCompare()
-  const modelHeader = screen.getByRole('button', { name: /^Model/ })
+  const modelHeader = screen.getByRole('button', { name: /^Model\./ })
   await user.click(modelHeader)
   const table = screen.getByRole('table')
   const rows = within(table).getAllByRole('row')
@@ -176,7 +179,7 @@ test('sorting by name reorders models alphabetically', async () => {
 test('header has aria-sort attribute for accessibility', async () => {
   const user = userEvent.setup()
   renderCompare()
-  const sortButton = screen.getByRole('button', { name: 'Model' })
+  const sortButton = screen.getByRole('button', { name: /^Model\./ })
   // aria-sort is only valid on the columnheader, not on the button inside it.
   const modelHeader = screen.getByRole('columnheader', { name: /Model/ })
   // Initial state
@@ -186,6 +189,30 @@ test('header has aria-sort attribute for accessibility', async () => {
   expect(modelHeader).toHaveAttribute('aria-sort', 'ascending')
   await user.click(sortButton)
   expect(modelHeader).toHaveAttribute('aria-sort', 'descending')
+})
+
+test('benchmark headers use short labels, are sortable, and keep their source link', async () => {
+  const user = userEvent.setup()
+  renderCompare()
+
+  const gpqa = benchmarks.find((b) => b.id === 'gpqa-diamond')!
+  const header = screen.getByRole('columnheader', { name: new RegExp(gpqa.shortName!) })
+
+  // Short label instead of the full name — that is what stopped the wrapping.
+  expect(header).toHaveClass('whitespace-nowrap')
+  const sortButton = within(header).getByRole('button')
+  expect(sortButton.textContent).toContain(gpqa.shortName)
+  expect(sortButton.textContent).not.toContain(gpqa.eli5)
+  // The long explanation lives in the tooltip.
+  expect(sortButton).toHaveAttribute('title', expect.stringContaining(gpqa.eli5))
+
+  expect(header).toHaveAttribute('aria-sort', 'none')
+  await user.click(sortButton)
+  expect(header).toHaveAttribute('aria-sort', 'ascending')
+
+  // The source link stays beside the button, reachable on its own.
+  const sourceLink = within(header).getByRole('link', { name: `View ${gpqa.name} source` })
+  expect(sourceLink.getAttribute('href')).toContain('utm_source=www.models.fyi')
 })
 
 test('view toggle switches from table to cards and back', async () => {
@@ -338,7 +365,7 @@ describe('URL-shareable state', () => {
     const user = userEvent.setup()
     renderCompare()
     await user.click(screen.getByRole('button', { name: /Reasoning/ }))
-    await user.click(screen.getByRole('button', { name: 'Model' }))
+    await user.click(screen.getByRole('button', { name: /^Model\./ }))
     expect(screen.getByTestId('location')).toHaveTextContent(
       '/compare?caps=reasoning&sort=name',
     )

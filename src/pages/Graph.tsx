@@ -1,11 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { usePostHog } from '../lib/posthog-react.ts'
-import { Chart } from '@opendata-ai/openchart-react'
 import '@opendata-ai/openchart-react/styles.css'
+import { ThemeAwareChart } from '../components/ThemeAwareChart.tsx'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
-import { axisOptions, buildGraphRows, buildGraphSpec, defaultYAxisId, providerColor } from '../lib/graph.ts'
-import type { AxisOption, GraphRow } from '../lib/graph.ts'
+import { axisOptions, buildGraphRows, buildGraphSpec, providerColor } from '../lib/graph.ts'
+import type { AxisOption, GraphConnections, GraphRow } from '../lib/graph.ts'
+import {
+  graphPresets,
+  parseGraphParams,
+  serializeGraphParams,
+} from '../lib/graphUrlState.ts'
+import type { GraphUrlState } from '../lib/graphUrlState.ts'
 import { captureGraphAxesChange, captureGraphPointSelected } from '../lib/posthog-events.ts'
 import { Breadcrumb } from '../components/Breadcrumb.tsx'
 
@@ -38,6 +45,117 @@ function AxisPicker({ label, value, onChange }: AxisPickerProps) {
           </button>
         ))}
       </div>
+    </fieldset>
+  )
+}
+
+interface PresetTabsProps {
+  value: string | null
+  onChange: (id: string) => void
+}
+
+/**
+ * The preset views, as a real ARIA tablist.
+ *
+ * Roving tabindex: exactly one tab is in the tab order at a time and the
+ * arrow keys move between them, which is what the tablist pattern requires —
+ * leaving every tab tabbable would make a keyboard user press Tab four times
+ * to get past the strip.
+ */
+export function PresetTabs({ value, onChange }: PresetTabsProps) {
+  const refs = useRef<Array<HTMLButtonElement | null>>([])
+  // With hand-set axes no tab is selected, but one still has to be reachable.
+  const activeIndex = Math.max(
+    0,
+    graphPresets.findIndex((p) => p.id === value),
+  )
+
+  const onKeyDown = (e: React.KeyboardEvent, index: number) => {
+    const delta = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+    let next: number
+    if (delta !== 0) {
+      next = (index + delta + graphPresets.length) % graphPresets.length
+    } else if (e.key === 'Home') {
+      next = 0
+    } else if (e.key === 'End') {
+      next = graphPresets.length - 1
+    } else {
+      return
+    }
+    e.preventDefault()
+    onChange(graphPresets[next].id)
+    refs.current[next]?.focus()
+  }
+
+  return (
+    <div role="tablist" aria-label="Preset views" className="flex flex-wrap gap-1.5">
+      {graphPresets.map((preset, i) => {
+        const selected = preset.id === value
+        return (
+          <button
+            key={preset.id}
+            ref={(el) => {
+              refs.current[i] = el
+            }}
+            type="button"
+            role="tab"
+            id={`graph-tab-${preset.id}`}
+            aria-selected={selected}
+            aria-controls="graph-panel"
+            tabIndex={i === activeIndex ? 0 : -1}
+            onClick={() => onChange(preset.id)}
+            onKeyDown={(e) => onKeyDown(e, i)}
+            className={`rounded-lg px-3 py-2 text-sm transition-colors duration-150 ${
+              selected
+                ? 'bg-accent-soft font-medium text-accent-deep'
+                : 'border border-line text-fg-secondary hover:border-line-strong hover:text-fg'
+            }`}
+          >
+            {preset.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+interface ConnectionPickerProps {
+  value: GraphConnections
+  onChange: (value: GraphConnections) => void
+}
+
+const connectionOptions: Array<{ id: GraphConnections; label: string; hint: string }> = [
+  { id: 'provider', label: 'By company', hint: 'Joins every model from the same company.' },
+  { id: 'family', label: 'By model family', hint: 'Joins variants of one release, cheapest first.' },
+  { id: 'off', label: 'None', hint: 'Just the points.' },
+]
+
+/** Chooses which related points get joined by a dotted line. */
+export function ConnectionPicker({ value, onChange }: ConnectionPickerProps) {
+  const active = connectionOptions.find((o) => o.id === value)!
+  return (
+    <fieldset>
+      <legend className="mb-1.5 text-xs font-medium uppercase tracking-wide text-fg-muted">
+        Connect points
+      </legend>
+      <div className="flex flex-wrap gap-1.5">
+        {connectionOptions.map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => onChange(opt.id)}
+            aria-pressed={value === opt.id}
+            className={`rounded-lg px-3 py-1.5 text-sm transition-colors duration-150 ${
+              value === opt.id
+                ? 'bg-accent-soft font-medium text-accent-deep'
+                : 'border border-line text-fg-secondary hover:border-line-strong hover:text-fg'
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+      <p className="mt-1.5 text-xs text-fg-muted">{active.hint}</p>
     </fieldset>
   )
 }
@@ -103,33 +221,60 @@ export function Graph() {
     structuredData: meta.structuredData,
   })
 
-  const [xId, setXId] = useState('price-input')
-  const [yId, setYId] = useState(defaultYAxisId)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const state = parseGraphParams(searchParams)
   const [selected, setSelected] = useState<GraphRow | null>(null)
 
-  // A pinned point's values only make sense for the axes it was tapped on.
+  // A pinned point's values only make sense for the axes it was tapped on, so
+  // any change that moves the axes clears it.
+  const patchState = (patch: Partial<GraphUrlState>) => {
+    setSearchParams(
+      (prev) => serializeGraphParams({ ...parseGraphParams(prev), ...patch }),
+      { replace: true },
+    )
+  }
+
+  const changePreset = (id: string) => {
+    const preset = graphPresets.find((p) => p.id === id)!
+    patchState({ preset: preset.id, xId: preset.xId, yId: preset.yId })
+    setSelected(null)
+    captureGraphAxesChange(posthog, 'x', preset.xId)
+    captureGraphAxesChange(posthog, 'y', preset.yId)
+  }
+
+  // Hand-setting an axis drops out of preset mode: the chart no longer matches
+  // any tab, so leaving one highlighted would misdescribe what's on screen.
   const changeX = (id: string) => {
-    setXId(id)
+    patchState({ preset: null, xId: id, yId: state.yId })
     setSelected(null)
     captureGraphAxesChange(posthog, 'x', id)
   }
   const changeY = (id: string) => {
-    setYId(id)
+    patchState({ preset: null, xId: state.xId, yId: id })
     setSelected(null)
     captureGraphAxesChange(posthog, 'y', id)
   }
+
+  const changeConnections = (connections: GraphConnections) => patchState({ connections })
 
   const handlePointSelected = (row: GraphRow) => {
     setSelected(row)
     captureGraphPointSelected(posthog, row.model, row.provider, row.x, row.y)
   }
 
-  const xAxis = axisOptions.find((o) => o.id === xId)!
-  const yAxis = axisOptions.find((o) => o.id === yId)!
+  const xAxis = axisOptions.find((o) => o.id === state.xId)!
+  const yAxis = axisOptions.find((o) => o.id === state.yId)!
+  const activePreset = graphPresets.find((p) => p.id === state.preset) ?? null
 
-  const { rows, excluded } = useMemo(() => buildGraphRows(xAxis, yAxis), [xAxis, yAxis])
+  const { rows, excluded } = useMemo(
+    () => buildGraphRows(xAxis, yAxis, state.connections),
+    [xAxis, yAxis, state.connections],
+  )
 
-  const spec = useMemo(() => buildGraphSpec(xAxis, yAxis, rows), [rows, xAxis, yAxis])
+  const spec = useMemo(
+    () => buildGraphSpec(xAxis, yAxis, rows, state.connections),
+    [rows, xAxis, yAxis, state.connections],
+  )
 
   return (
     <div className="space-y-6">
@@ -143,24 +288,33 @@ export function Graph() {
       <div className="max-w-2xl">
         <h1 className="text-3xl font-semibold tracking-tight">See it on a graph</h1>
         <p className="mt-3 leading-relaxed text-fg-secondary">
-          Pick what each axis shows, then look for models in the sweet spot, usually{' '}
+          Start with one of the views below, then look for models in the sweet spot, usually{' '}
           <span className="font-medium text-fg">high on performance, low on price</span>. Tap or
           hover a point to see which model it is.
         </p>
       </div>
 
-      <div className="space-y-4 rounded-xl border border-line bg-surface-raised p-4">
-        <AxisPicker label="Horizontal axis (x)" value={xId} onChange={changeX} />
-        <AxisPicker label="Vertical axis (y)" value={yId} onChange={changeY} />
+      <div className="space-y-3">
+        <PresetTabs value={state.preset} onChange={changePreset} />
+        <p className="text-sm text-fg-secondary">
+          {activePreset
+            ? activePreset.question
+            : `Custom view: ${xAxis.label} against ${yAxis.label}.`}
+        </p>
       </div>
 
-      <div className="rounded-xl border border-line bg-surface-raised p-4">
+      <div
+        id="graph-panel"
+        role="tabpanel"
+        aria-labelledby={activePreset ? `graph-tab-${activePreset.id}` : undefined}
+        tabIndex={0}
+        className="rounded-xl border border-line bg-surface-raised p-4"
+      >
         {rows.length > 0 ? (
           <>
             <div style={{ height: 480 }}>
-              <Chart<GraphRow>
+              <ThemeAwareChart<GraphRow>
                 spec={spec}
-                darkMode="off"
                 onMarkClick={(e) => handlePointSelected(e.datum as GraphRow)}
               />
             </div>
@@ -172,6 +326,21 @@ export function Graph() {
           </p>
         )}
       </div>
+
+      <details
+        open={state.advancedOpen}
+        onToggle={(e) => patchState({ advancedOpen: (e.currentTarget as HTMLDetailsElement).open })}
+        className="rounded-xl border border-line bg-surface-raised"
+      >
+        <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-fg-secondary transition-colors duration-150 hover:text-fg">
+          Advanced: choose your own axes
+        </summary>
+        <div className="space-y-4 border-t border-line p-4">
+          <AxisPicker label="Horizontal axis (x)" value={state.xId} onChange={changeX} />
+          <AxisPicker label="Vertical axis (y)" value={state.yId} onChange={changeY} />
+          <ConnectionPicker value={state.connections} onChange={changeConnections} />
+        </div>
+      </details>
 
       {excluded.length > 0 && (
         <p className="text-xs text-fg-muted">

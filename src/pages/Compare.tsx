@@ -425,36 +425,27 @@ export function Compare() {
                 className="sticky left-0 z-20 bg-surface-raised"
               />
               {benchmarks.map((b) => (
-                <th
+                /* Short label keeps the header on one line; the full name and the
+                   plain-language explanation move into the tooltip. The source link
+                   sits beside the sort button, not inside it — nesting a link in a
+                   button hides it from keyboard users. */
+                <SortableHeader
                   key={b.id}
-                  aria-sort={
-                    sort.column === b.id
-                      ? sort.direction === 'asc'
-                        ? 'ascending'
-                        : 'descending'
-                      : 'none'
+                  column={b.id}
+                  label={b.shortName ?? b.name}
+                  title={`${b.name}. ${b.eli5}`}
+                  sort={sort}
+                  onSort={handleSortChange}
+                  textAlign="right"
+                  className="text-sm"
+                  trailing={
+                    <BenchmarkSourceLink
+                      sourceUrl={b.sourceUrl}
+                      benchmarkName={b.name}
+                      variant="icon"
+                    />
                   }
-                  className="px-2 sm:px-3 py-3 text-right text-sm font-medium text-fg-muted"
-                >
-                  {/* The source link sits beside the sort button, not inside it —
-                      nesting a link in a button hides it from keyboard users. */}
-                  <span className="inline-flex w-full items-center justify-end">
-                    <button
-                      type="button"
-                      onClick={() => handleSortChange(b.id)}
-                      title={b.eli5}
-                      className="hover:text-fg transition-colors duration-150 text-right"
-                    >
-                      {b.name}
-                      {sort.column === b.id && (
-                        <span aria-hidden className="ml-1">
-                          {sort.direction === 'asc' ? '↑' : '↓'}
-                        </span>
-                      )}
-                    </button>
-                    <BenchmarkSourceLink sourceUrl={b.sourceUrl} benchmarkName={b.name} />
-                  </span>
-                </th>
+                />
               ))}
               <SortableHeader
                 column="inputPrice"

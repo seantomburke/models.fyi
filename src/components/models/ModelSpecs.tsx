@@ -22,17 +22,17 @@ export function ModelSpecs({ model, relevantBenchmarks }: Props) {
   return (
     <div className="space-y-6">
       <section>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Pricing</h2>
-        <div className="space-y-3 bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
+        <h2 className="text-lg font-semibold text-fg mb-4">Pricing</h2>
+        <div className="space-y-3 bg-surface-raised border border-line rounded-lg p-4">
           <div className="flex justify-between items-center">
-            <span className="text-slate-600 dark:text-slate-400">Input tokens</span>
-            <span className="font-medium text-slate-900 dark:text-white">
+            <span className="text-fg-muted">Input tokens</span>
+            <span className="font-medium text-fg">
               {formatPrice(model.inputPricePerMTok)}/M
             </span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-slate-600 dark:text-slate-400">Output tokens</span>
-            <span className="font-medium text-slate-900 dark:text-white">
+            <span className="text-fg-muted">Output tokens</span>
+            <span className="font-medium text-fg">
               {formatPrice(model.outputPricePerMTok)}/M
             </span>
           </div>
@@ -40,18 +40,18 @@ export function ModelSpecs({ model, relevantBenchmarks }: Props) {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Capacity</h2>
-        <div className="space-y-3 bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
+        <h2 className="text-lg font-semibold text-fg mb-4">Capacity</h2>
+        <div className="space-y-3 bg-surface-raised border border-line rounded-lg p-4">
           <div className="flex justify-between items-center">
-            <span className="text-slate-600 dark:text-slate-400">Context window</span>
-            <span className="font-medium text-slate-900 dark:text-white">
+            <span className="text-fg-muted">Context window</span>
+            <span className="font-medium text-fg">
               {formatNumber(model.contextWindowTokens)}
             </span>
           </div>
           {model.maxOutputTokens && (
             <div className="flex justify-between items-center">
-              <span className="text-slate-600 dark:text-slate-400">Max output</span>
-              <span className="font-medium text-slate-900 dark:text-white">
+              <span className="text-fg-muted">Max output</span>
+              <span className="font-medium text-fg">
                 {formatNumber(model.maxOutputTokens)}
               </span>
             </div>
@@ -60,17 +60,17 @@ export function ModelSpecs({ model, relevantBenchmarks }: Props) {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Capabilities</h2>
+        <h2 className="text-lg font-semibold text-fg mb-4">Capabilities</h2>
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+          <div className="flex items-center gap-2 text-fg-secondary">
             <span>{model.reasoning ? '✓' : '✗'}</span>
             <span>Reasoning & Planning</span>
           </div>
-          <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+          <div className="flex items-center gap-2 text-fg-secondary">
             <span>{model.internetAccess ? '✓' : '✗'}</span>
             <span>Web Search</span>
           </div>
-          <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+          <div className="flex items-center gap-2 text-fg-secondary">
             <span>{model.openSource ? '✓' : '✗'}</span>
             <span>Open Source</span>
           </div>
@@ -79,7 +79,7 @@ export function ModelSpecs({ model, relevantBenchmarks }: Props) {
 
       {relevantBenchmarks.length > 0 && (
         <section>
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+          <h2 className="text-lg font-semibold text-fg mb-4">
             Best Scores
           </h2>
           <div className="space-y-2">
@@ -88,8 +88,8 @@ export function ModelSpecs({ model, relevantBenchmarks }: Props) {
               .slice(0, 5)
               .map((bench) => (
                 <div key={bench.id} className="flex justify-between items-center text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">{bench.name}</span>
-                  <span className="font-medium text-slate-900 dark:text-white">
+                  <span className="text-fg-muted">{bench.name}</span>
+                  <span className="font-medium text-fg">
                     {model.scores[bench.id]}%
                   </span>
                 </div>

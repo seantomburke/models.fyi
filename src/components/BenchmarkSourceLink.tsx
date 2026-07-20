@@ -3,7 +3,11 @@ interface BenchmarkSourceLinkProps {
   benchmarkName: string
   className?: string
   children?: React.ReactNode
-  variant?: 'badge' | 'wrapper'
+  /**
+   * `badge` — "source ↗" text. `wrapper` — wraps children in the link.
+   * `icon` — arrow only, for tight spots like table headers.
+   */
+  variant?: 'badge' | 'wrapper' | 'icon'
 }
 
 function addUtmSource(url: string): string {
@@ -36,6 +40,21 @@ export function BenchmarkSourceLink({
         title={`View ${benchmarkName} source`}
       >
         {children}
+      </a>
+    )
+  }
+
+  if (variant === 'icon') {
+    return (
+      <a
+        href={urlWithUtm}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`inline-flex shrink-0 items-center rounded text-[10px] font-medium text-fg-faint transition-colors duration-150 hover:text-accent-deep focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-deep ${className}`}
+        aria-label={`View ${benchmarkName} source`}
+        title={`View ${benchmarkName} source`}
+      >
+        <span aria-hidden>↗</span>
       </a>
     )
   }

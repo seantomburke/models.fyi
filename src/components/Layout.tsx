@@ -5,6 +5,7 @@ import { dataSourcedAt } from '../data/index.ts'
 import { DarkModeToggle } from './DarkModeToggle'
 import { ErrorBoundary } from './ErrorBoundary.tsx'
 import { ReturnToTop } from './ReturnToTop.tsx'
+import { ScrollToTop } from './ScrollToTop.tsx'
 
 const navItems = [
   { to: '/compare', label: 'Compare' },
@@ -51,6 +52,7 @@ export function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <ScrollToTop />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:z-50 focus:absolute focus:top-0 focus:left-0 focus:p-4 focus:bg-accent-deep focus:text-white"

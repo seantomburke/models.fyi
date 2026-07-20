@@ -38,8 +38,7 @@ function ModelDetailContent({ model }: { model: Model }) {
   })
 
   return (
-    <main className="min-h-screen bg-white dark:bg-slate-950 transition-colors">
-      <div className="max-w-4xl mx-auto px-6 py-12 space-y-12">
+    <div className="mx-auto max-w-4xl space-y-12">
         <ModelHeader model={model} provider={provider} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -56,10 +55,10 @@ function ModelDetailContent({ model }: { model: Model }) {
 
         {model.whyChooseThis && (
           <section>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+            <h2 className="mb-4 text-2xl font-bold text-fg">
               Why Choose {model.name}?
             </h2>
-            <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+            <p className="whitespace-pre-line leading-relaxed text-fg-secondary">
               {model.whyChooseThis}
             </p>
           </section>
@@ -73,24 +72,23 @@ function ModelDetailContent({ model }: { model: Model }) {
 
         <nav
           aria-label="Compare links"
-          className="flex flex-wrap gap-x-6 gap-y-2 pt-8 border-t border-slate-200 dark:border-slate-700"
+          className="flex flex-wrap gap-x-6 gap-y-2 border-t border-line pt-8"
         >
           {provider && (
             <Link
               to={`/compare?filter=${model.providerId}`}
-              className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-sm font-medium text-accent-deep hover:underline"
             >
               Compare all {provider.name} models →
             </Link>
           )}
           <Link
             to="/compare"
-            className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            className="text-sm font-medium text-accent-deep hover:underline"
           >
             Compare every model →
           </Link>
         </nav>
-      </div>
-    </main>
+    </div>
   )
 }

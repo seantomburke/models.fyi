@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { BenchmarkCell } from './BenchmarkCell'
 import type { Benchmark } from '../data/types'
 import type { ProvenanceDisplay } from '../lib/scoreProvenance'
@@ -118,5 +119,131 @@ describe('BenchmarkCell', () => {
     )
     expect(screen.getByText('75.0%')).toBeInTheDocument()
     expect(container.querySelector('span.rounded-full')).toBeNull()
+  })
+})
+
+describe('BenchmarkCell pinned details card (issue #78)', () => {
+  const secondBenchmark: Benchmark = {
+    ...mockBenchmark,
+    id: 'hle',
+    name: 'Second Benchmark',
+    sourceUrl: 'https://example.com/second',
+  }
+
+  function renderRow(children: React.ReactNode) {
+    return render(
+      <table>
+        <tbody>
+          <tr>{children}</tr>
+        </tbody>
+      </table>,
+    )
+  }
+
+  it('previews the card on hover and hides it when the pointer leaves', async () => {
+    const user = userEvent.setup()
+    renderRow(<BenchmarkCell benchmark={mockBenchmark} score={85.3} isBest={false} />)
+
+    expect(screen.queryByRole('link', { name: /view source/i })).not.toBeInTheDocument()
+
+    await user.hover(screen.getByRole('button'))
+    expect(screen.getByRole('link', { name: /view source/i })).toBeInTheDocument()
+
+    await user.unhover(screen.getByRole('button'))
+    await waitFor(() =>
+      expect(screen.queryByRole('link', { name: /view source/i })).not.toBeInTheDocument(),
+    )
+  })
+
+  it('keeps the card open after a click so the source link is clickable', async () => {
+    const user = userEvent.setup()
+    renderRow(<BenchmarkCell benchmark={mockBenchmark} score={85.3} isBest={false} />)
+
+    const scoreButton = screen.getByRole('button')
+    await user.click(scoreButton)
+    expect(scoreButton).toHaveAttribute('aria-expanded', 'true')
+
+    // Pointer leaves the score on its way into the card — it must stay open.
+    await user.unhover(scoreButton)
+    const link = screen.getByRole('link', { name: /view source/i })
+    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', 'https://example.com/test')
+  })
+
+  it('unpins when the same score is clicked again', async () => {
+    const user = userEvent.setup()
+    renderRow(<BenchmarkCell benchmark={mockBenchmark} score={85.3} isBest={false} />)
+
+    const scoreButton = screen.getByRole('button')
+    await user.click(scoreButton)
+    await user.click(scoreButton)
+
+    expect(scoreButton).toHaveAttribute('aria-expanded', 'false')
+    await user.unhover(scoreButton)
+    await waitFor(() =>
+      expect(screen.queryByRole('link', { name: /view source/i })).not.toBeInTheDocument(),
+    )
+  })
+
+  it('unpins when clicking away', async () => {
+    const user = userEvent.setup()
+    renderRow(<BenchmarkCell benchmark={mockBenchmark} score={85.3} isBest={false} />)
+
+    const scoreButton = screen.getByRole('button')
+    await user.click(scoreButton)
+    await user.click(document.body)
+
+    expect(scoreButton).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('unpins the previous card when another score is clicked', async () => {
+    const user = userEvent.setup()
+    renderRow(
+      <>
+        <BenchmarkCell benchmark={mockBenchmark} score={85.3} isBest={false} />
+        <BenchmarkCell benchmark={secondBenchmark} score={12.5} isBest={false} />
+      </>,
+    )
+
+    const [first, second] = screen.getAllByRole('button')
+    await user.click(first)
+    expect(first).toHaveAttribute('aria-expanded', 'true')
+
+    await user.click(second)
+    expect(first).toHaveAttribute('aria-expanded', 'false')
+    expect(second).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('closes a pinned card on Escape and returns focus to the score', async () => {
+    const user = userEvent.setup()
+    renderRow(<BenchmarkCell benchmark={mockBenchmark} score={85.3} isBest={false} />)
+
+    const scoreButton = screen.getByRole('button')
+    await user.click(scoreButton)
+    await user.keyboard('{Escape}')
+
+    expect(scoreButton).toHaveAttribute('aria-expanded', 'false')
+    expect(scoreButton).toHaveFocus()
+  })
+
+  it('exposes the pinned card as a labelled dialog', async () => {
+    const user = userEvent.setup()
+    renderRow(<BenchmarkCell benchmark={mockBenchmark} score={85.3} isBest={false} />)
+
+    await user.click(screen.getByRole('button'))
+    const dialog = screen.getByRole('dialog', { name: 'Test Benchmark details' })
+    expect(dialog).toBeInTheDocument()
+    expect(screen.getByRole('button')).toHaveAttribute('aria-controls', dialog.id)
+  })
+
+  it('keeps the card open while the source link is focused by keyboard', async () => {
+    const user = userEvent.setup()
+    renderRow(<BenchmarkCell benchmark={mockBenchmark} score={85.3} isBest={false} />)
+
+    await user.tab()
+    expect(screen.getByRole('button')).toHaveFocus()
+
+    await user.tab()
+    expect(screen.getByRole('link', { name: /view source/i })).toHaveFocus()
   })
 })

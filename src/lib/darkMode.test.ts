@@ -96,3 +96,13 @@ test('updates document root class when dark mode is toggled', () => {
   })
   expect(document.documentElement.classList.contains('dark')).toBe(false)
 })
+
+test('keeps every hook consumer synchronized when the preference changes', () => {
+  const first = renderHook(() => useDarkMode())
+  const second = renderHook(() => useDarkMode())
+
+  act(() => first.result.current[1](true))
+
+  expect(first.result.current[0]).toBe(true)
+  expect(second.result.current[0]).toBe(true)
+})

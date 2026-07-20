@@ -8,7 +8,7 @@ interface Props {
 
 export function ModelHeader({ model, provider }: Props) {
   return (
-    <div className="border-b border-slate-200 dark:border-slate-700 pb-8">
+    <div className="border-b border-line pb-8">
       <div className="flex flex-wrap items-start gap-4 mb-4">
         {provider && (
           <div className="flex-shrink-0">
@@ -16,16 +16,16 @@ export function ModelHeader({ model, provider }: Props) {
           </div>
         )}
         <div className="flex-1 min-w-48">
-          <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2">
+          <h1 className="text-4xl font-bold text-fg mb-2">
             {model.name}
           </h1>
           {provider && (
-            <p className="text-lg text-slate-600 dark:text-slate-400">{provider.name}</p>
+            <p className="text-lg text-fg-muted">{provider.name}</p>
           )}
         </div>
         <div className="flex flex-wrap gap-2">
           {model.reasoning && (
-            <span className="whitespace-nowrap px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-md text-sm font-medium">
+            <span className="whitespace-nowrap px-3 py-1 bg-accent-soft text-accent-deep rounded-md text-sm font-medium">
               🧠 Reasoning
             </span>
           )}
@@ -36,7 +36,7 @@ export function ModelHeader({ model, provider }: Props) {
           )}
         </div>
       </div>
-      <p className="text-lg text-slate-700 dark:text-slate-300">{model.blurb}</p>
+      <p className="text-lg text-fg-secondary">{model.blurb}</p>
     </div>
   )
 }

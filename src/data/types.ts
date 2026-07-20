@@ -45,6 +45,11 @@ export type BenchmarkCategory =
 export interface Benchmark {
   id: BenchmarkId
   name: string
+  /**
+   * Compact label for narrow table headers. Keep it to one line — the full
+   * `name` still shows in the header tooltip and everywhere else.
+   */
+  shortName?: string
   /** What this benchmark measures, in plain language. */
   eli5: string
   /** All current benchmarks are 0-100 percentages, higher = better. */

@@ -118,7 +118,10 @@ export function PixelGrid({ pixels, onChange, gridSize }: PixelGridProps) {
     <div
       ref={containerRef}
       onPointerMove={handleContainerPointerMove}
-      className="grid touch-none gap-1 rounded border border-line p-3 sm:p-4"
+      // select-none stops a desktop drag from text-selecting the grid and the prose
+      // around it; onDragStart cancels the browser's native drag of the cell itself.
+      onDragStart={(event) => event.preventDefault()}
+      className="grid touch-none select-none gap-1 rounded border border-line p-3 sm:p-4"
       style={{
         gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
       }}

@@ -23,7 +23,7 @@ export function RelatedModels({ currentModelId }: Props) {
 
   return (
     <section>
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+      <h2 className="text-2xl font-bold text-fg mb-6">
         You Might Also Like
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -33,13 +33,13 @@ export function RelatedModels({ currentModelId }: Props) {
             <Link
               key={model.id}
               to={`/models/${model.id}`}
-              className="block p-4 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-slate-400 dark:hover:border-slate-500 transition-colors"
+              className="block p-4 border border-line rounded-lg hover:border-line-strong transition-colors"
             >
               <div className="flex items-center gap-2 mb-2">
                 {provider && <ProviderLogo providerId={provider.id} size={16} />}
-                <h3 className="font-semibold text-slate-900 dark:text-white">{model.name}</h3>
+                <h3 className="font-semibold text-fg">{model.name}</h3>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">{model.blurb}</p>
+              <p className="text-sm text-fg-muted">{model.blurb}</p>
             </Link>
           )
         })}

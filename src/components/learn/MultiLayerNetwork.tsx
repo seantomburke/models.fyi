@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { HoverableNode } from './NodePatternTooltip'
 
 /**
  * Animated forward pass through a small deep network.
@@ -129,8 +130,8 @@ export function MultiLayerNetwork() {
             const reached = step >= l
             const value = activations[l][i]
             const isWinner = done && l === LAYER_SIZES.length - 1 && i === winner
-            return (
-              <g key={`n-${l}-${i}`}>
+            const marks = (
+              <>
                 <circle
                   cx={nodeX(l)}
                   cy={nodeY(l, i)}
@@ -152,7 +153,35 @@ export function MultiLayerNetwork() {
                     {value.toFixed(2)}
                   </text>
                 )}
-              </g>
+              </>
+            )
+
+            // Only the hidden layers get a hover card. These weights are random,
+            // so a hidden node here has no name and no picture — what it does have
+            // is the weight vector it applies, which is the honest answer to
+            // "what pattern is this node looking for?" for an untrained network.
+            const isHidden = l > 0 && l < LAYER_SIZES.length - 1
+            if (!isHidden) return <g key={`n-${l}-${i}`}>{marks}</g>
+
+            const incoming = weights[l - 1][i]
+            return (
+              <HoverableNode
+                key={`n-${l}-${i}`}
+                cx={nodeX(l)}
+                cy={nodeY(l, i)}
+                hitRadius={18}
+                svgWidth={SVG_W}
+                pattern={{
+                  name: `${layerLabels[l]}, neuron ${i + 1}`,
+                  color: 'var(--color-accent-deep)',
+                  blurb: `Looks for this pattern in the layer before it: ${incoming
+                    .map((w) => w.toFixed(2))
+                    .join(', ')}. Positive weights excite it, negative ones dampen it.`,
+                  activation: reached ? value : undefined,
+                }}
+              >
+                {marks}
+              </HoverableNode>
             )
           })
         )}

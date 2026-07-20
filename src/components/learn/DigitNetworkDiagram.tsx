@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
+  DIGIT_SEGMENTS,
   DIGITS,
   GRID_SIZE,
   OUTPUT_WEIGHTS,
+  PIXEL_COUNT,
   SEGMENTS,
   classifyDigit,
 } from './digitClassifierModel'
+import { HoverableNode } from './NodePatternTooltip'
 
 /**
  * Animated forward pass for the digit classifier: 64 pixel inputs on the
@@ -40,6 +43,19 @@ const OUTPUT_X = 578
 function outputY(d: number): number {
   return 48 + d * 36
 }
+
+/** A detector's watched pixels as a full-grid boolean mask, for the hover card. */
+function maskOf(indices: number[]): boolean[] {
+  const mask = Array<boolean>(PIXEL_COUNT).fill(false)
+  for (const i of indices) mask[i] = true
+  return mask
+}
+
+/** Precomputed once: each stroke's mask and the digits that use it. */
+const SEGMENT_PATTERNS = SEGMENTS.map((seg, j) => ({
+  mask: maskOf(seg.pixels),
+  digits: DIGITS.filter((d) => DIGIT_SEGMENTS[d].includes(j)),
+}))
 
 interface DigitNetworkDiagramProps {
   pixels: boolean[]
@@ -150,8 +166,22 @@ export function DigitNetworkDiagram({ pixels }: DigitNetworkDiagramProps) {
         {/* Hidden nodes: the 7 stroke detectors */}
         {SEGMENTS.map((seg, j) => {
           const activation = result.hidden[j]
+          const pattern = SEGMENT_PATTERNS[j]
           return (
-            <g key={`h-${j}`}>
+            <HoverableNode
+              key={`h-${j}`}
+              cx={HIDDEN_X}
+              cy={hiddenY(j)}
+              hitRadius={16}
+              svgWidth={SVG_W}
+              pattern={{
+                name: seg.name,
+                color: seg.color,
+                pixels: pattern.mask,
+                blurb: `Fires when most of this stroke is drawn. Used by ${pattern.digits.join(', ')}.`,
+                activation: hiddenDone ? activation : undefined,
+              }}
+            >
               <circle
                 cx={HIDDEN_X}
                 cy={hiddenY(j)}
@@ -169,7 +199,7 @@ export function DigitNetworkDiagram({ pixels }: DigitNetworkDiagramProps) {
               >
                 {hiddenDone ? `${(activation * 100).toFixed(0)}%` : '?'}
               </text>
-            </g>
+            </HoverableNode>
           )
         })}
 

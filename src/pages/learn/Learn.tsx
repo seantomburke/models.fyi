@@ -3,6 +3,8 @@ import { usePageMeta } from '../../lib/meta.ts'
 import { metaFor } from '../../lib/routeMeta.ts'
 import { topics, levels } from './topics.ts'
 import { Breadcrumb } from '../../components/Breadcrumb.tsx'
+import { TopicCardAnimation } from '../../components/learn/TopicCardAnimation.tsx'
+import { MOTIF_LABELS, motifFor } from '../../components/learn/topicMotifs.ts'
 
 export function Learn() {
   const meta = metaFor('/learn')
@@ -40,24 +42,30 @@ export function Learn() {
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-relaxed text-fg-secondary">{level.blurb}</p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {levelTopics.map((t, i) => (
-                <Link
-                  key={t.slug}
-                  to={`/learn/${t.slug}`}
-                  className="group rounded-xl border border-line bg-surface-raised p-5 transition-colors duration-150 hover:border-line-strong"
-                >
-                  <span className="flex items-baseline justify-between text-xs font-medium uppercase tracking-wide text-fg-faint">
-                    <span>
-                      {level.title} · Part {i + 1}
+              {levelTopics.map((t, i) => {
+                const motif = motifFor(t.slug)
+                return (
+                  <Link
+                    key={t.slug}
+                    to={`/learn/${t.slug}`}
+                    className="group rounded-xl border border-line bg-surface-raised p-5 transition-colors duration-150 hover:border-line-strong"
+                  >
+                    <span className="flex items-baseline justify-between text-xs font-medium uppercase tracking-wide text-fg-faint">
+                      <span>
+                        {level.title} · Part {i + 1}
+                      </span>
+                      {t.modelSpec && <span className="text-accent-deep">{t.modelSpec.name}</span>}
                     </span>
-                    {t.modelSpec && <span className="text-accent-deep">{t.modelSpec.name}</span>}
-                  </span>
-                  <h3 className="mt-1 text-lg font-semibold tracking-tight group-hover:text-accent-deep">
-                    {t.question}
-                  </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-fg-secondary">{t.hook}</p>
-                </Link>
-              ))}
+                    <h3 className="mt-1 text-lg font-semibold tracking-tight group-hover:text-accent-deep">
+                      {t.question}
+                    </h3>
+                    <p className="mt-1 text-sm leading-relaxed text-fg-secondary">{t.hook}</p>
+                    <div className="mt-3">
+                      <TopicCardAnimation motif={motif} label={MOTIF_LABELS[motif]} />
+                    </div>
+                  </Link>
+                )
+              })}
             </div>
           </section>
         )

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, createEvent } from '@testing-library/react'
 import { useState } from 'react'
 import { PixelGrid } from './PixelGrid'
 
@@ -209,5 +209,21 @@ describe('PixelGrid', () => {
 
     fireEvent.click(target)
     expect(pixel(0)).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  // Issue #71: on desktop, dragging across the grid used to text-select the
+  // squares and the prose around them, leaving the page smeared blue.
+  it('does not let a drawing drag select text', () => {
+    render(<Harness />)
+    const container = pixel(0).parentElement!
+    expect(container.className).toContain('select-none')
+  })
+
+  it('blocks the browser from starting a native drag on a cell', () => {
+    render(<Harness />)
+    const container = pixel(0).parentElement!
+    const dragStart = createEvent.dragStart(container)
+    fireEvent(container, dragStart)
+    expect(dragStart.defaultPrevented).toBe(true)
   })
 })

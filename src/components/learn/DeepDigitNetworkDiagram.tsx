@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
+  DIGIT_PRIMITIVES,
   DIGITS,
   GRID_SIZE,
   OUTPUT_SHAPE_WEIGHTS,
+  PIXEL_COUNT,
   PRIMITIVES,
   SHAPES,
   SHAPE_WEIGHTS,
   classifyDigitDeep,
 } from './deepDigitModel'
+import { HoverableNode } from './NodePatternTooltip'
 
 /**
  * Animated forward pass for Doodle-918, four columns wide: the 64 pixel
@@ -49,6 +52,30 @@ const OUTPUT_X = 682
 function outputY(d: number): number {
   return 48 + d * 36
 }
+
+/** A detector's watched pixels as a full-grid boolean mask, for the hover card. */
+function maskOf(indices: number[]): boolean[] {
+  const mask = Array<boolean>(PIXEL_COUNT).fill(false)
+  for (const i of indices) mask[i] = true
+  return mask
+}
+
+/** Precomputed once: each primitive's mask and the digits that use it. */
+const PRIMITIVE_PATTERNS = PRIMITIVES.map((prim, j) => ({
+  mask: maskOf(prim.pixels),
+  digits: DIGITS.filter((d) => DIGIT_PRIMITIVES[d].includes(j)),
+}))
+
+/**
+ * A shape has no pixels of its own — it watches primitives. Its pattern is
+ * the union of the pixels of every primitive it requires, which is exactly
+ * the drawing that makes the shape appear.
+ */
+const SHAPE_PATTERNS = SHAPES.map((shape) => ({
+  mask: maskOf(shape.needs.flatMap((j) => PRIMITIVES[j].pixels)),
+  needs: shape.needs.map((j) => PRIMITIVES[j].name),
+  forbids: shape.forbids.map((j) => PRIMITIVES[j].name),
+}))
 
 interface DeepDigitNetworkDiagramProps {
   pixels: boolean[]
@@ -181,8 +208,22 @@ export function DeepDigitNetworkDiagram({ pixels }: DeepDigitNetworkDiagramProps
         {/* Layer 1 nodes: the 10 stroke primitives */}
         {PRIMITIVES.map((prim, j) => {
           const activation = result.primitives[j]
+          const pattern = PRIMITIVE_PATTERNS[j]
           return (
-            <g key={`p-${j}`}>
+            <HoverableNode
+              key={`p-${j}`}
+              cx={PRIMITIVE_X}
+              cy={primitiveY(j)}
+              hitRadius={14}
+              svgWidth={SVG_W}
+              pattern={{
+                name: prim.name,
+                color: prim.color,
+                pixels: pattern.mask,
+                blurb: `Fires when most of this stroke is drawn. Used by ${pattern.digits.join(', ')}.`,
+                activation: primitivesDone ? activation : undefined,
+              }}
+            >
               <circle
                 cx={PRIMITIVE_X}
                 cy={primitiveY(j)}
@@ -200,15 +241,31 @@ export function DeepDigitNetworkDiagram({ pixels }: DeepDigitNetworkDiagramProps
               >
                 {primitivesDone ? `${(activation * 100).toFixed(0)}%` : '?'}
               </text>
-            </g>
+            </HoverableNode>
           )
         })}
 
         {/* Layer 2 nodes: the 8 shape detectors */}
         {SHAPES.map((shape, s) => {
           const activation = result.shapes[s]
+          const pattern = SHAPE_PATTERNS[s]
           return (
-            <g key={`s-${s}`}>
+            <HoverableNode
+              key={`s-${s}`}
+              cx={SHAPE_X}
+              cy={shapeY(s)}
+              hitRadius={16}
+              svgWidth={SVG_W}
+              pattern={{
+                name: shape.name,
+                color: shape.color,
+                pixels: pattern.mask,
+                blurb: shape.blurb,
+                needs: pattern.needs,
+                forbids: pattern.forbids,
+                activation: shapesDone ? activation : undefined,
+              }}
+            >
               <circle
                 cx={SHAPE_X}
                 cy={shapeY(s)}
@@ -226,7 +283,7 @@ export function DeepDigitNetworkDiagram({ pixels }: DeepDigitNetworkDiagramProps
               >
                 {shapesDone ? `${(activation * 100).toFixed(0)}%` : '?'}
               </text>
-            </g>
+            </HoverableNode>
           )
         })}
 
