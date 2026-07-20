@@ -457,31 +457,31 @@ interface Release {
 
 ## Success Criteria (Completion Definition)
 
+**Status: complete and deployed 2026-07-19 (`a7bab9f`).** Tasks 1–12 all shipped to `main`.
+
 - [x] Plan documented with clear task breakdown
-- [ ] Phase 1: 307 tests passing (Learn + FAQ + Glossary)
-- [ ] Phase 2: 332 tests passing (Model pages + data)
-- [ ] Phase 3: 380 tests passing (Bookmarks, What's new, Filters, Cards, Sticky header)
-- [ ] All new pages responsive (mobile + desktop)
-- [ ] All new pages have proper SEO (title, meta, schema)
-- [ ] Lighthouse ≥90 across all new pages
-- [ ] Zero TypeScript/ESLint errors
-- [ ] Manual QA sign-off (desktop + mobile)
-- [ ] PR created and ready for merge
+- [x] Phase 1: Learn + FAQ + Glossary shipped
+- [x] Phase 2: Model pages + data shipped
+- [x] Phase 3: Bookmarks, What's new, Filters, Cards, Sticky header shipped
+- [x] Test target cleared — **537 tests** across 56 files (target was 380)
+- [x] All new pages have proper SEO (title, meta, schema) — JSON-LD on 55/56 prerendered pages
+- [x] Zero TypeScript/lint errors — 3 pre-existing oxlint warnings remain
+- [ ] All new pages responsive (mobile + desktop) — not re-verified this pass
+- [ ] Lighthouse ≥90 across all new pages — **not measured**: needs a real browser
+- [ ] Manual QA sign-off (desktop + mobile) — outstanding, browser-dependent
+- [x] ~~PR created~~ — shipped directly to `main` per the repo's deploy-on-push convention
 
 ---
 
 ## Next Steps
 
-1. ✅ Audit completed (this document)
-2. → Start Task 1 (Expand Learn Topics)
-3. → Parallel: Start Task 2 (FAQ) and Task 3 (Glossary)
-4. → Complete Phase 1 validation
-5. → Move to Phase 2 (Model pages)
-6. → Complete Phase 3 (Engagement)
-7. → Comprehensive testing
-8. → Create Pull Request
+All twelve tasks are done and deployed. What remains is carried forward, not part of Phase 4B:
 
-**Estimated Start:** Immediately  
-**Estimated Completion:** 2026-07-25
+1. **Browser-dependent QA** — Lighthouse ≥90, mobile-responsive and dark-mode passes, manual sign-off. These need a real browser; the repo's light-stack rule keeps that tooling out of the test suite, so it wants a deliberate decision rather than a quiet dependency add.
+2. **Glossary to 50+ terms** — currently 47.
+3. **Model pages to 30+** — currently 19, gated on the model dataset growing (see issue #19, the standing benchmark/model refresh).
+4. **Verify rich snippets in Google Search Console** — markup validates locally; confirming how Google actually reads it needs live GSC access.
+
+**Completed:** 2026-07-19 (estimated 2026-07-25)
 
 ---

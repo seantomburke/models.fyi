@@ -89,23 +89,23 @@ Phase 4A (search, tooltips, copy buttons) has been completed with 283 passing te
 
 ## Specification
 
-**Success Criteria:**
+**Success Criteria:** (verified 2026-07-19 at `a7bab9f`)
 
-- [ ] 15+ new Learn topics published (comparisons, use cases, advanced concepts)
-- [ ] FAQ page with 20+ searchable questions
-- [ ] Glossary with 50+ terms, indexed for discovery
-- [ ] 30+ model detail pages live at `/models/:id`
-- [ ] Model pages include "why this model," related models, use cases
-- [ ] SEO rich snippets (JSON-LD) on model pages
-- [ ] Advanced filtering: reasoning, vision, web, image generation
-- [ ] Bookmark system: save 5+ favorites to localStorage
-- [ ] "What's new" feed showing recent releases
-- [ ] Model comparison cards (table alternative) on mobile
-- [ ] Sticky header with search on Compare page
-- [ ] All new code ≥90% test coverage
-- [ ] 350+ total tests passing
-- [ ] No Lighthouse regression (maintain ≥90)
-- [ ] SEO: rich snippets verified in Google Search Console
+- [x] 15+ new Learn topics published — **26 topics** live
+- [x] FAQ page with 20+ searchable questions — **24**
+- [ ] Glossary with 50+ terms, indexed for discovery — **47**, 3 short of target
+- [ ] 30+ model detail pages live at `/models/:id` — **19**, gated on the model dataset having 19 entries
+- [x] Model pages include "why this model," related models, use cases
+- [x] SEO rich snippets (JSON-LD) on model pages — now on **55/56** prerendered pages, not just model pages
+- [x] Advanced filtering: reasoning, vision, web, image generation
+- [x] Bookmark system: save 5+ favorites to localStorage
+- [x] "What's new" feed showing recent releases
+- [x] Model comparison cards (table alternative) on mobile
+- [x] Sticky header with search on Compare page
+- [x] All new code ≥90% test coverage — new lib modules 100%, ModelDetail 92.3%
+- [x] 350+ total tests passing — **537**
+- [ ] No Lighthouse regression (maintain ≥90) — **not measured**: needs a real browser
+- [ ] SEO: rich snippets verified in Google Search Console — needs live GSC access; markup validated locally (all 55 blocks parse, no fabricated fields)
 
 ---
 
