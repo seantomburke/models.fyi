@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { loadTokenSplitter, type TokenSplitter } from '../../lib/tokenize'
 
 const COLORS = [
@@ -51,24 +51,66 @@ function HighlightedTokens({ text, splitter }: { text: string; splitter: TokenSp
 export function TokenVisualization() {
   const [splitter, setSplitter] = useState<TokenSplitter | null>(null)
   const [customText, setCustomText] = useState('Type anything here to see how a model tokenizes it!')
+  const containerRef = useRef<HTMLDivElement>(null)
+  const requestedRef = useRef(false)
+  const mountedRef = useRef(true)
 
-  useEffect(() => {
-    let cancelled = false
+  // The o200k_base ranks are a megabyte of lazy chunk, and this widget sits in
+  // the last section of a long article. Fetch it only once the widget is about
+  // to be seen (or the moment someone types), never on page render.
+  const ensureSplitter = useCallback(() => {
+    if (requestedRef.current) return
+    requestedRef.current = true
     loadTokenSplitter()
       .then((s) => {
-        if (!cancelled) setSplitter(() => s)
+        if (mountedRef.current) setSplitter(() => s)
       })
-      .catch((err) => console.error('tokenizer failed to load', err))
-    return () => {
-      cancelled = true
-    }
+      .catch((err) => {
+        requestedRef.current = false
+        console.error('tokenizer failed to load', err)
+      })
   }, [])
+
+  useEffect(() => {
+    mountedRef.current = true
+    // No IntersectionObserver (SSR, jsdom, old browsers): load right away so
+    // behavior never regresses to a permanently unhighlighted fallback.
+    if (typeof IntersectionObserver === 'undefined') {
+      ensureSplitter()
+      return () => {
+        mountedRef.current = false
+      }
+    }
+
+    const el = containerRef.current
+    if (!el) {
+      ensureSplitter()
+      return () => {
+        mountedRef.current = false
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect()
+          ensureSplitter()
+        }
+      },
+      { rootMargin: '200px' },
+    )
+    observer.observe(el)
+    return () => {
+      mountedRef.current = false
+      observer.disconnect()
+    }
+  }, [ensureSplitter])
 
   const countLabel = (text: string) =>
     splitter ? `${splitter(text).length} tokens` : 'loading tokenizer…'
 
   return (
-    <div className="space-y-8">
+    <div ref={containerRef} className="space-y-8">
       <p className="text-sm text-fg-secondary">
         These are the real tokens computed by the o200k_base tokenizer (used by
         GPT-4o and o-series models). Each highlight is one token. Notice how a
@@ -96,7 +138,10 @@ export function TokenVisualization() {
         <textarea
           id="tokenize-input"
           value={customText}
-          onChange={(e) => setCustomText(e.target.value)}
+          onChange={(e) => {
+            ensureSplitter()
+            setCustomText(e.target.value)
+          }}
           rows={2}
           className="w-full rounded-lg border border-line bg-surface p-3 text-base text-fg focus:outline-none focus:ring-2 focus:ring-accent-deep"
         />
