@@ -93,5 +93,10 @@ test('open-source models are footnoted, not priced', async () => {
 
 test('renders both the price chart and the total-cost chart', async () => {
   await renderCalculator()
-  expect(screen.getAllByTestId('chart')).toHaveLength(2)
+  const user = userEvent.setup()
+  expect(screen.getAllByRole('status', { name: 'Interactive chart not loaded' })).toHaveLength(2)
+
+  await user.click(screen.getAllByRole('button', { name: 'Load chart' })[0])
+
+  expect(await screen.findAllByTestId('chart')).toHaveLength(2)
 })

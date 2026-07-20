@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePostHog } from '../lib/posthog-react.ts'
 import { ThemeAwareChart } from '../components/ThemeAwareChart.tsx'
-import '@opendata-ai/openchart-react/styles.css'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
 import { formatCost } from '../lib/format.ts'
@@ -277,7 +276,7 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
         </p>
         <div className="rounded-xl border border-line bg-surface-raised p-4">
           <div style={{ height: 560 }}>
-            <ThemeAwareChart spec={priceChart.spec} />
+            <ThemeAwareChart spec={priceChart.spec} deferUntilInteraction />
           </div>
         </div>
       </section>
@@ -371,7 +370,7 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
         <div className="rounded-xl border border-line bg-surface-raised p-4">
           {hasCosts ? (
             <div style={{ height: 440 }}>
-              <ThemeAwareChart spec={totalCostChart.spec} />
+              <ThemeAwareChart spec={totalCostChart.spec} deferUntilInteraction />
             </div>
           ) : (
             <p className="py-16 text-center text-sm text-fg-muted">
