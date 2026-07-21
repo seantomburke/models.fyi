@@ -1,16 +1,17 @@
 import { Link } from 'react-router-dom'
 import { usePageMeta } from '../lib/meta.ts'
 import { Breadcrumb } from '../components/Breadcrumb.tsx'
+import { notFoundMeta } from '../lib/routeMeta.ts'
 
 export function NotFound() {
   usePageMeta({
-    title: 'Page not found — Models.fyi',
-    description: 'The page you\'re looking for doesn\'t exist.',
-    pathname: '*',
+    ...notFoundMeta,
+    pathname: null,
+    robots: 'noindex',
   })
 
   return (
-    <main className="space-y-8">
+    <div className="space-y-8">
       <Breadcrumb
         items={[
           { name: 'Home', path: '/' },
@@ -98,6 +99,6 @@ export function NotFound() {
           </p>
         </Link>
       </section>
-    </main>
+    </div>
   )
 }

@@ -7,7 +7,7 @@
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
-import { render, routeMeta, canonicalUrl, faqs } from '../dist-server/entry-server.js'
+import { render, routeMeta, notFoundMeta, canonicalUrl, faqs } from '../dist-server/entry-server.js'
 
 const esc = (s) =>
   s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
@@ -69,10 +69,6 @@ function routePreloads(path) {
   ].join('\n    ')
 }
 
-// 404 fallback for routes we did NOT prerender: keep the EMPTY root so the
-// client renders from scratch (no hydration mismatch against wrong content).
-writeFileSync('dist/404.html', template)
-
 // Social crawlers (Slack, iMessage, X, Facebook) never run JS, so OG/Twitter
 // tags and the canonical URL must be in the static head, not just set by
 // usePageMeta at runtime.
@@ -80,23 +76,25 @@ writeFileSync('dist/404.html', template)
 // not match the template's tag, which Vite reformats across several lines. The
 // template's copy is stripped above so this is the only description on the
 // page; both facts are asserted below.
-const socialHead = ({ path, title, description, type, image }) => {
-  const url = canonicalUrl(path)
+const socialHead = ({ path, title, description, type, image }, { canonical = true } = {}) => {
+  const url = canonical ? canonicalUrl(path) : undefined
   return [
     `<meta name="description" content="${esc(description)}" />`,
-    `<link rel="canonical" href="${url}" />`,
+    ...(url ? [`<link rel="canonical" href="${url}" />`] : []),
     `<meta property="og:title" content="${esc(title)}" />`,
     `<meta property="og:description" content="${esc(description)}" />`,
-    `<meta property="og:url" content="${url}" />`,
+    ...(url ? [`<meta property="og:url" content="${url}" />`] : []),
     `<meta property="og:type" content="${type ?? 'website'}" />`,
     `<meta property="og:site_name" content="Models.fyi" />`,
-    `<meta property="og:image" content="${image}" />`,
-    `<meta property="og:image:width" content="1200" />`,
-    `<meta property="og:image:height" content="630" />`,
+    ...(image ? [
+      `<meta property="og:image" content="${image}" />`,
+      `<meta property="og:image:width" content="1200" />`,
+      `<meta property="og:image:height" content="630" />`,
+    ] : []),
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${esc(title)}" />`,
     `<meta name="twitter:description" content="${esc(description)}" />`,
-    `<meta name="twitter:image" content="${image}" />`,
+    ...(image ? [`<meta name="twitter:image" content="${image}" />`] : []),
   ].join('\n    ')
 }
 
@@ -106,17 +104,7 @@ const socialHead = ({ path, title, description, type, image }) => {
 const jsonLd = (data) =>
   `<script type="application/ld+json">${JSON.stringify(data).replaceAll('<', '\\u003c')}</script>`
 
-let count = 0
-for (const meta of routeMeta) {
-  const { path, title, description, structuredData } = meta
-  const body = await render(path)
-  // The point of prerendering is that a crawler reading raw HTML sees the real
-  // page. An unresolved Suspense boundary defeats that completely: React emits
-  // the shell with a `<!--$?-->` marker and the fallback, then streams the
-  // actual content as trailing <template> blobs that only a browser splices in.
-  // This shipped on 32 of 57 pages without anyone noticing, because the file
-  // still *contained* the content — just after </main>, where no crawler looks.
-  // Fail the build instead.
+const assertResolvedBody = (body, path) => {
   const main = body.match(/<main[^>]*>([\s\S]*?)<\/main>/)?.[1] ?? ''
   if (body.includes('<!--$?-->') || body.includes('<template id="B:')) {
     throw new Error(
@@ -126,6 +114,37 @@ for (const meta of routeMeta) {
   if (main.includes('Loading…')) {
     throw new Error(`prerender emitted the loading fallback inside <main> for ${path}`)
   }
+  return main
+}
+
+const renderDocument = async (meta, { canonical = true, robots } = {}) => {
+  const { path, title, structuredData } = meta
+  const body = await render(path)
+  const main = assertResolvedBody(body, path)
+  const metadata = [
+    robots ? `<meta name="robots" content="${esc(robots)}" />` : '',
+    structuredData ? `${socialHead(meta, { canonical })}\n    ${jsonLd(structuredData)}` : socialHead(meta, { canonical }),
+  ].filter(Boolean).join('\n    ')
+  const preloads = routePreloads(path)
+  const headExtras = preloads ? `${preloads}\n    ${metadata}` : metadata
+  const out = template
+    .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
+    .replace('</head>', `  ${headExtras}\n  </head>`)
+    .replace('<div id="root"></div>', `<div id="root" data-prerender-path="${esc(path)}">${body}</div>`)
+  return { body, main, out }
+}
+
+let count = 0
+for (const meta of routeMeta) {
+  const { path, title, description, structuredData } = meta
+  const { body, main, out } = await renderDocument(meta)
+  // The point of prerendering is that a crawler reading raw HTML sees the real
+  // page. An unresolved Suspense boundary defeats that completely: React emits
+  // the shell with a `<!--$?-->` marker and the fallback, then streams the
+  // actual content as trailing <template> blobs that only a browser splices in.
+  // This shipped on 32 of 57 pages without anyone noticing, because the file
+  // still *contained* the content — just after </main>, where no crawler looks.
+  // Fail the build instead.
   // A collapsed accordion must still SHIP its answers. /faq rendered each answer
   // as `{isExpanded && ...}`, so the prerendered page carried all 23 questions
   // and zero answers: the page's entire substance was invisible to crawlers and
@@ -148,18 +167,6 @@ for (const meta of routeMeta) {
       )
     }
   }
-  const metadata = structuredData
-    ? `${socialHead(meta)}\n    ${jsonLd(structuredData)}`
-    : socialHead(meta)
-  const preloads = routePreloads(path)
-  const headExtras = preloads ? `${preloads}\n    ${metadata}` : metadata
-  const out = template
-    .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
-    .replace('</head>', `  ${headExtras}\n  </head>`)
-    .replace(
-      '<div id="root"></div>',
-      `<div id="root" data-prerender-path="${esc(path)}">${body}</div>`,
-    )
   // Assert every injection landed. The description check earns its keep: its
   // absence is invisible in the browser and in social previews, so only a
   // build-time guard catches it.
@@ -178,4 +185,24 @@ for (const meta of routeMeta) {
   writeFileSync(file, out)
   count++
 }
-console.log(`✓ prerendered ${count} routes (+ empty-root 404.html fallback)`)
+
+const notFoundPath = '/__not-found__'
+const { body: notFoundBody, out: notFoundOut } = await renderDocument(
+  { path: notFoundPath, ...notFoundMeta },
+  { canonical: false, robots: 'noindex' },
+)
+const notFoundFailures = [
+  [!notFoundBody.trim() || !notFoundOut.includes(`<div id="root" data-prerender-path="${notFoundPath}">${notFoundBody}</div>`), 'empty root'],
+  [(notFoundOut.match(/<main(?:\s|>)/g) ?? []).length !== 1, 'expected exactly one <main>'],
+  [!/<h1[^>]*>Page not found<\/h1>/.test(notFoundOut), 'missing Page not found <h1>'],
+  [(notFoundOut.match(/<meta\s+name="description"/g) ?? []).length !== 1, 'expected exactly one description'],
+  [!/<meta\s+name="robots"\s+content="noindex"\s*\/>/.test(notFoundOut), 'missing robots noindex'],
+  [/<link\s+rel="canonical"/.test(notFoundOut), 'unexpected canonical'],
+  [notFoundOut.includes('<!--$?-->') || notFoundOut.includes('<template id="B:') || notFoundOut.includes('Loading…'), 'unresolved Suspense or fallback'],
+].filter(([failed]) => failed).map(([, message]) => message)
+if (notFoundFailures.length > 0) {
+  throw new Error(`invalid prerendered 404.html: ${notFoundFailures.join(', ')}`)
+}
+writeFileSync('dist/404.html', notFoundOut)
+
+console.log(`✓ prerendered ${count} routes (+ semantic 404.html fallback)`)

@@ -7,7 +7,8 @@ export interface PageMetaOptions {
   image?: string
   type?: 'website' | 'article'
   structuredData?: Record<string, unknown>
-  pathname?: string
+  pathname?: string | null
+  robots?: string
 }
 
 /**
@@ -34,6 +35,8 @@ export function usePageMeta(titleOrOptions: string | PageMetaOptions, descriptio
       document.head.appendChild(tag)
     }
     tag.content = options.description
+
+    setMetaTag('name', 'robots', options.robots ?? 'index,follow')
 
     // Set OG tags
     setMetaTag('property', 'og:title', options.title)
@@ -77,6 +80,9 @@ export function usePageMeta(titleOrOptions: string | PageMetaOptions, descriptio
 
       // Add og:url
       setMetaTag('property', 'og:url', url)
+    } else if (options.pathname === null) {
+      document.querySelector('link[rel="canonical"]')?.remove()
+      document.querySelector('meta[property="og:url"]')?.remove()
     }
   }, [
     options.title,
@@ -85,6 +91,7 @@ export function usePageMeta(titleOrOptions: string | PageMetaOptions, descriptio
     options.type,
     options.structuredData,
     options.pathname,
+    options.robots,
   ])
 }
 

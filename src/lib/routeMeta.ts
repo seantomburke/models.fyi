@@ -20,6 +20,11 @@ export interface RouteMeta {
   structuredData?: Record<string, unknown>
 }
 
+export const notFoundMeta = {
+  title: 'Page not found — Models.fyi',
+  description: 'The page you\'re looking for doesn\'t exist.',
+} as const
+
 /** Absolute base URL of the deployed site — og:image and canonical URLs must be absolute. */
 export const SITE_URL = 'https://seantomburke.github.io/models.fyi'
 

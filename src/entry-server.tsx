@@ -8,7 +8,7 @@ import { glossaryTerms } from './data/glossary.ts'
 import { releases } from './data/releases.ts'
 
 // Re-exported for scripts/prerender.mjs (which can only import compiled JS).
-export { routeMeta, SITE_URL, canonicalUrl } from './lib/routeMeta.ts'
+export { routeMeta, notFoundMeta, SITE_URL, canonicalUrl } from './lib/routeMeta.ts'
 // The prerender guard asserts every FAQ answer reaches /faq's <main>.
 export { faqs } from './data/faqs.ts'
 
