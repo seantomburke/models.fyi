@@ -19,18 +19,18 @@ interface SwipeLabelDeckProps {
   /** How many cards wait behind this one, for the stacked edges. */
   remaining: number
   onLabel: (label: SwipeLabel) => void
-  onSkip: () => void
+  onDelete: () => void
 }
 
 /**
  * One training drawing at a time, judged like a dating profile: drag right to
- * call it a 3, left to call it an E, up to skip it for now. Hand-rolled on
- * pointer events (same family of tricks as PixelGrid) instead of a swipe
- * library, so it costs the bundle nothing and works identically for mouse and
- * touch. The three buttons underneath fire the exact same actions, and are the
- * whole interface for keyboard and screen-reader users.
+ * call it a 3, left to call it an E, up to throw it out of the training set.
+ * Hand-rolled on pointer events (same family of tricks as PixelGrid) instead
+ * of a swipe library, so it costs the bundle nothing and works identically for
+ * mouse and touch. The three buttons underneath fire the exact same actions,
+ * and are the whole interface for keyboard and screen-reader users.
  */
-export function SwipeLabelDeck({ card, remaining, onLabel, onSkip }: SwipeLabelDeckProps) {
+export function SwipeLabelDeck({ card, remaining, onLabel, onDelete }: SwipeLabelDeckProps) {
   const [drag, setDrag] = useState<{ dx: number; dy: number } | null>(null)
   // Where the pointer went down, in refs: pointermove fires between renders.
   const originRef = useRef<{ x: number; y: number; pointerId: number } | null>(null)
@@ -45,20 +45,20 @@ export function SwipeLabelDeck({ card, remaining, onLabel, onSkip }: SwipeLabelD
     }
   }, [])
 
-  const settle = (action: SwipeLabel | 'skip', dx: number, dy: number) => {
+  const settle = (action: SwipeLabel | 'delete', dx: number, dy: number) => {
     // One decision per card: ignore input while the last card is still flying off.
     if (exit) return
     if (prefersReducedMotion()) {
-      if (action === 'skip') onSkip()
+      if (action === 'delete') onDelete()
       else onLabel(action)
       return
     }
     // Launch the card along its drag direction, then commit the action.
     const scale = 3
-    setExit({ dx: dx * scale, dy: action === 'skip' ? -320 : dy * scale })
+    setExit({ dx: dx * scale, dy: action === 'delete' ? -320 : dy * scale })
     exitTimerRef.current = window.setTimeout(() => {
       setExit(null)
-      if (action === 'skip') onSkip()
+      if (action === 'delete') onDelete()
       else onLabel(action)
     }, 180)
   }
@@ -122,7 +122,7 @@ export function SwipeLabelDeck({ card, remaining, onLabel, onSkip }: SwipeLabelD
             onPointerCancel={cancelDrag}
             onDragStart={(event) => event.preventDefault()}
             className={`absolute inset-0 z-10 flex touch-none flex-col items-center justify-center gap-3 rounded-xl border bg-surface p-4 shadow-sm ${
-              leaning === 'E' ? 'border-seg-3' : leaning === '3' ? 'border-seg-2' : leaning === 'skip' ? 'border-line-strong' : 'border-line'
+              leaning === 'E' ? 'border-seg-3' : leaning === '3' ? 'border-seg-2' : leaning === 'delete' ? 'border-seg-6' : 'border-line'
             } ${drag ? 'cursor-grabbing' : 'cursor-grab'}`}
             style={{ transform, transition: drag ? 'none' : 'transform 180ms ease-out' }}
           >
@@ -138,12 +138,12 @@ export function SwipeLabelDeck({ card, remaining, onLabel, onSkip }: SwipeLabelD
             </span>
             <p className="text-xs text-fg-muted">{card.name}</p>
             <p className="text-[11px] text-fg-faint" aria-hidden="true">
-              &larr; E &nbsp;&middot;&nbsp; &uarr; skip &nbsp;&middot;&nbsp; 3 &rarr;
+              &larr; E &nbsp;&middot;&nbsp; &uarr; delete &nbsp;&middot;&nbsp; 3 &rarr;
             </p>
           </div>
         ) : (
           <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl border border-dashed border-line p-4 text-center text-sm text-fg-muted">
-            Every drawing has a label. Ready to train.
+            Every remaining drawing has a label. Ready to train.
           </div>
         )}
       </div>
@@ -160,11 +160,11 @@ export function SwipeLabelDeck({ card, remaining, onLabel, onSkip }: SwipeLabelD
         </button>
         <button
           type="button"
-          disabled={!card || remaining === 0}
-          onClick={() => card && settle('skip', 0, -SWIPE_THRESHOLD * 2)}
-          className="rounded-full border border-line px-5 py-2 text-sm font-medium text-fg-secondary enabled:hover:border-line-strong disabled:opacity-40"
+          disabled={!card}
+          onClick={() => card && settle('delete', 0, -SWIPE_THRESHOLD * 2)}
+          className="rounded-full border border-seg-6 px-5 py-2 text-sm font-medium text-seg-6 enabled:hover:bg-seg-6/10 disabled:opacity-40"
         >
-          Skip
+          Delete
         </button>
         <button
           type="button"
@@ -176,7 +176,7 @@ export function SwipeLabelDeck({ card, remaining, onLabel, onSkip }: SwipeLabelD
         </button>
       </div>
       <p className="mt-2 text-center text-xs text-fg-muted">
-        Swipe left for E, right for 3, up to skip &mdash; or use the buttons.
+        Swipe left for E, right for 3, up to delete it from the training set &mdash; or use the buttons.
       </p>
     </div>
   )

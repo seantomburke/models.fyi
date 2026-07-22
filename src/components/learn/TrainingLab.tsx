@@ -4,21 +4,22 @@ import {
   GRID_SIZE,
   PIXEL_COUNT,
   buildTrainingSet,
-  classifyWithLearnedWeights,
   trainGradientDescent,
   type TrainingExample,
   type TrainingRun,
 } from './gradientDescent'
+import { LearnedNetworkDiagram } from './LearnedNetworkDiagram'
 import { PixelGrid } from './PixelGrid'
 import { SwipeLabelDeck } from './SwipeLabelDeck'
+import { WeightTrajectoryChart } from './WeightTrajectoryChart'
 import {
   addCard,
   createDeck,
   currentCard,
+  deleteCurrent,
   labelAll,
   labelCurrent,
   labelledCount,
-  skipCurrent,
   unlabelCard,
   type SwipeDeckState,
   type SwipeLabel,
@@ -109,6 +110,7 @@ export function TrainingLab() {
   const [pixels, setPixels] = useState<boolean[]>(Array(PIXEL_COUNT).fill(false))
   const [drawing, setDrawing] = useState<boolean[]>(Array(PIXEL_COUNT).fill(false))
   const assignedCount = labelledCount(deck)
+  const keptCount = examples.length - deck.deleted.length
   const card = currentCard(deck)
 
   useEffect(() => {
@@ -165,8 +167,13 @@ export function TrainingLab() {
   }
 
   const train = () => {
-    if (assignedCount !== examples.length) return
-    const data = examples.map((example, index) => ({ ...example, target: deck.labels[index] === '3' ? 1 : 0 }))
+    if (assignedCount === 0) return
+    // Only the cards the visitor labelled train the model; deleted and
+    // still-queued drawings sit this run out.
+    const data = examples
+      .map((example, index) => ({ example, index }))
+      .filter(({ index }) => index in deck.labels)
+      .map(({ example, index }) => ({ ...example, target: deck.labels[index] === '3' ? 1 : 0 }))
     const nextRun = trainGradientDescent({ seed, data })
     setRun(nextRun)
     setEpoch(0)
@@ -174,13 +181,12 @@ export function TrainingLab() {
   }
 
   const snapshot = run?.history[epoch]
-  const result = run && pixels.some(Boolean) ? classifyWithLearnedWeights(run.finalWeights, run.bias, pixels) : null
 
   return (
     <div className="space-y-8">
       <section className="rounded-lg border border-line p-4" aria-labelledby="training-lab-title">
         <h2 id="training-lab-title" className="text-lg font-semibold tracking-tight">Teach the model, one card at a time</h2>
-        <p className="mt-2 text-sm leading-relaxed text-fg-secondary">Each card is an E or a 3. Swipe it left for E, right for 3, or up to skip it for later — or use the buttons under the deck. The model only learns the labels you give it.</p>
+        <p className="mt-2 text-sm leading-relaxed text-fg-secondary">Each card is an E or a 3. Swipe it left for E, right for 3, or up to delete it from the training set — or use the buttons under the deck. The model only learns the labels you give it, and you can start training with as few as you like.</p>
         <div className="mt-4 flex flex-wrap items-end gap-3">
           <label className="text-sm font-medium">Random seed<input aria-label="Training random seed" type="number" min="0" max="4294967295" value={seedText} onChange={(event) => setSeedText(event.target.value)} className="mt-1 block w-44 rounded border border-line bg-surface-raised px-3 py-2 font-mono" /></label>
           <button type="button" onClick={generate} className="rounded border border-line px-3 py-2 text-sm font-medium hover:border-line-strong">Make new drawings</button>
@@ -192,14 +198,16 @@ export function TrainingLab() {
       <section aria-labelledby="label-drawings-title">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 id="label-drawings-title" className="text-lg font-semibold tracking-tight">Label the training set</h2>
-          <p className="text-sm text-fg-muted" role="status">{assignedCount} of {examples.length} labelled</p>
+          <p className="text-sm text-fg-muted" role="status">
+            {assignedCount} of {keptCount} labelled{deck.deleted.length > 0 && ` · ${deck.deleted.length} deleted`}
+          </p>
         </div>
         <div className="mt-4 grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <SwipeLabelDeck
             card={card !== null ? { id: card, name: examples[card].label, pixels: examples[card].pixels } : null}
             remaining={Math.max(deck.queue.length - 1, 0)}
             onLabel={(label) => { setDeck((current) => labelCurrent(current, label)); invalidateRun() }}
-            onSkip={() => setDeck(skipCurrent)}
+            onDelete={() => { setDeck(deleteCurrent); invalidateRun() }}
           />
           <div className="space-y-3">
             <LabelledTray label="E" examples={examples} deck={deck} onUnlabel={(index) => { setDeck((current) => unlabelCard(current, index)); invalidateRun() }} />
@@ -223,13 +231,49 @@ export function TrainingLab() {
 
       <section className="rounded-lg border border-line p-4" aria-labelledby="start-training-title">
         <h2 id="start-training-title" className="text-lg font-semibold tracking-tight">Start training</h2>
-        <p className="mt-2 text-sm text-fg-secondary">Gradient descent adjusts all 64 weights after seeing every labelled drawing.</p>
-        <button type="button" onClick={train} disabled={assignedCount !== examples.length} className="mt-4 rounded bg-accent px-4 py-2 text-sm font-medium text-white enabled:hover:bg-accent-deep disabled:cursor-not-allowed disabled:opacity-50">Start training</button>
-        {assignedCount !== examples.length && <p className="mt-2 text-xs text-fg-muted">Label every drawing before training.</p>}
-        {snapshot && <div className="mt-5 grid gap-5 md:grid-cols-2"><div><p className="text-sm font-medium" aria-live="polite">Epoch {epoch} of {EPOCHS} · loss {snapshot.loss.toFixed(3)} · accuracy {(snapshot.accuracy * 100).toFixed(0)}%</p><input className="mt-3 w-full accent-accent" aria-label="Training progress" type="range" min="0" max={run!.history.length - 1} value={epoch} onChange={(event) => { setPlaying(false); setEpoch(Number(event.target.value)) }} /><button type="button" onClick={() => { setEpoch(0); setPlaying(true) }} className="mt-3 rounded border border-line px-3 py-2 text-sm font-medium hover:border-line-strong">Replay training</button></div><WeightMap weights={snapshot.weights} /></div>}
+        <p className="mt-2 text-sm text-fg-secondary">Gradient descent adjusts all 64 weights after seeing every drawing you labelled. You can train on as few as one card — a lopsided set makes a lopsided model, which is a lesson in itself.</p>
+        <button type="button" onClick={train} disabled={assignedCount === 0} className="mt-4 rounded bg-accent px-4 py-2 text-sm font-medium text-white enabled:hover:bg-accent-deep disabled:cursor-not-allowed disabled:opacity-50">
+          {assignedCount === 0 ? 'Start training' : `Train on ${assignedCount} labelled ${assignedCount === 1 ? 'drawing' : 'drawings'}`}
+        </button>
+        {assignedCount === 0 && <p className="mt-2 text-xs text-fg-muted">Label at least one drawing before training.</p>}
+        {snapshot && (
+          <div className="mt-5 space-y-5">
+            <div className="max-w-xl">
+              <p className="text-sm font-medium" aria-live="polite">Epoch {epoch} of {EPOCHS} · loss {snapshot.loss.toFixed(3)} · accuracy {(snapshot.accuracy * 100).toFixed(0)}%</p>
+              <input className="mt-3 w-full accent-accent" aria-label="Training progress" type="range" min="0" max={run!.history.length - 1} value={epoch} onChange={(event) => { setPlaying(false); setEpoch(Number(event.target.value)) }} />
+              <button type="button" onClick={() => { setEpoch(0); setPlaying(true) }} className="mt-3 rounded border border-line px-3 py-2 text-sm font-medium hover:border-line-strong">Replay training</button>
+            </div>
+            <div className="grid gap-5 md:grid-cols-2">
+              <div>
+                <h3 className="text-sm font-semibold">Weights converging over time</h3>
+                <div className="mt-2"><WeightTrajectoryChart run={run!} epoch={epoch} /></div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold">The same weights on the grid</h3>
+                <div className="mt-2"><WeightMap weights={snapshot.weights} /></div>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
-      {run && <section className="rounded-lg border border-line p-4" aria-labelledby="use-trained-model-title"><h2 id="use-trained-model-title" className="text-lg font-semibold tracking-tight">Use your trained weights</h2><p className="mt-2 text-sm text-fg-secondary">Draw a fresh input. If you inverted the deck, the trained model should invert its answers too.</p><div className="mt-4 max-w-72"><PixelGrid pixels={pixels} onChange={setPixels} gridSize={GRID_SIZE} /></div><div className="mt-3 flex flex-wrap gap-2"><button type="button" onClick={() => setPixels(patternE())} className="rounded border border-line px-3 py-2 text-sm">Example: E</button><button type="button" onClick={() => setPixels(patternThree())} className="rounded border border-line px-3 py-2 text-sm">Example: 3</button><button type="button" onClick={() => setPixels(Array(PIXEL_COUNT).fill(false))} className="rounded border border-line px-3 py-2 text-sm">Clear</button></div><p className="mt-4 text-xl font-semibold" aria-live="polite">{result ? `Prediction: ${result.prediction} (${(result.confidence * 100).toFixed(0)}%)` : 'Draw a shape to classify it.'}</p></section>}
+      {run && (
+        <section className="rounded-lg border border-line p-4" aria-labelledby="use-trained-model-title">
+          <h2 id="use-trained-model-title" className="text-lg font-semibold tracking-tight">Use your trained weights</h2>
+          <p className="mt-2 text-sm text-fg-secondary">Draw a fresh input, then run it through the network you just trained. If you inverted the deck, the trained model should invert its answers too.</p>
+          <div className="mt-4 grid items-start gap-6 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]">
+            <div>
+              <div className="max-w-72"><PixelGrid pixels={pixels} onChange={setPixels} gridSize={GRID_SIZE} /></div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button type="button" onClick={() => setPixels(patternE())} className="rounded border border-line px-3 py-2 text-sm">Example: E</button>
+                <button type="button" onClick={() => setPixels(patternThree())} className="rounded border border-line px-3 py-2 text-sm">Example: 3</button>
+                <button type="button" onClick={() => setPixels(Array(PIXEL_COUNT).fill(false))} className="rounded border border-line px-3 py-2 text-sm">Clear</button>
+              </div>
+            </div>
+            <LearnedNetworkDiagram pixels={pixels} weights={run.finalWeights} bias={run.bias} />
+          </div>
+        </section>
+      )}
     </div>
   )
 }

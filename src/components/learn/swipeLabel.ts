@@ -1,13 +1,13 @@
 /**
- * The label/skip state machine behind the swipe deck in the training lab.
+ * The label/delete state machine behind the swipe deck in the training lab.
  *
  * Pure data, no React, no DOM: the deck component translates pointer gestures
- * and button presses into these three actions, and this module decides what
- * they mean. Keeping it pure makes the labelling rules unit-testable without
+ * and button presses into these actions, and this module decides what they
+ * mean. Keeping it pure makes the labelling rules unit-testable without
  * simulating a single pointer event.
  *
  * The deck walks a queue of card indices. Labelling a card removes it from the
- * queue; skipping moves it to the back so it comes around again. Cards can also
+ * queue; swiping up deletes it from the training set entirely. Cards can also
  * be sent back to the queue (relabelling), which is how "remove" works in the
  * labelled tray.
  */
@@ -18,7 +18,7 @@ export type SwipeLabel = 'E' | '3'
 export const SWIPE_DIRECTIONS = {
   left: 'E',
   right: '3',
-  up: 'skip',
+  up: 'delete',
 } as const
 
 export interface SwipeDeckState {
@@ -26,14 +26,16 @@ export interface SwipeDeckState {
   queue: number[]
   /** The label each already-judged card received. */
   labels: Record<number, SwipeLabel>
+  /** Cards thrown out of the training set entirely. */
+  deleted: number[]
 }
 
 /** A fresh deck over `count` cards, none labelled. */
 export function createDeck(count: number): SwipeDeckState {
-  return { queue: Array.from({ length: count }, (_, index) => index), labels: {} }
+  return { queue: Array.from({ length: count }, (_, index) => index), labels: {}, deleted: [] }
 }
 
-/** The card currently facing the user, or null when everything is labelled. */
+/** The card currently facing the user, or null when everything is judged. */
 export function currentCard(state: SwipeDeckState): number | null {
   return state.queue.length > 0 ? state.queue[0] : null
 }
@@ -48,18 +50,20 @@ export function labelCurrent(state: SwipeDeckState, label: SwipeLabel): SwipeDec
   const card = currentCard(state)
   if (card === null) return state
   return {
+    ...state,
     queue: state.queue.slice(1),
     labels: { ...state.labels, [card]: label },
   }
 }
 
 /**
- * Skip the front card: it goes to the back of the deck so it comes around
- * again. With one card left this is a no-op — there is nowhere to hide.
+ * Delete the front card: it leaves the training set entirely instead of
+ * waiting for a label. No-op on an empty deck.
  */
-export function skipCurrent(state: SwipeDeckState): SwipeDeckState {
-  if (state.queue.length < 2) return state
-  return { ...state, queue: [...state.queue.slice(1), state.queue[0]] }
+export function deleteCurrent(state: SwipeDeckState): SwipeDeckState {
+  const card = currentCard(state)
+  if (card === null) return state
+  return { ...state, queue: state.queue.slice(1), deleted: [...state.deleted, card] }
 }
 
 /** Send a labelled card back into the deck to be judged again. */
@@ -67,7 +71,7 @@ export function unlabelCard(state: SwipeDeckState, card: number): SwipeDeckState
   if (!(card in state.labels)) return state
   const labels = { ...state.labels }
   delete labels[card]
-  return { queue: [card, ...state.queue], labels }
+  return { ...state, queue: [card, ...state.queue], labels }
 }
 
 /**
@@ -75,14 +79,16 @@ export function unlabelCard(state: SwipeDeckState, card: number): SwipeDeckState
  * the very next thing the user labels with the same swipe or buttons.
  */
 export function addCard(state: SwipeDeckState, card: number): SwipeDeckState {
-  if (state.queue.includes(card) || card in state.labels) return state
+  if (state.queue.includes(card) || card in state.labels || state.deleted.includes(card)) {
+    return state
+  }
   return { ...state, queue: [card, ...state.queue] }
 }
 
 /**
  * Label many cards in one stroke (the shortcut buttons). Cards for which
  * `labelFor` returns null — a custom drawing whose truth only its author
- * knows — stay in the queue.
+ * knows — stay in the queue. Deleted cards stay deleted.
  */
 export function labelAll(
   state: SwipeDeckState,
@@ -95,19 +101,19 @@ export function labelAll(
     if (label === null) queue.push(card)
     else labels[card] = label
   }
-  return { queue, labels }
+  return { ...state, queue, labels }
 }
 
 /**
  * Turn a completed drag into an action, or null when the gesture was too small
  * to mean anything. Horizontal wins ties so a sloppy diagonal flick still
- * labels rather than skips.
+ * labels rather than deletes.
  */
 export function resolveSwipe(
   dx: number,
   dy: number,
   threshold: number
-): SwipeLabel | 'skip' | null {
+): SwipeLabel | 'delete' | null {
   if (Math.abs(dx) >= threshold && Math.abs(dx) >= Math.abs(dy)) {
     return dx > 0 ? SWIPE_DIRECTIONS.right : SWIPE_DIRECTIONS.left
   }
