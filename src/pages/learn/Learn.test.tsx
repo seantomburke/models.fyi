@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { Learn } from './Learn'
 import { LearnTopic } from './LearnTopic'
@@ -19,10 +19,24 @@ function renderAt(path: string) {
 test('index links every topic', () => {
   renderAt('/learn')
   for (const t of topics) {
-    expect(screen.getByRole('link', { name: new RegExp(t.question, 'i') })).toHaveAttribute(
-      'href',
-      `/learn/${t.slug}`,
-    )
+    // Each topic appears twice: once as a card, once in the sidebar index.
+    const links = screen.getAllByRole('link', { name: new RegExp(t.question, 'i') })
+    expect(links.length).toBeGreaterThanOrEqual(2)
+    for (const link of links) {
+      expect(link).toHaveAttribute('href', `/learn/${t.slug}`)
+    }
+  }
+})
+
+test('the sidebar index lists every lesson under its level header', () => {
+  renderAt('/learn')
+  const toc = screen.getByRole('navigation', { name: 'All lessons' })
+  const { getByRole, getByText } = within(toc)
+  for (const level of levels) {
+    expect(getByText(level.title)).toBeInTheDocument()
+  }
+  for (const t of topics) {
+    expect(getByRole('link', { name: t.question })).toHaveAttribute('href', `/learn/${t.slug}`)
   }
 })
 
