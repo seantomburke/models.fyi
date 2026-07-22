@@ -1,5 +1,5 @@
 import { validateSpec } from '@opendata-ai/openchart-react'
-import { buildPriceRows, buildPriceSpec, buildTotalCostRows, buildTotalCostSpec } from './priceChart.ts'
+import { buildPriceRows, buildTotalCostRows, buildTotalCostSpec, priceTicks } from './priceChart.ts'
 import { buildCostRows } from './pricing.ts'
 import { formatCost } from './format.ts'
 import { models, providers } from '../data/index.ts'
@@ -8,31 +8,32 @@ const pricedCount = models.filter(
   (m) => m.inputPricePerMTok !== null && m.outputPricePerMTok !== null,
 ).length
 
-test('price rows: two per priced model, output prices descending, Input first', () => {
+test('price rows: one per priced model, output prices descending', () => {
   const { rows, excluded } = buildPriceRows()
-  expect(rows).toHaveLength(pricedCount * 2)
-  expect(rows.length / 2 + excluded.length).toBe(models.length)
-  const outputPrices: number[] = []
-  for (let i = 0; i < rows.length; i += 2) {
-    expect(rows[i].series).toBe('Input')
-    expect(rows[i + 1].series).toBe('Output')
-    expect(rows[i].model).toBe(rows[i + 1].model)
-    outputPrices.push(rows[i + 1].price)
+  expect(rows).toHaveLength(pricedCount)
+  expect(rows.length + excluded.length).toBe(models.length)
+  for (let i = 1; i < rows.length; i++) {
+    expect(rows[i].outputPrice).toBeLessThanOrEqual(rows[i - 1].outputPrice)
   }
-  for (let i = 1; i < outputPrices.length; i++) {
-    expect(outputPrices[i]).toBeLessThanOrEqual(outputPrices[i - 1])
+  for (const row of rows) {
+    expect(row.inputPrice).toBeGreaterThan(0)
+    expect(row.outputPrice).toBeGreaterThan(0)
+    expect(row.providerId).toBeTruthy()
   }
 })
 
-test('price spec is engine-valid grouped bars with a padded domain', () => {
+test('price ticks start at $0, step in round dollars, and cover the top bar', () => {
   const { rows } = buildPriceRows()
-  const spec = buildPriceSpec(rows)
-  const result = validateSpec(spec)
-  expect(result.valid, JSON.stringify(result.errors)).toBe(true)
-  expect(spec.mark).toMatchObject({ type: 'bar', orient: 'horizontal' })
-  expect(spec.encoding.x?.stack).toBeNull()
-  const domain = spec.encoding.x?.scale?.domain as [number, number]
-  expect(domain[1]).toBeGreaterThan(Math.max(...rows.map((r) => r.price)))
+  const maxPrice = Math.max(...rows.map((r) => r.outputPrice))
+  const ticks = priceTicks(maxPrice)
+  expect(ticks[0]).toBe(0)
+  expect(ticks[ticks.length - 1]).toBeGreaterThanOrEqual(maxPrice)
+  const step = ticks[1] - ticks[0]
+  for (let i = 1; i < ticks.length; i++) {
+    expect(ticks[i] - ticks[i - 1]).toBeCloseTo(step)
+  }
+  // A $50 ceiling should yield the familiar $10/$20/… ladder.
+  expect(priceTicks(50)).toEqual([0, 10, 20, 30, 40, 50])
 })
 
 test('total-cost rows are cheapest-first with preformatted labels', () => {

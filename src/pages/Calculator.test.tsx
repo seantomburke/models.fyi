@@ -19,10 +19,15 @@ vi.mock('@opendata-ai/openchart-react', () => ({
   Chart: () => <div data-testid="chart" />,
 }))
 
+/** The visible conversation-cost table (the price chart has an sr-only one too). */
+function costTable() {
+  return screen.getByRole('table', { name: 'Conversation cost by model' })
+}
+
 /** Total-cost cell per model row, keyed by the row's model+provider text. */
 function totalsByModel(): Map<string, number> {
   const totals = new Map<string, number>()
-  for (const row of within(screen.getByRole('table')).getAllByRole('row').slice(1)) {
+  for (const row of within(costTable()).getAllByRole('row').slice(1)) {
     const cells = row.querySelectorAll('td')
     totals.set(cells[0].textContent!, parseFloat(cells[3].textContent!.replace(/[$<,]/g, '')))
   }
@@ -84,18 +89,44 @@ test('table sorts by total cost ascending and toggles on header click', async ()
 
 test('open-source models are footnoted, not priced', async () => {
   await renderCalculator()
-  const table = screen.getByRole('table')
+  const table = costTable()
   expect(within(table).queryByText('GLM-5.2')).not.toBeInTheDocument()
   expect(screen.getByText(/Not shown/).textContent).toContain('GLM-5.2')
   const pricedCount = models.filter((m) => m.inputPricePerMTok !== null).length
   expect(within(table).getAllByRole('row')).toHaveLength(pricedCount + 1) // + header
 })
 
-test('renders both the price chart and the total-cost chart', async () => {
+test('renders both the price bar chart and the total-cost chart', async () => {
   await renderCalculator()
 
   // Both charts defer until visible. Without IntersectionObserver (jsdom, SSR,
   // old browsers) they fall back to loading immediately rather than stranding
   // the reader on a placeholder.
-  expect(await screen.findAllByTestId('chart')).toHaveLength(2)
+  expect(await screen.findByTestId('price-bar-chart')).toBeInTheDocument()
+  expect(await screen.findAllByTestId('chart')).toHaveLength(1)
+})
+
+test('the price bar chart shows dollar ticks, logos, and an accessible table', async () => {
+  await renderCalculator()
+  await screen.findByTestId('price-bar-chart')
+
+  const figure = screen.getByRole('figure', {
+    name: 'Input and output price per million tokens, by model',
+  })
+  // Y-axis labels carry dollar signs.
+  expect(within(figure).getAllByText(/^\$\d+$/).length).toBeGreaterThanOrEqual(3)
+
+  // One bar slot (with a provider logo SVG) per priced model, in the sr table too.
+  const priced = models.filter(
+    (m) => m.inputPricePerMTok !== null && m.outputPricePerMTok !== null,
+  )
+  const chart = screen.getByTestId('price-bar-chart')
+  expect(chart.querySelectorAll('svg[aria-hidden="true"]')).toHaveLength(priced.length)
+  const srTable = within(figure).getByRole('table', {
+    name: 'USD per one million tokens, by model',
+  })
+  expect(within(srTable).getAllByRole('row')).toHaveLength(priced.length + 1) // + header
+  for (const m of priced) {
+    expect(within(srTable).getByRole('rowheader', { name: m.name })).toBeInTheDocument()
+  }
 })

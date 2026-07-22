@@ -8,10 +8,10 @@ import { buildCostRows, effortPresets } from '../lib/pricing.ts'
 import type { CostRow, EffortId } from '../lib/pricing.ts'
 import {
   buildPriceRows,
-  buildPriceSpec,
   buildTotalCostRows,
   buildTotalCostSpec,
 } from '../lib/priceChart.ts'
+import { PriceBarChart } from '../components/PriceBarChart.tsx'
 import { estimateTokens, loadTokenizer } from '../lib/tokenize.ts'
 import type { TokenCounter } from '../lib/tokenize.ts'
 import {
@@ -238,10 +238,7 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
     captureCalculatorSortChanged(posthog, key, newSort.dir)
   }
 
-  const priceChart = useMemo(() => {
-    const { rows } = buildPriceRows()
-    return { rows, spec: buildPriceSpec(rows) }
-  }, [])
+  const priceRows = useMemo(() => buildPriceRows().rows, [])
 
   const totalCostChart = useMemo(() => {
     const rows = buildTotalCostRows(costRows)
@@ -275,9 +272,7 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
           models aren't shown. They're free to download, so there's no fixed per-token price.
         </p>
         <div className="rounded-xl border border-line bg-surface-raised p-4">
-          <div style={{ height: 560 }}>
-            <ThemeAwareChart spec={priceChart.spec} deferUntilInteraction />
-          </div>
+          <PriceBarChart rows={priceRows} />
         </div>
       </section>
 
@@ -318,7 +313,7 @@ export function Calculator({ debounceMs = 200 }: CalculatorProps) {
           What this conversation costs, model by model
         </h2>
         <div className="overflow-x-auto rounded-xl border border-line bg-surface-raised">
-          <table className="w-full min-w-[36rem] text-sm">
+          <table aria-label="Conversation cost by model" className="w-full min-w-[36rem] text-sm">
             <thead>
               <tr className="border-b border-line text-left">
                 <SortHeader label="Model" sortKey="model" sort={sort} onSort={toggleSort} align="left" />

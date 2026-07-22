@@ -1,24 +1,22 @@
 import type { ChartSpec } from '@opendata-ai/openchart-core'
 import { models, providerById } from '../data/index.ts'
-import type { Model } from '../data/index.ts'
+import type { Model, ProviderId } from '../data/index.ts'
 import { formatCost } from './format.ts'
 import { paddedDomain, paletteFor } from './graph.ts'
 import type { CostRow } from './pricing.ts'
 
-export interface PriceRow extends Record<string, unknown> {
+export interface PriceRow {
+  modelId: string
   model: string
   provider: string
-  series: 'Input' | 'Output'
-  price: number
+  providerId: ProviderId
+  inputPrice: number
+  outputPrice: number
 }
 
-/** Input bars in a neutral stone, output bars in the site accent. */
-const PRICE_SERIES_COLORS = ['#a8a29e', '#0d9488']
-
 /**
- * Long-format rows for the price chart: two per priced model, models sorted
- * by output price descending. The Input row precedes the Output row so the
- * engine's first-appearance color order matches PRICE_SERIES_COLORS.
+ * One row per priced model for the native price bar chart, sorted by output
+ * price descending so the expensive end anchors the left of the chart.
  */
 export function buildPriceRows(): { rows: PriceRow[]; excluded: Model[] } {
   const priced = models.filter(
@@ -29,45 +27,33 @@ export function buildPriceRows(): { rows: PriceRow[]; excluded: Model[] } {
     (m) => m.inputPricePerMTok === null || m.outputPricePerMTok === null,
   )
   priced.sort((a, b) => b.outputPricePerMTok - a.outputPricePerMTok)
-  const rows: PriceRow[] = []
-  for (const m of priced) {
-    const provider = providerById.get(m.providerId)?.name ?? m.providerId
-    rows.push({ model: m.name, provider, series: 'Input', price: m.inputPricePerMTok })
-    rows.push({ model: m.name, provider, series: 'Output', price: m.outputPricePerMTok })
-  }
+  const rows: PriceRow[] = priced.map((m) => ({
+    modelId: m.id,
+    model: m.name,
+    provider: providerById.get(m.providerId)?.name ?? m.providerId,
+    providerId: m.providerId,
+    inputPrice: m.inputPricePerMTok,
+    outputPrice: m.outputPricePerMTok,
+  }))
   return { rows, excluded }
 }
 
-/** Horizontal grouped bars: input and output price side by side per model. */
-export function buildPriceSpec(rows: PriceRow[]): ChartSpec<PriceRow> {
-  return {
-    mark: { type: 'bar', orient: 'horizontal', tooltip: true },
-    data: rows,
-    legend: { position: 'top' },
-    encoding: {
-      // Rows are pre-sorted by output price; sort: null keeps that order.
-      y: { field: 'model', type: 'nominal', title: 'Model', sort: null },
-      x: {
-        field: 'price',
-        type: 'quantitative',
-        title: 'USD per 1M tokens',
-        axis: { title: 'USD per 1M tokens' },
-        scale: { domain: paddedDomain(rows.map((r) => r.price)) },
-        // Grouped (side-by-side) bars, never stacked: the two series share a
-        // baseline so input and output prices stay directly comparable.
-        stack: null,
-      },
-      color: { field: 'series', type: 'nominal', title: 'Token type' },
-      tooltip: [
-        { field: 'model', type: 'nominal', title: 'Model' },
-        { field: 'series', type: 'nominal', title: 'Type' },
-        { field: 'price', type: 'quantitative', title: '$ per 1M tokens' },
-      ],
-    },
-    theme: { colors: { categorical: PRICE_SERIES_COLORS } },
-    watermark: false,
-    responsive: true,
-  }
+/**
+ * Dollar tick values for the price chart's y axis: whole-dollar steps from
+ * zero up past the priciest bar, sized so the axis lands on 4-6 round ticks
+ * ($10/$20/… for frontier prices, finer steps if prices ever drop).
+ */
+export function priceTicks(maxPrice: number): number[] {
+  const targetSteps = 5
+  const rawStep = maxPrice / targetSteps
+  // Round the step to 1/2/5 × 10^n, the usual "nice number" ladder.
+  const magnitude = 10 ** Math.floor(Math.log10(Math.max(rawStep, 0.1)))
+  const residual = rawStep / magnitude
+  const step = (residual > 5 ? 10 : residual > 2 ? 5 : residual > 1 ? 2 : 1) * magnitude
+  const top = Math.ceil(maxPrice / step) * step
+  const ticks: number[] = []
+  for (let v = 0; v <= top; v += step) ticks.push(v)
+  return ticks
 }
 
 export interface TotalCostRow extends Record<string, unknown> {
