@@ -5,16 +5,17 @@ import {
   projectPoint,
   sampleGradientVectors,
   sampleSurface,
+  seededValue,
 } from './lossLandscape'
 
 const GRID = sampleSurface()
-const PATH = descendSurface({ x: 2.8, y: 2.5 })
 const VECTORS = sampleGradientVectors(GRID)
 const SURFACE_LOSSES = GRID.flat().map((point) => point.z)
 const SURFACE_MIN = Math.min(...SURFACE_LOSSES)
 const SURFACE_MAX = Math.max(...SURFACE_LOSSES)
 const DEFAULT_YAW = -0.72
 const DEFAULT_PITCH = 0.68
+const SURFACE_STEPS = 42
 
 function readColor(name: string, fallback: string): string {
   if (typeof document === 'undefined') return fallback
@@ -41,13 +42,37 @@ export function LossSurface3D() {
   const [size, setSize] = useState({ width: 640, height: 390 })
   const [themeVersion, setThemeVersion] = useState(0)
   const [dragStart, setDragStart] = useState<{ x: number; y: number; yaw: number; pitch: number } | null>(null)
-  const finalPoint = PATH[PATH.length - 1]
+  const [seedText, setSeedText] = useState('17')
+  const [start, setStart] = useState({ x: 2.8, y: 2.5 })
+  const [learningRate, setLearningRate] = useState(0.11)
+  const [step, setStep] = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const [seedError, setSeedError] = useState('')
+  const path = useMemo(
+    () => descendSurface(start, SURFACE_STEPS, learningRate),
+    [learningRate, start]
+  )
+  const currentPoint = path[step]
 
   const summary = useMemo(
     () =>
-      `The small arrows show the local downhill direction. The path starts at loss ${PATH[0].z.toFixed(2)} and finishes at loss ${finalPoint.z.toFixed(2)} near x ${finalPoint.x.toFixed(2)}, y ${finalPoint.y.toFixed(2)}.`,
-    [finalPoint]
+      `The small arrows show the local downhill direction. At step ${step}, the path is at loss ${currentPoint.z.toFixed(2)} near x ${currentPoint.x.toFixed(2)}, y ${currentPoint.y.toFixed(2)}.`,
+    [currentPoint, step]
   )
+
+  useEffect(() => {
+    if (!playing) return
+    const timer = window.setInterval(() => {
+      setStep((value) => {
+        if (value >= SURFACE_STEPS) {
+          setPlaying(false)
+          return SURFACE_STEPS
+        }
+        return value + 1
+      })
+    }, 75)
+    return () => window.clearInterval(timer)
+  }, [playing])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -156,7 +181,7 @@ export function LossSurface3D() {
       context.fill()
     }
 
-    const projectedPath = PATH.map((point) => projectPoint(point, yaw, pitch, scale))
+    const projectedPath = path.slice(0, step + 1).map((point) => projectPoint(point, yaw, pitch, scale))
     context.globalAlpha = 1
     context.strokeStyle = accent
     context.lineWidth = 3
@@ -171,7 +196,7 @@ export function LossSurface3D() {
     context.beginPath()
     context.arc(end.x, end.y, 5, 0, Math.PI * 2)
     context.fill()
-  }, [pitch, size, themeVersion, yaw])
+  }, [path, pitch, size, step, themeVersion, yaw])
 
   const rotate = (yawDelta: number, pitchDelta: number) => {
     setYaw((value) => value + yawDelta)
@@ -181,6 +206,21 @@ export function LossSurface3D() {
   const resetView = () => {
     setYaw(DEFAULT_YAW)
     setPitch(DEFAULT_PITCH)
+  }
+
+  const chooseSeededStart = () => {
+    const seed = Number(seedText)
+    if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) {
+      setSeedError('Enter a whole-number seed from 0 to 4,294,967,295.')
+      return
+    }
+    setStart({
+      x: seededValue(seed, -3, 3),
+      y: seededValue((seed ^ 0x9e3779b9) >>> 0, -3, 3),
+    })
+    setStep(0)
+    setPlaying(false)
+    setSeedError('')
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLCanvasElement>) => {
@@ -204,7 +244,8 @@ export function LossSurface3D() {
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-fg-secondary">
         Height and color both encode loss. The small arrows point down the local slope, while the
-        teal path connects the steps training takes. Doodle-64 follows this rule across 65 dimensions.
+        teal path connects the steps training takes. Pick a starting point, then start the descent;
+        Doodle-64 follows this rule across 65 dimensions.
       </p>
       <canvas
         ref={canvasRef}
@@ -230,6 +271,43 @@ export function LossSurface3D() {
         Projected loss surface. {summary}
       </canvas>
       <p className="mt-3 text-sm text-fg-secondary">{summary}</p>
+      <div className="mt-3 flex flex-wrap items-end gap-3">
+        <label className="text-sm font-medium">
+          Surface random seed
+          <input
+            type="number"
+            min="0"
+            max="4294967295"
+            step="1"
+            value={seedText}
+            onChange={(event) => setSeedText(event.target.value)}
+            className="mt-1 block w-44 rounded border border-line bg-surface-raised px-3 py-2 font-mono tabular-nums"
+          />
+        </label>
+        <button type="button" onClick={chooseSeededStart} className="rounded border border-line bg-surface-raised px-3 py-2 text-sm font-medium hover:border-line-strong">
+          Choose seeded start
+        </button>
+        <button type="button" onClick={() => { setStep(0); setPlaying(true) }} className="rounded bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-accent-deep">
+          {playing ? 'Training…' : 'Start training'}
+        </button>
+      </div>
+      {seedError && <p className="mt-2 text-sm text-seg-3" role="alert">{seedError}</p>}
+      <label className="mt-3 block text-xs text-fg-muted">
+        Learning rate: <span className="font-mono tabular-nums">{learningRate.toFixed(2)}</span>
+        <input
+          type="range"
+          min="0.03"
+          max="0.8"
+          step="0.01"
+          value={learningRate}
+          aria-label="Surface learning rate"
+          onChange={(event) => { setLearningRate(Number(event.target.value)); setStep(0); setPlaying(false) }}
+          className="mt-1 w-full accent-[var(--color-accent)]"
+        />
+      </label>
+      <p className="mt-2 text-xs text-fg-muted" role="status">
+        Step {step} of {SURFACE_STEPS}: loss {currentPoint.z.toFixed(2)}. A different seed can lead into a different basin.
+      </p>
       <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Rotate loss surface">
         <button type="button" onClick={() => rotate(-0.12, 0)} className="rounded border border-line px-3 py-2 text-sm hover:border-line-strong">
           Rotate left

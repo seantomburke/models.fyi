@@ -121,4 +121,20 @@ describe('GradientDescentDemo', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start right of the ridge' }))
     expect(screen.getByText(/This start reaches the right valley/)).toBeInTheDocument()
   })
+
+  it('lets learners choose seeded starts and learning rates for both loss landscapes', () => {
+    render(<GradientDescentDemo />)
+    const polynomialSeed = screen.getByRole('spinbutton', { name: 'Polynomial random seed' })
+    fireEvent.change(polynomialSeed, { target: { value: '42' } })
+    fireEvent.click(screen.getAllByRole('button', { name: 'Choose seeded start' })[0])
+    expect(screen.getByText(/Step 0: weight/)).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('Polynomial learning rate'), { target: { value: '0.8' } })
+    expect(screen.getByText(/A small rate creeps steadily downhill/)).toBeInTheDocument()
+
+    const surfaceSeed = screen.getByRole('spinbutton', { name: 'Surface random seed' })
+    fireEvent.change(surfaceSeed, { target: { value: '99' } })
+    fireEvent.click(screen.getAllByRole('button', { name: 'Choose seeded start' })[1])
+    fireEvent.change(screen.getByLabelText('Surface learning rate'), { target: { value: '0.5' } })
+    expect(screen.getByText(/Step 0 of 42/)).toBeInTheDocument()
+  })
 })

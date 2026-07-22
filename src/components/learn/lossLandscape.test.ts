@@ -8,6 +8,7 @@ import {
   interpolateSurfaceColor,
   sampleGradientVectors,
   sampleSurface,
+  seededValue,
   surfaceGradient,
   surfaceLoss,
 } from './lossLandscape'
@@ -37,6 +38,14 @@ describe('loss landscape math', () => {
     expect(right[right.length - 1].y).toBeLessThan(right[0].y)
     expect(left[left.length - 1].x).toBeLessThan(0)
     expect(right[right.length - 1].x).toBeGreaterThan(0)
+  })
+
+  it('maps a valid seed to a deterministic start inside the requested range', () => {
+    expect(seededValue(7, -3.4, 2.8)).toBe(seededValue(7, -3.4, 2.8))
+    expect(seededValue(8, -3.4, 2.8)).not.toBe(seededValue(7, -3.4, 2.8))
+    expect(seededValue(7, -3.4, 2.8)).toBeGreaterThanOrEqual(-3.4)
+    expect(seededValue(7, -3.4, 2.8)).toBeLessThan(2.8)
+    expect(() => seededValue(-1, 0, 1)).toThrow(/Seed/)
   })
 
   it('samples and projects a finite deterministic surface', () => {

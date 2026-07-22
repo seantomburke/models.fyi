@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { descendPolynomial, polynomialLoss } from './lossLandscape'
+import { useEffect, useMemo, useState } from 'react'
+import { descendPolynomial, polynomialLoss, seededValue } from './lossLandscape'
 
 const WIDTH = 640
 const HEIGHT = 270
@@ -8,6 +8,8 @@ const X_MIN = -3.4
 const X_MAX = 2.8
 const Y_MAX = 5.3
 const STEPS = 36
+const MIN_RATE = 0.04
+const MAX_RATE = 0.8
 
 function chartX(x: number): number {
   return PAD + ((x - X_MIN) / (X_MAX - X_MIN)) * (WIDTH - PAD * 2)
@@ -30,10 +32,45 @@ function svgPath(points: Array<{ x: number; y: number }>): string {
 
 export function PolynomialDescent2D() {
   const [start, setStart] = useState(-0.4)
-  const [step, setStep] = useState(STEPS)
-  const path = useMemo(() => descendPolynomial(start, STEPS), [start])
+  const [seedText, setSeedText] = useState('7')
+  const [learningRate, setLearningRate] = useState(0.08)
+  const [step, setStep] = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const [error, setError] = useState('')
+  const path = useMemo(() => descendPolynomial(start, STEPS, learningRate), [learningRate, start])
   const current = path[step]
   const basin = current.x < 0 ? 'left valley' : 'right valley'
+
+  useEffect(() => {
+    if (!playing) return
+    const timer = window.setInterval(() => {
+      setStep((value) => {
+        if (value >= STEPS) {
+          setPlaying(false)
+          return STEPS
+        }
+        return value + 1
+      })
+    }, 75)
+    return () => window.clearInterval(timer)
+  }, [playing])
+
+  const startTraining = () => {
+    setStep(0)
+    setPlaying(true)
+  }
+
+  const useSeed = () => {
+    const seed = Number(seedText)
+    if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) {
+      setError('Enter a whole-number seed from 0 to 4,294,967,295.')
+      return
+    }
+    setStart(seededValue(seed, X_MIN, X_MAX))
+    setStep(0)
+    setPlaying(false)
+    setError('')
+  }
 
   return (
     <section className="rounded-lg border border-line p-4" aria-labelledby="polynomial-descent-title">
@@ -41,8 +78,8 @@ export function PolynomialDescent2D() {
         One weight, two valleys
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-fg-secondary">
-        This polynomial is a teaching model, not Doodle-64's real loss. Move the starting point and
-        watch the same downhill rule settle in a different local minimum.
+        This polynomial is a teaching model, not Doodle-64's real loss. Pick a reproducible random
+        start, change the stride, then watch the same downhill rule settle in a local minimum.
       </p>
 
       <svg
@@ -83,7 +120,8 @@ export function PolynomialDescent2D() {
           type="button"
           onClick={() => {
             setStart(-0.4)
-            setStep(STEPS)
+            setStep(0)
+            setPlaying(false)
           }}
           aria-pressed={start === -0.4}
           className="rounded border border-line bg-surface-raised px-3 py-2 text-sm font-medium hover:border-line-strong"
@@ -94,7 +132,8 @@ export function PolynomialDescent2D() {
           type="button"
           onClick={() => {
             setStart(0.45)
-            setStep(STEPS)
+            setStep(0)
+            setPlaying(false)
           }}
           aria-pressed={start === 0.45}
           className="rounded border border-line bg-surface-raised px-3 py-2 text-sm font-medium hover:border-line-strong"
@@ -102,6 +141,48 @@ export function PolynomialDescent2D() {
           Start right of the ridge
         </button>
       </div>
+      <div className="mt-4 flex flex-wrap items-end gap-3">
+        <label className="text-sm font-medium">
+          Polynomial random seed
+          <input
+            type="number"
+            min="0"
+            max="4294967295"
+            step="1"
+            value={seedText}
+            onChange={(event) => setSeedText(event.target.value)}
+            className="mt-1 block w-44 rounded border border-line bg-surface-raised px-3 py-2 font-mono tabular-nums"
+          />
+        </label>
+        <button type="button" onClick={useSeed} className="rounded border border-line bg-surface-raised px-3 py-2 text-sm font-medium hover:border-line-strong">
+          Choose seeded start
+        </button>
+        <button type="button" onClick={startTraining} className="rounded bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-accent-deep">
+          {playing ? 'Training…' : 'Start training'}
+        </button>
+      </div>
+      {error && <p className="mt-2 text-sm text-seg-3" role="alert">{error}</p>}
+      <label className="mt-4 block text-xs text-fg-muted">
+        Learning rate: <span className="font-mono tabular-nums">{learningRate.toFixed(2)}</span>
+        <input
+          type="range"
+          min={MIN_RATE}
+          max={MAX_RATE}
+          step="0.04"
+          value={learningRate}
+          aria-label="Polynomial learning rate"
+          onChange={(event) => {
+            setLearningRate(Number(event.target.value))
+            setStep(0)
+            setPlaying(false)
+          }}
+          className="mt-1 w-full accent-[var(--color-accent)]"
+        />
+      </label>
+      <p className="mt-2 text-xs leading-relaxed text-fg-muted">
+        A small rate creeps steadily downhill. Near the high end, each stride can leap over the
+        valley and bounce back; this is overshooting, not a better route.
+      </p>
       <label className="mt-4 block text-xs text-fg-muted">
         Descent step
         <input
@@ -115,7 +196,7 @@ export function PolynomialDescent2D() {
       </label>
       <p className="mt-3 text-sm text-fg-secondary" role="status">
         Step {step}: weight {current.x.toFixed(2)}, loss {current.y.toFixed(2)}. This start reaches the{' '}
-        {basin}.
+        {basin}; different starts can settle in different local minima.
       </p>
     </section>
   )

@@ -17,6 +17,18 @@ export interface GradientVector {
   magnitude: number
 }
 
+/** Deterministic teaching starts make a loss-landscape experiment replayable. */
+export function seededValue(seed: number, minimum: number, maximum: number): number {
+  if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) {
+    throw new RangeError('Seed must be a whole number from 0 to 4,294,967,295')
+  }
+  if (!Number.isFinite(minimum) || !Number.isFinite(maximum) || minimum >= maximum) {
+    throw new RangeError('Seeded range needs finite bounds in ascending order')
+  }
+  const mixed = (seed * 1664525 + 1013904223) >>> 0
+  return minimum + (mixed / 0x100000000) * (maximum - minimum)
+}
+
 /** An asymmetric double well: different starts settle in different valleys. */
 export function polynomialLoss(x: number): number {
   return 0.08 * (x + 2.2) ** 2 * (x - 1.4) ** 2 + 0.08 * x + 0.45
