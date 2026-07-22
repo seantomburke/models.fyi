@@ -155,10 +155,14 @@ roster), plus web searches for Muse Spark 1.1 and Kimi K3 eval tables.
 - **Omitted for lack of a source: `grok-4-1-fast`.** Secondary sources
   (MindStudio, TypingMind, Oracle's model docs) all describe it as accepting
   text and image, but xAI's current `docs.x.ai/developers/models` table no
-  longer lists the model at all, and both plausible doc URLs 404. Per
-  "missing beats fabricated" both keys are omitted rather than guessed. Grok
-  4.5 itself is confirmed by xAI's image-understanding guide, whose examples
-  pass images to `grok-4.5`.
+  longer lists the model at all. xAI subsequently confirmed that both 4.1 Fast
+  API variants were retired on May 15, 2026; their slugs now redirect to Grok
+  4.3, whose model card cannot establish the historical model's capabilities.
+  The original 4.1 Fast launch post documents context, pricing, and tools but
+  no image modality. Per "missing beats fabricated" both keys remain omitted
+  rather than inheriting Grok 4.3's `Text, Image` input declaration. Grok 4.5
+  itself is confirmed by xAI's image-understanding guide, whose examples pass
+  images to `grok-4.5`.
 - **Rejected lead:** several third-party pages (MindStudio, Gate.AI) call
   GLM-5.2 multimodal. Z.AI's own model card lists it under Text Generation
   with no image input, and NVIDIA's mirror of the card lists text-only input

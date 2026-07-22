@@ -425,6 +425,9 @@ export const models: Model[] = [
     contextWindowTokens: 2_000_000,
     reasoning: true,
     internetAccess: true,
+    // Modality intentionally omitted: xAI retired both API variants on May 15, 2026,
+    // and the surviving slugs now redirect to Grok 4.3. The original 4.1 Fast
+    // launch material never documented image input or output.
     scores: {
       'swe-bench-pro': 70.0, // xAI-published (July 2026)
       'gpqa-diamond': 85.3, // Artificial Analysis independent reasoning run; replaces non-reasoning 63.7
