@@ -49,7 +49,11 @@ export const axisOptions: AxisOption[] = [
 
 export interface GraphRow extends Record<string, unknown> {
   model: string
+  /** URL slug for the model's detail page (/models/:id). */
+  modelId: string
   provider: string
+  /** ISO release date, when the dataset reliably knows one. */
+  releaseDate?: string
   x: number
   y: number
   /**
@@ -80,6 +84,38 @@ export function familyOf(m: Model): string {
     return parts.slice(0, -1).join(' ')
   }
   return m.name
+}
+
+/**
+ * Short label for a point on the graph: the model name minus a leading
+ * provider brand word, because the point's color already says who made it.
+ * 'Claude Opus 4.8' → 'Opus 4.8', but 'GPT-5.6 Sol' keeps its GPT — the
+ * brand word only comes off when it stands alone at the front of the name
+ * and something distinctive remains after it. Word-by-word prefix matching
+ * (not substring) so 'Geminix Prime' never loses letters to 'Gemini'.
+ */
+export function shortModelLabel(name: string, provider: string): string {
+  const nameWords = name.split(' ')
+  // Candidate brand prefixes, longest first, drawn from the provider name.
+  // 'Moonshot AI' should strip 'Moonshot AI' before falling back to
+  // 'Moonshot'; a parenthesized alias like 'Alibaba (Qwen)' offers both words.
+  const providerWords = provider.replace(/[()]/g, '').split(' ').filter(Boolean)
+  const candidates: string[][] = []
+  for (let take = providerWords.length; take >= 1; take--) {
+    candidates.push(providerWords.slice(0, take))
+  }
+  // Anthropic's models carry the product brand 'Claude', not the company
+  // name, so brand words are candidates too.
+  if (nameWords.length > 1 && nameWords[0] === 'Claude') candidates.push(['Claude'])
+
+  for (const prefix of candidates) {
+    if (prefix.length >= nameWords.length) continue
+    const matches = prefix.every((word, i) => nameWords[i] === word)
+    if (!matches) continue
+    const rest = nameWords.slice(prefix.length).join(' ')
+    if (rest.length > 0) return rest
+  }
+  return name
 }
 
 const providerName = new Map(providers.map((p) => [p.id, p.name]))
@@ -442,7 +478,9 @@ export function buildGraphRows(
       const family = familyOf(m)
       rows.push({
         model: m.name,
+        modelId: m.id,
         provider,
+        ...(m.releaseDate !== undefined && { releaseDate: m.releaseDate }),
         x,
         y,
         family,

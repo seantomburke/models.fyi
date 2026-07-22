@@ -1,5 +1,5 @@
 import { validateSpec } from '@opendata-ai/openchart-react'
-import { axisOptions, axisScale, buildGraphRows, buildGraphSpec, connectionSegments, defaultYAxisId, familyOf, LOG_SCALE_RATIO, paddedDomain, paletteFor, paletteForSeries, providerColor, scaledAxisTitle, scaleFraction, scaleTicks } from './graph'
+import { axisOptions, axisScale, buildGraphRows, buildGraphSpec, connectionSegments, defaultYAxisId, familyOf, LOG_SCALE_RATIO, paddedDomain, paletteFor, paletteForSeries, providerColor, scaledAxisTitle, scaleFraction, scaleTicks, shortModelLabel } from './graph'
 import { benchmarks, models, providers } from '../data/index.ts'
 
 const byId = (id: string) => axisOptions.find((o) => o.id === id)!
@@ -27,6 +27,48 @@ test('axis options cover every benchmark plus price and context', () => {
       'context',
     ]),
   )
+})
+
+test('shortModelLabel strips a distinct brand prefix and keeps everything else', () => {
+  // Anthropic models drop the Claude brand word — the color already says who.
+  expect(shortModelLabel('Claude Opus 4.8', 'Anthropic')).toBe('Opus 4.8')
+  expect(shortModelLabel('Claude Fable 5', 'Anthropic')).toBe('Fable 5')
+  expect(shortModelLabel('Claude Sonnet 5', 'Anthropic')).toBe('Sonnet 5')
+  expect(shortModelLabel('Claude Haiku 4.5', 'Anthropic')).toBe('Haiku 4.5')
+  // GPT / Gemini / Grok are the product names themselves, not a company
+  // prefix, so they stay whole.
+  expect(shortModelLabel('GPT-5.6 Sol', 'OpenAI')).toBe('GPT-5.6 Sol')
+  expect(shortModelLabel('Gemini 3.1 Pro', 'Google')).toBe('Gemini 3.1 Pro')
+  expect(shortModelLabel('Grok 4.5', 'xAI')).toBe('Grok 4.5')
+  expect(shortModelLabel('Kimi K3', 'Moonshot AI')).toBe('Kimi K3')
+  // Stripping 'Qwen' would leave a bare version number; the full name stays.
+  expect(shortModelLabel('Qwen 3.6', 'Alibaba (Qwen)')).toBe('Qwen 3.6')
+  expect(shortModelLabel('GLM-5.2', 'Z.ai (GLM)')).toBe('GLM-5.2')
+  expect(shortModelLabel('Llama 4 Maverick', 'Meta')).toBe('Llama 4 Maverick')
+  expect(shortModelLabel('DeepSeek V4 Pro', 'DeepSeek')).toBe('V4 Pro')
+})
+
+test('shortModelLabel never returns an empty string for any real model', () => {
+  const providerName = new Map(providers.map((p) => [p.id, p.name]))
+  for (const m of models) {
+    const label = shortModelLabel(m.name, providerName.get(m.providerId) ?? m.providerId)
+    expect(label.length).toBeGreaterThan(0)
+    // The short label is always a suffix of the full name — it only ever
+    // strips a leading brand, never rewrites.
+    expect(m.name.endsWith(label)).toBe(true)
+  }
+})
+
+test('graph rows carry the model id and release date for the detail card', () => {
+  const { rows } = buildGraphRows(byId('price-input'), byId('swe-bench-pro'))
+  const opus = rows.find((r) => r.model === 'Claude Opus 4.8')!
+  expect(opus.modelId).toBe('claude-opus-4-8')
+  const dated = models.find((m) => m.releaseDate !== undefined)!
+  for (const r of rows) {
+    const source = models.find((m) => m.id === r.modelId)!
+    expect(r.releaseDate).toBe(source.releaseDate)
+  }
+  expect(dated).toBeDefined()
 })
 
 test('only models with values on both axes are plotted; the rest are listed as excluded', () => {

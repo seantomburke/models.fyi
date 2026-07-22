@@ -1,6 +1,7 @@
 import { act } from '@testing-library/react'
 import { prerender } from 'react-dom/static'
 import { vi } from 'vitest'
+import { MemoryRouter } from 'react-router-dom'
 import { preloadInitialRoute } from './routePreload.ts'
 import { renderRoot } from './rootRender.tsx'
 import { GraphScatter } from './components/GraphScatter.tsx'
@@ -77,17 +78,23 @@ test('the responsive graph preserves its server markup during hydration', async 
     getValue: () => undefined,
   }
   const rows: GraphRow[] = [
-    { model: 'Alpha', provider: 'OpenAI', family: 'Alpha', series: 'OpenAI', x: 2, y: 80 },
-    { model: 'Beta', provider: 'OpenAI', family: 'Beta', series: 'OpenAI', x: 4, y: 90 },
+    { model: 'Alpha', modelId: 'alpha', provider: 'OpenAI', family: 'Alpha', series: 'OpenAI', x: 2, y: 80 },
+    { model: 'Beta', modelId: 'beta', provider: 'OpenAI', family: 'Beta', series: 'OpenAI', x: 4, y: 90 },
   ]
+  // The card's model-page link needs a router, during prerender too — the
+  // real page always renders inside one.
   const graph = (
-    <GraphScatter
-      rows={rows}
-      xAxis={xAxis}
-      yAxis={yAxis}
-      connections="provider"
-      onPointSelected={() => {}}
-    />
+    <MemoryRouter initialEntries={['/graph']}>
+      <GraphScatter
+        rows={rows}
+        xAxis={xAxis}
+        yAxis={yAxis}
+        connections="provider"
+        selected={null}
+        onPointSelected={() => {}}
+        onDismiss={() => {}}
+      />
+    </MemoryRouter>
   )
   const { prelude } = await prerender(graph)
   const container = document.createElement('div')

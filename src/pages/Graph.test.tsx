@@ -1,23 +1,8 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { vi } from 'vitest'
 import { MemoryRouter, useLocation } from 'react-router-dom'
-import { Graph, SelectedPoint } from './Graph'
-import { axisOptions } from '../lib/graph.ts'
-import type { GraphRow } from '../lib/graph.ts'
+import { Graph } from './Graph'
 import { graphPresets } from '../lib/graphUrlState.ts'
-
-const xAxis = axisOptions.find((o) => o.id === 'price-input')!
-const yAxis = axisOptions.find((o) => o.id === 'swe-bench-pro')!
-
-const row: GraphRow = {
-  model: 'Claude Opus 4.8',
-  provider: 'Anthropic',
-  x: 5,
-  y: 69.2,
-  family: 'Claude Opus',
-  series: 'Anthropic',
-}
 
 function LocationProbe() {
   const location = useLocation()
@@ -35,20 +20,57 @@ function renderGraph(initialEntry = '/graph') {
 
 const search = () => screen.getByTestId('location').textContent!.split('?')[1] ?? ''
 
-test('shows a hint until a point is tapped', () => {
-  render(<SelectedPoint row={null} xAxis={xAxis} yAxis={yAxis} onDismiss={() => {}} />)
-  expect(screen.getByText(/tap or click a point/i)).toBeInTheDocument()
-})
-
-test('the native graph is immediately interactive and pins a selected model', async () => {
+test('the native graph is immediately interactive and pins an in-graph card', async () => {
   const user = userEvent.setup()
   renderGraph()
   const point = screen.getByRole('button', { name: /^claude opus 4\.8, anthropic/i })
 
   await user.click(point)
 
-  expect(screen.getAllByText('Claude Opus 4.8')).toHaveLength(2)
-  expect(screen.getByRole('button', { name: /clear pinned point/i })).toBeInTheDocument()
+  const card = screen.getByRole('dialog', { name: /claude opus 4\.8 details/i })
+  expect(within(card).getByText('Anthropic')).toBeInTheDocument()
+  // Axis titles carry the units; bare labels like "Context window: 0.2"
+  // would mislead a non-expert audience.
+  expect(within(card).getByText(/price \(\$ per 1M tokens/i)).toBeInTheDocument()
+  expect(within(card).getByRole('link', { name: /model details/i })).toHaveAttribute(
+    'href',
+    '/models/claude-opus-4-8',
+  )
+  expect(within(card).getByRole('button', { name: /close details/i })).toBeInTheDocument()
+})
+
+test('the pinned card is dismissed by its close button', async () => {
+  const user = userEvent.setup()
+  renderGraph()
+  await user.click(screen.getByRole('button', { name: /^claude opus 4\.8, anthropic/i }))
+  await user.click(screen.getByRole('button', { name: /close details/i }))
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+})
+
+test('the pinned card is dismissed by Escape', async () => {
+  const user = userEvent.setup()
+  renderGraph()
+  await user.click(screen.getByRole('button', { name: /^claude opus 4\.8, anthropic/i }))
+  await user.keyboard('{Escape}')
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+})
+
+test('clicking another point moves the pin to that point', async () => {
+  const user = userEvent.setup()
+  renderGraph()
+  await user.click(screen.getByRole('button', { name: /^claude opus 4\.8, anthropic/i }))
+  await user.click(screen.getByRole('button', { name: /^gemini 3\.1 pro, google/i }))
+  expect(screen.getByRole('dialog', { name: /gemini 3\.1 pro details/i })).toBeInTheDocument()
+  expect(screen.queryByRole('dialog', { name: /claude opus 4\.8 details/i })).not.toBeInTheDocument()
+})
+
+test('changing axes clears a pinned card whose values no longer apply', async () => {
+  const user = userEvent.setup()
+  renderGraph()
+  await user.click(screen.getByRole('button', { name: /^claude opus 4\.8, anthropic/i }))
+  expect(screen.getByRole('dialog')).toBeInTheDocument()
+  await user.click(screen.getByRole('tab', { name: graphPresets[1].label }))
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 })
 
 test('the compact model chooser can select a point hidden by an overlapping target', async () => {
@@ -58,27 +80,8 @@ test('the compact model chooser can select a point hidden by an overlapping targ
   await user.click(screen.getByText(/can’t tap a point.*choose a model/i))
   await user.click(screen.getByRole('button', { name: /select gpt-5\.6 sol, openai/i }))
 
-  expect(screen.getAllByText('GPT-5.6 Sol')).toHaveLength(2)
-  expect(screen.getByRole('button', { name: /clear pinned point/i })).toBeInTheDocument()
-})
-
-test('shows the tapped model with both axis values, labeled with units', () => {
-  render(<SelectedPoint row={row} xAxis={xAxis} yAxis={yAxis} onDismiss={() => {}} />)
-  expect(screen.getByText('Claude Opus 4.8')).toBeInTheDocument()
-  expect(screen.getByText('Anthropic')).toBeInTheDocument()
-  // Axis titles carry the units; bare labels like "Context window: 0.2"
-  // would mislead a non-expert audience.
-  expect(screen.getByText(xAxis.axisTitle, { exact: false })).toBeInTheDocument()
-  expect(screen.getByText(yAxis.axisTitle, { exact: false })).toBeInTheDocument()
-  expect(screen.getByText('5')).toBeInTheDocument()
-  expect(screen.getByText('69.2')).toBeInTheDocument()
-})
-
-test('a pinned point can be dismissed', async () => {
-  const onDismiss = vi.fn()
-  render(<SelectedPoint row={row} xAxis={xAxis} yAxis={yAxis} onDismiss={onDismiss} />)
-  await userEvent.click(screen.getByRole('button', { name: /clear pinned point/i }))
-  expect(onDismiss).toHaveBeenCalledOnce()
+  const card = screen.getByRole('dialog', { name: /gpt-5\.6 sol details/i })
+  expect(within(card).getByRole('button', { name: /close details/i })).toBeInTheDocument()
 })
 
 test('lands on the first preset with exactly one tab selected', () => {
