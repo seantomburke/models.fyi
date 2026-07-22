@@ -186,6 +186,11 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://seantomburke.github.io/models.fyi/learn/train-a-neural-network/</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://seantomburke.github.io/models.fyi/learn/how-llms-predict-the-next-word/</loc>
     <lastmod>2026-07-20</lastmod>
     <changefreq>monthly</changefreq>

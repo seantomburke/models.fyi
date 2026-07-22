@@ -22,6 +22,9 @@ export { GRID_SIZE, PIXEL_COUNT }
 /** Number of full passes over the training set we record. */
 export const EPOCHS = 120
 
+/** Each class gets enough varied drawings that the model cannot just memorize one glyph. */
+export const TRAINING_SAMPLES_PER_CLASS = 25
+
 /** How big a step each weight takes down the slope. */
 export const LEARNING_RATE = 0.35
 
@@ -73,9 +76,10 @@ export function buildTrainingSet(seed = SEED): TrainingExample[] {
     { label: 'Clean 3', pixels: three, target: 1 },
     { label: 'Clean E', pixels: e, target: 0 },
   ]
-  for (let v = 1; v <= 4; v++) {
-    examples.push({ label: `Smudged 3 #${v}`, pixels: withNoise(three, rand, 3), target: 1 })
-    examples.push({ label: `Smudged E #${v}`, pixels: withNoise(e, rand, 3), target: 0 })
+  for (let v = 1; v < TRAINING_SAMPLES_PER_CLASS; v++) {
+    const flips = 2 + Math.floor(rand() * 4)
+    examples.push({ label: `Training 3 #${v + 1}`, pixels: withNoise(three, rand, flips), target: 1 })
+    examples.push({ label: `Training E #${v + 1}`, pixels: withNoise(e, rand, flips), target: 0 })
   }
   return examples
 }

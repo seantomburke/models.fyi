@@ -46,6 +46,7 @@ export const TOPIC_MOTIFS: Record<string, Motif> = {
   'understand-image-classification': 'pixels',
   'how-neural-networks-recognize-digits': 'digits',
   'what-is-gradient-descent': 'descent',
+  'train-a-neural-network': 'pixels',
   'how-llms-predict-the-next-word': 'nextWord',
   'why-neural-networks-need-more-layers': 'layers',
 }

@@ -10,6 +10,18 @@
  * order, and a Learn.test.tsx guard asserts every section here resolves.
  */
 export const topicProse: Record<string, string[]> = {
+  "train-a-neural-network::Training starts with examples": [
+    'A neural network cannot learn what an E or a 3 is until somebody supplies examples. Here, each 8×8 drawing is deliberately a little different, like handwriting from different people.',
+  ],
+  "train-a-neural-network::Your labels become the lesson": [
+    'The pictures do not come with answers attached. The buckets are the answers. When you put a picture in the E bucket, you are telling the model to make that output more likely next time it sees a similar pattern.',
+  ],
+  "train-a-neural-network::Gradient descent changes the weights": [
+    'Training compares each guess with your label, measures how wrong it was, then nudges all 64 weights a little. The loss number falls when those small nudges make the model agree with more of your examples.',
+  ],
+  "train-a-neural-network::A backwards lesson still teaches something": [
+    'Try inverting every label before training. The model is not secretly aware that a shape looks like a 3. It learns the rule in its examples, so reversed teaching produces a reversed classifier.',
+  ],
   "what-is-an-ai-model::The five-year-old version": [
       'Normal computer programs are recipe books. A person writes exact steps, and the computer follows them. An AI model doesn\'t get written like a recipe. Instead, you show it millions of examples, and it learns the patterns on its own.',
       'Imagine teaching a kid what a dog is. You don\'t hand them a rulebook: four legs, fur, tail. You point at dogs until they just get it. That\'s how models learn.',

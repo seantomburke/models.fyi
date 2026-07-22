@@ -3,6 +3,7 @@ import {
   EPOCHS,
   PIXEL_COUNT,
   TRAINING_RUN,
+  TRAINING_SAMPLES_PER_CLASS,
   TRAINING_SET,
   makeRandom,
   classifyWithLearnedWeights,
@@ -28,6 +29,12 @@ describe('makeRandom', () => {
 })
 
 describe('training set', () => {
+  it('provides 25 seeded examples for each label', () => {
+    expect(TRAINING_SET).toHaveLength(TRAINING_SAMPLES_PER_CLASS * 2)
+    expect(TRAINING_SET.filter((example) => example.target === 1)).toHaveLength(TRAINING_SAMPLES_PER_CLASS)
+    expect(TRAINING_SET.filter((example) => example.target === 0)).toHaveLength(TRAINING_SAMPLES_PER_CLASS)
+  })
+
   it('has balanced 3 and E examples, each 64 pixels wide', () => {
     expect(TRAINING_SET.length).toBeGreaterThanOrEqual(10)
     for (const ex of TRAINING_SET) {

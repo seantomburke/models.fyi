@@ -17,6 +17,7 @@ import { DeepDigitClassifier } from '../../components/learn/DeepDigitClassifier'
 import { MultiLayerNetwork } from '../../components/learn/MultiLayerNetwork'
 import { NextWordPredictor } from '../../components/learn/NextWordPredictor'
 import { GradientDescentDemo } from '../../components/learn/GradientDescentDemo'
+import { TrainingLab } from '../../components/learn/TrainingLab'
 
 import { TokenVisualization } from '../../components/learn/TokenVisualization'
 
@@ -681,6 +682,21 @@ const authored: Topic[] = [
       {
         heading: 'This is how every model on this site was made',
       },
+    ],
+  },
+  {
+    slug: 'train-a-neural-network',
+    level: 'lab',
+    question: 'How do you train a neural network?',
+    metaTitle: 'Train a neural network yourself - Interactive lab - Models.fyi',
+    metaDescription: 'Label 50 tiny images, train a real 64-weight neural network in your browser, and test the weights it learned.',
+    hook: 'You are the teacher: label the drawings, then watch the model turn your answers into weights.',
+    interactive: TrainingLab,
+    sections: [
+      { heading: 'Training starts with examples' },
+      { heading: 'Your labels become the lesson' },
+      { heading: 'Gradient descent changes the weights' },
+      { heading: 'A backwards lesson still teaches something' },
     ],
   },
   {
