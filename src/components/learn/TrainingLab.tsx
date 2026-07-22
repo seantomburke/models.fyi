@@ -202,15 +202,23 @@ export function TrainingLab() {
             {assignedCount} of {keptCount} labelled{deck.deleted.length > 0 && ` · ${deck.deleted.length} deleted`}
           </p>
         </div>
-        <div className="mt-4 grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-          <SwipeLabelDeck
-            card={card !== null ? { id: card, name: examples[card].label, pixels: examples[card].pixels } : null}
-            remaining={Math.max(deck.queue.length - 1, 0)}
-            onLabel={(label) => { setDeck((current) => labelCurrent(current, label)); invalidateRun() }}
-            onDelete={() => { setDeck(deleteCurrent); invalidateRun() }}
-          />
-          <div className="space-y-3">
+        {/* The trays flank the deck like buckets: E on the left, 3 on the
+            right, matching the swipe directions (left = E, right = 3). The
+            deck stays first in the DOM — it is the interaction — and on small
+            screens it leads with the trays stacking beneath it. */}
+        <div className="mt-4 grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+          <div className="md:order-2">
+            <SwipeLabelDeck
+              card={card !== null ? { id: card, name: examples[card].label, pixels: examples[card].pixels } : null}
+              remaining={Math.max(deck.queue.length - 1, 0)}
+              onLabel={(label) => { setDeck((current) => labelCurrent(current, label)); invalidateRun() }}
+              onDelete={() => { setDeck(deleteCurrent); invalidateRun() }}
+            />
+          </div>
+          <div className="md:order-1">
             <LabelledTray label="E" examples={examples} deck={deck} onUnlabel={(index) => { setDeck((current) => unlabelCard(current, index)); invalidateRun() }} />
+          </div>
+          <div className="md:order-3">
             <LabelledTray label="3" examples={examples} deck={deck} onUnlabel={(index) => { setDeck((current) => unlabelCard(current, index)); invalidateRun() }} />
           </div>
         </div>

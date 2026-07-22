@@ -39,6 +39,19 @@ describe('TrainingLab', () => {
     expect(screen.getByRole('list', { name: 'Drawings labelled 3' }).children).toHaveLength(25)
   })
 
+  it('flanks the deck with E on the left and 3 on the right on desktop', () => {
+    render(<TrainingLab />)
+    // Grid placement follows order-modified document order: the E tray takes
+    // md:order-1 (left of the deck) and the 3 tray md:order-3 (right of it),
+    // matching the swipe directions.
+    const eTray = screen.getByRole('list', { name: 'Drawings labelled E' }).closest('.md\\:order-1')
+    const threeTray = screen.getByRole('list', { name: 'Drawings labelled 3' }).closest('.md\\:order-3')
+    const deck = screen.getByTestId('swipe-deck').closest('.md\\:order-2')
+    expect(eTray).not.toBeNull()
+    expect(threeTray).not.toBeNull()
+    expect(deck).not.toBeNull()
+  })
+
   it('labels one card at a time through the swipe deck buttons', () => {
     vi.useFakeTimers()
     render(<TrainingLab />)
