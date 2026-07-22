@@ -24,3 +24,25 @@ test('every internal Learn link points at a real topic', () => {
     .map((t) => `${t.id} -> ${t.relatedLearnTopic}`)
   expect(broken).toEqual([])
 })
+
+test('includes the requested agent and protocol jargon with plain-language explanations', () => {
+  const requestedTerms = [
+    'ai-agent',
+    'a2a',
+    'lsp',
+    'mcp',
+    'multimodal',
+    'rag',
+  ]
+
+  for (const id of requestedTerms) {
+    const term = glossaryTerms.find((entry) => entry.id === id)
+    expect(term).toBeDefined()
+    expect(term?.short).not.toBe('')
+    expect(term?.long).not.toBe('')
+  }
+
+  expect(glossaryTerms.find((entry) => entry.id === 'a2a')?.term).toContain('Agent2Agent')
+  expect(glossaryTerms.find((entry) => entry.id === 'lsp')?.term).toContain('Language Server Protocol')
+  expect(glossaryTerms.find((entry) => entry.id === 'mcp')?.term).toContain('Model Context Protocol')
+})

@@ -14,6 +14,12 @@ export interface GlossaryTerm {
 
 export const glossaryTerms: GlossaryTerm[] = [
   {
+    id: 'ai-agent',
+    term: 'AI Agent',
+    short: 'An AI system that can choose steps and use tools to complete a task.',
+    long: 'An AI agent does more than answer one question. You give it a goal, and it can decide what to do next: look something up, use a tool, check the result, and keep going until it finishes. For example, an agent might research a trip, compare options, and put the best choices in a draft itinerary. The AI model is the brain; the agent is the system that gives it a goal and tools.',
+  },
+  {
     id: 'ai-model',
     term: 'AI Model',
     short: 'A trained system that takes text input and generates text output.',
@@ -26,6 +32,18 @@ export const glossaryTerms: GlossaryTerm[] = [
     short: 'A type of AI model trained on massive amounts of text.',
     long: 'LLM stands for "Large Language Model." It\'s an AI model trained on billions of words from the internet. The "large" part means it has billions of internal knobs (called parameters) that let it understand nuance and context. GPT, Claude, and Gemini are all LLMs.',
     relatedLearnTopic: 'what-is-an-llm',
+  },
+  {
+    id: 'lsp',
+    term: 'LSP (Language Server Protocol)',
+    short: 'A standard way for code editors to get language features like autocomplete and error checks.',
+    long: 'LSP stands for "Language Server Protocol." It lets a code editor ask a language-specific helper for useful features such as autocomplete, jump to definition, and error messages. One language server can work with many editors, so developers do not need a separate integration for every editor. You may see it mentioned when AI coding tools describe how they understand a codebase.',
+  },
+  {
+    id: 'mcp',
+    term: 'MCP (Model Context Protocol)',
+    short: 'An open standard that lets AI apps connect to external tools and information.',
+    long: 'MCP stands for "Model Context Protocol." It is a shared way for an AI app to connect to things outside the model, such as files, databases, calendars, or search tools. Instead of building a different custom connection for every app and service, developers can use the same protocol. This gives an AI assistant useful context and tools while keeping the connection structured.',
   },
   {
     id: 'gpt',
@@ -98,6 +116,12 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'API',
     short: 'A way for your app to talk to an AI model.',
     long: 'API stands for "Application Programming Interface." In this context, it\'s how your code (or app) connects to an AI model. Instead of visiting a website, your code sends a request to the API, the model processes it, and you get a response back. OpenAI, Anthropic, and Google all offer APIs so developers can build on top of their models.',
+  },
+  {
+    id: 'a2a',
+    term: 'A2A (Agent2Agent)',
+    short: 'An open standard that lets independent AI agents communicate and work together.',
+    long: 'A2A stands for "Agent2Agent." It is a shared set of rules that lets one AI agent find another agent, give it a task, and receive the result. For example, a travel-planning agent could ask a separate booking agent for hotel options. The standard helps agents built by different companies cooperate without needing a custom connection for every pair.',
   },
   {
     id: 'embedding',
