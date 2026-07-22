@@ -248,14 +248,6 @@ export function generateComparisonMarkdown(visibleModels: Model[]): string {
   return lines.join('\n')
 }
 
-/**
- * Window event fired by the global `e` keyboard shortcut. Pages with their
- * own export flow (Compare, with its active filters and sort) listen for it
- * and call preventDefault to claim the export; when no page claims it, the
- * App-level handler falls back to exporting the full model list as CSV.
- */
-export const EXPORT_SHORTCUT_EVENT = 'modelsfyi:export-shortcut'
-
 export type ExportFormat = 'csv' | 'json' | 'markdown'
 
 /**

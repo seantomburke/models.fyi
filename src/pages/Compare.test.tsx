@@ -1,11 +1,11 @@
-import { render, screen, within, act } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 import { Compare } from './Compare'
 import { benchmarks, models } from '../data/index.ts'
 import type { Model } from '../data/index.ts'
 import { formatPrice, formatTokens } from '../lib/format.ts'
-import { exportComparison, EXPORT_SHORTCUT_EVENT } from '../lib/export.ts'
+import { exportComparison } from '../lib/export.ts'
 
 const posthogCapture = vi.fn()
 
@@ -326,23 +326,11 @@ describe('export', () => {
     expect(exported).toHaveLength(models.length)
   })
 
-  test('claims the global export shortcut event', () => {
-    renderCompare()
-    const event = new CustomEvent(EXPORT_SHORTCUT_EVENT, { cancelable: true })
-    act(() => {
-      window.dispatchEvent(event)
-    })
-    expect(event.defaultPrevented).toBe(true)
-    expect(exportComparison).toHaveBeenCalledOnce()
-  })
-
-  test('shortcut export honors the active filter', async () => {
+  test('export honors the active filter', async () => {
     const user = userEvent.setup()
     renderCompare()
     await user.click(screen.getByRole('button', { name: 'Anthropic' }))
-    act(() => {
-      window.dispatchEvent(new CustomEvent(EXPORT_SHORTCUT_EVENT, { cancelable: true }))
-    })
+    await user.click(screen.getByRole('button', { name: 'Export comparison table as CSV' }))
     const exported = vi.mocked(exportComparison).mock.calls[0][0] as Model[]
     expect(exported.length).toBeGreaterThan(0)
     expect(exported.length).toBeLessThan(models.length)

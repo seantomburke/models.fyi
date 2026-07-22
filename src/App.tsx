@@ -1,18 +1,10 @@
-import { useState, useCallback } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import { Layout, ClientSuspense } from './components/Layout.tsx'
-import { ShortcutsDialog } from './components/ShortcutsDialog.tsx'
 import { Home } from './pages/Home.tsx'
 import { GraphSkeleton } from './components/GraphSkeleton.tsx'
 import { CalculatorSkeleton } from './components/CalculatorSkeleton.tsx'
-import { useDarkMode } from './lib/darkMode'
-import { useKeyboardShortcuts, createDefaultShortcuts } from './lib/keyboard-shortcuts.ts'
 import { usePostHogPageView } from './hooks/usePostHogPageView'
-import { usePostHog } from './lib/posthog-react.ts'
-import { exportComparison, EXPORT_SHORTCUT_EVENT } from './lib/export.ts'
-import { captureExport, captureExportFailed } from './lib/posthog-events.ts'
-import { models } from './data/index.ts'
 import { createPreloadedRoute, routeLoaders } from './routePreload.ts'
 
 // Every route but Home is lazy. Home stays static because it is the most
@@ -35,60 +27,9 @@ const NotFound = createPreloadedRoute(routeLoaders.notFound)
 
 function App() {
   usePostHogPageView()
-  const navigate = useNavigate()
-  const posthog = usePostHog()
-  const [, setIsDark] = useDarkMode()
-  const [showShortcuts, setShowShortcuts] = useState(false)
-
-  const handleShowHelp = useCallback(() => {
-    setShowShortcuts(true)
-  }, [])
-
-  const handleToggleDarkMode = useCallback(() => {
-    const currentIsDark = document.documentElement.classList.contains('dark')
-    setIsDark(!currentIsDark)
-  }, [setIsDark])
-
-  const shortcuts = createDefaultShortcuts({
-    showHelp: handleShowHelp,
-    showSearch: () => navigate('/search'),
-    goToCompare: () => navigate('/compare'),
-    goToGraph: () => navigate('/graph'),
-    goToCalculator: () => navigate('/calculator'),
-    goToQuiz: () => navigate('/quiz'),
-    goToLearn: () => navigate('/learn'),
-    goToFAQ: () => navigate('/faq'),
-    toggleExport: () => {
-      // A page with richer export state (Compare's filtered table) claims the
-      // shortcut by calling preventDefault; dispatchEvent returns false then.
-      const claimed = !window.dispatchEvent(
-        new CustomEvent(EXPORT_SHORTCUT_EVENT, { cancelable: true }),
-      )
-      if (claimed) return
-      try {
-        exportComparison(models)
-        captureExport(posthog, models.length)
-      } catch (error) {
-        console.error('Failed to export model data:', error)
-        captureExportFailed(
-          posthog,
-          models.length,
-          error instanceof Error ? error.message : 'Unknown error',
-        )
-      }
-    },
-    toggleDarkMode: handleToggleDarkMode,
-  })
-
-  useKeyboardShortcuts(shortcuts)
 
   return (
     <ErrorBoundary>
-      <ShortcutsDialog
-        isOpen={showShortcuts}
-        onClose={() => setShowShortcuts(false)}
-        shortcuts={shortcuts}
-      />
       <Routes>
       {/* Layout wraps <Outlet /> in a Suspense boundary, so the lazy routes
           below need no per-route one. Graph and Calculator keep theirs because
