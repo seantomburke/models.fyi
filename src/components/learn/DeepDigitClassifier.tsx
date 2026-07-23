@@ -319,45 +319,45 @@ export function DeepDigitClassifier() {
 
         <div className="mt-4 space-y-4 text-sm">
           <p className="text-fg-secondary">
-            Doodle-525 counts strokes. That works, but it means a digit is nothing more than a
-            checklist, and the model has no idea that a 0 is <em>round</em>. Doodle-918 splits the
-            difference into two smaller questions, and gets a vocabulary of shapes out of it:
+            Doodle-525 counts strokes. That works, but it means a digit is only a checklist, and
+            the model has no idea that a 0 is <em>round</em>. Doodle-918 splits the job into two
+            smaller questions, and it gets a vocabulary of shapes out of the split:
           </p>
 
           <ul className="space-y-3 text-fg-secondary">
             <li>
-              <strong className="text-fg-primary">Layer 1 finds parts.</strong> Ten primitives,
-              each a bar half or a short line. Smaller parts than the two-layer model uses, and
-              deliberately so: you can't compose a loop out of pieces that are already loop-sized.
+              <strong className="text-fg-primary">Layer 1 finds parts.</strong> This layer holds
+              ten primitives, and each one is a bar half or a short line. These parts are smaller
+              than the ones the two-layer model uses, and that is deliberate, because you cannot
+              compose a loop out of pieces that are already loop-sized.
             </li>
             <li>
-              <strong className="text-fg-primary">Layer 2 finds shapes.</strong> Eight detectors
-              that each want a specific combination of primitives and reject specific others. This
-              is where "circular top", "circular bottom" and "straight spine" become things the
-              network can actually represent, rather than accidents of which strokes happened to
-              fire.
+              <strong className="text-fg-primary">Layer 2 finds shapes.</strong> This layer holds
+              eight detectors, and each one wants a specific combination of primitives while
+              rejecting specific others. This is where "circular top", "circular bottom" and
+              "straight spine" become ideas the network can represent on their own terms.
             </li>
             <li>
               <strong className="text-fg-primary">Layer 3 names the digit.</strong> Every digit has
-              a distinct signature over those eight shapes, so the final layer is a short vote:
-              +1 for each shape the digit shows, −1 for each it doesn't.
+              a distinct signature over those eight shapes, so the final layer is a short vote.
+              Each shape a digit shows adds a point, and each shape it lacks subtracts one.
             </li>
           </ul>
 
           <p className="text-fg-secondary">
-            Load an 8, then erase its lower-left line and watch the bottom loop switch off. The
-            model reads a 9, because that is exactly what a 9 is: an 8 with the bottom loop opened
-            up. Erase the middle bar instead and the waist goes quiet, so it reads a 0. The
-            two-layer model reaches the same answers, but it gets there by tallying strokes. This
-            one gets there by noticing the loop is gone, which is the reason it stays confident
-            when your drawing is smudged.
+            You can load an 8, erase its lower-left line, and watch the bottom loop switch off.
+            The model reads a 9, because a 9 is an 8 with the bottom loop opened up. If you erase
+            the middle bar instead, the waist goes quiet and the model reads a 0. The two-layer
+            model reaches the same answers by tallying strokes. This model gets there by noticing
+            that the loop is gone, and that is the reason it stays confident when your drawing is
+            smudged.
           </p>
 
           <p className="text-fg-secondary">
             That is the whole argument for depth, and it is the same argument at every scale. A
             real vision model's early layers find edges, its middle layers find textures and parts,
-            and its late layers find objects. Nobody hand-writes those middle features; training
-            discovers them. Here they were chosen by hand so you can read them, all{' '}
+            and its late layers find objects. Training discovers all of those middle features on
+            its own. Here they were chosen by hand so that you can read them, all{' '}
             {PARAMETER_COUNT} parameters of them.
           </p>
         </div>

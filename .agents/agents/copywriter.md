@@ -7,6 +7,9 @@ The canonical style rules live in `.agents/rules/writing-style.md`. Read that fi
 ## Summary of the rules
 
 - Concrete, specific, short sentences. One warm reader. Every word earns its place.
+- Classic sentence structure: complete sentences with a subject and a verb, connectives spelled out, natural articles kept. No colon splices, appositive fragments, or chained-verb tricolons.
+- Say what a thing is before what it does: "This is a model that can see loops and curves."
+- In explanations, prefer "You can draw a digit and watch how..." over the bare imperative "Draw one and watch". Imperatives stay fine in step-by-step instructions and UI labels.
 - No em dashes or en dashes anywhere. Split the thought or use a comma.
 - No negation-contrast framing in either direction: "X, not Y" and the reversed "doesn't X, it Z" / "never X; it just Z". State the intended claim directly.
 - No filler intensifiers or throat-clearing rhetorical questions.
@@ -52,6 +55,10 @@ After: "Nobody writes step-by-step instructions for an AI model. You show it mil
 Before: "It's a direct-answer model (no step-by-step thinking phase), which keeps it fast. Fine for this kind of task."
 
 After: "It answers directly without a thinking phase, which keeps it fast. That works well for this kind of task."
+
+Before: "Meet Doodle-918: it sees loops and curves, the shapes that make a digit a digit. Draw one and watch parts become shapes become an answer."
+
+After: "Meet Doodle-918. This is a model that can see loops and curves, and can interpret these into digits. You can draw a digit and watch how the different shapes become an answer."
 
 ## Workflow
 

@@ -5,10 +5,31 @@ Canonical rules for all user-facing copy on models.fyi. The site explains comple
 ## Voice
 
 - Be concrete and specific. Prefer examples and analogies to abstractions.
-- Use short sentences. One idea per sentence.
+- Use short sentences. One idea per sentence, and each sentence is complete, with a subject and a verb. Short means one idea. It does not mean fragments.
 - Address one reader warmly and directly.
 - Remove filler so every word earns its place.
 - Avoid being verbose. If a paragraph can be a sentence, make it a sentence.
+
+## Sentence structure
+
+The register is a patient teacher, and a teacher uses classic sentence structure. Compressed copywriting reads clever and explains nothing. The worked example:
+
+Before: "Meet Doodle-918: it sees loops and curves, the shapes that make a digit a digit. Draw one and watch parts become shapes become an answer."
+
+After: "Meet Doodle-918. This is a model that can see loops and curves, and can interpret these into digits. You can draw a digit and watch how the different shapes become an answer."
+
+The rules the After version follows:
+
+1. **Periods over colon splices.** When a colon joins two clauses ("Meet Doodle-918: it sees..."), end the sentence and start a new one. Colons stay legal for true lists.
+2. **Say what a thing is before what it does.** Classify first: "This is a model that can see loops and curves." A bare "it" whose referent was only implied leaves the reader guessing.
+3. **"You can..." over bare imperatives in explanations.** Describe what the reader can do ("You can draw a digit and watch how...") instead of commanding them ("Draw one and watch"). Imperatives stay fine in genuine step-by-step instructions and UI labels like buttons.
+4. **"can" frames capability.** "can see", "can interpret", "You can draw". Use it for abilities and invitations. Keep plain present tense for what a model is doing right now in a demo.
+5. **Complete conventional syntax.** Subject, verb, object. No appositive fragments hanging off a comma ("the shapes that make a digit a digit"), no chained-verb tricolons ("parts become shapes become an answer"), no verbless punch fragments ("Eighty weights to name ten digits.").
+6. **Spell out the connectives.** Join clauses with "and", "how", "that", "because". A comma standing in for a conjunction is a compression device, and compression is the copywriter register we are avoiding.
+7. **Keep natural determiners.** Write "the different shapes" and "a digit". Keep articles even when they feel slightly redundant. Stripping them for punchiness is the old register.
+8. **Follow the explainer arc.** What it is, then what it does, then what you can do with it.
+
+These are style rules applied with judgment. There is no regex guard for them, because colons, imperatives, and short sentences all have legitimate uses.
 
 ## Hard bans
 
