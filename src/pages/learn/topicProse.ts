@@ -279,7 +279,7 @@ export const topicProse: Record<string, string[]> = {
   ],
   "how-do-neural-network-weights-work::How they work: the multiplication": [
       'Each input gets multiplied by its weight. A weight of 0 means "this input doesn\'t matter." A weight of 2 means "pay double attention to this input." So if an input is 0.5 and its weight is 2, the product is 1.0.',
-      'Then all those products get added together. That sum is the output of the layer. In math: output = (input₁ × weight₁) + (input₂ × weight₂) + ... This operation repeats billions of times across a model.',
+      'Then all those products get added together. That sum is the output of the layer. The equation below is the whole operation, and it repeats billions of times across a model.',
   ],
   "how-do-neural-network-weights-work::Why they matter": [
       'A model\'s knowledge lives in its weights. They encode everything the network learned during training: what a dog looks like in pixels, what makes good code, the patterns in human speech. Change the weights, the model\'s behavior changes.',

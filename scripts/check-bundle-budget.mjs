@@ -3,7 +3,7 @@
  *
  * The homepage's preloaded JS is the floor for every route: a visitor pays it
  * before seeing anything, on any entry point. It is easy to regress by accident
- * because the cost is invisible in source review — a single top-level `import`
+ * because the cost is invisible in source review: a single top-level `import`
  * in a widely-imported module (routeMeta.ts is imported by every page) silently
  * pulls a whole dataset into the shared chunk. That is exactly how the FAQ,
  * glossary, and release corpora came to ship on all 58 routes.
@@ -22,14 +22,14 @@ const BUDGET_KB = {
    * The shared chunk holding route metadata, imported by every page.
    * Raised 60 → 64 on 2026-07-23 for the 10 /providers/:id routes (their
    * titles, blurbs, and schema builders live in routeMeta like the model
-   * pages' do) — measured 60.5 kB after the change.
+   * pages' do); measured 60.5 kB after the change.
    */
   meta: 64,
 }
 
 const html = 'dist/index.html'
 if (!existsSync(html)) {
-  throw new Error(`${html} not found — run the client build before the budget check`)
+  throw new Error(`${html} not found; run the client build before the budget check`)
 }
 
 const gzipKb = (path) => gzipSync(readFileSync(path)).length / 1024
@@ -57,7 +57,7 @@ const check = (name, actual, budget) => {
   if (actual > budget) {
     failures.push(
       `${name} bundle is ${actual.toFixed(1)} kB gzip, over its ${budget} kB budget. ` +
-        `Something large was probably pulled into a shared chunk — check for a new ` +
+        `Something large was probably pulled into a shared chunk. Check for a new ` +
         `top-level import in a module every page imports (src/lib/routeMeta.ts especially). ` +
         `If the growth is genuinely necessary, raise the budget in this script deliberately.`,
     )
@@ -67,6 +67,13 @@ const check = (name, actual, budget) => {
 console.log('bundle budget:')
 check('entry', entryKb, BUDGET_KB.entry)
 if (metaKb > 0) check('meta', metaKb, BUDGET_KB.meta)
+
+// KaTeX is ~70 kB gzip and belongs only in the lazy MathBlock chunk. If it
+// ever appears in the homepage's preload list, a shared module started
+// importing it eagerly.
+if (assets.some((asset) => /katex/i.test(asset))) {
+  failures.push('katex is preloaded by the homepage; it must stay in the lazy MathBlock chunk')
+}
 
 if (failures.length > 0) {
   throw new Error(failures.join('\n'))
