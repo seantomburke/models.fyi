@@ -46,11 +46,20 @@ effort configurations).
 - **Grok 4.1 Fast remains omitted from this column.** Artificial Analysis
   labels its 31-point reasoning result an estimate, rather than an independent
   evaluation. Per the data-layer rule, it is not comparable enough to publish.
+- **The broader provider and leaderboard sweep found no further eligible
+  changes.** OpenAI reconfirms the displayed GPT-5.6 GPQA Diamond, SWE-bench
+  Pro, and Terminal-Bench 2.1 values, including Terra's 87.4 and Luna's 84.7.
+  Moonshot continues to list Kimi K3 as API-only until its scheduled July 27
+  weights release. Empty benchmark cells remain omitted rather than inferred.
+- **Quiz audit:** recommendations and score explanations are derived from the
+  canonical `models` array. There is no duplicate quiz score data to update.
 
 Sources checked 2026-07-23: [Claude Sonnet 5](https://artificialanalysis.ai/models/claude-sonnet-5/),
 [GPT-5.6 Terra](https://artificialanalysis.ai/models/gpt-5-6-terra/),
-[GPT-5.6 Luna](https://artificialanalysis.ai/models/gpt-5-6-luna-high/), and
-[DeepSeek V4 Pro](https://artificialanalysis.ai/models/deepseek-v4-pro/).
+[GPT-5.6 Luna](https://artificialanalysis.ai/models/gpt-5-6-luna-high/),
+[DeepSeek V4 Pro](https://artificialanalysis.ai/models/deepseek-v4-pro/),
+[OpenAI's GPT-5.6 evaluation table](https://openai.com/index/gpt-5-6/), and
+[Moonshot AI's Kimi K3 page](https://www.moonshot.ai/).
 
 2026-07-22 fifth-pass refresh notes:
 
