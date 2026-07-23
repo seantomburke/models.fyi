@@ -3,7 +3,7 @@ import type { Model } from './types.ts'
 /**
  * Model facts researched 2026-07-22. Scores are provider-published evals
  * where available, otherwise independent leaderboard runs (noted below).
- * A missing score means no reliable published number was found, not zero.
+ * A missing score means no reliable published number was found. It never means zero.
  * Sources are listed in src/data/README.md.
  *
  * scoreProvenance records who produced each displayed number; scores
@@ -490,7 +490,7 @@ export const models: Model[] = [
       'swe-bench-pro': 64.7, // xAI-published (July 2026)
       'gpqa-diamond': 93.1, // Artificial Analysis independent run (July 2026)
       'terminal-bench': 83.3, // xAI-published; tbench.ai independent run (Cursor CLI) lands 79.3
-      // Independent closed-book run, not xAI's tool-assisted headline result.
+      // Independent closed-book run. xAI's tool-assisted headline result is higher.
       'hle': 52.2,
       'aa-intelligence-index': 54.0, // Artificial Analysis v4.1, high effort
     },
@@ -645,7 +645,7 @@ export const models: Model[] = [
       "Moonshot AI's brand-new 2.8-trillion-parameter flagship. Frontier scores on agentic and reasoning work, with open weights promised within weeks.",
     useCases: ['coding', 'research', 'analysis'],
     whyChooseThis:
-      'Kimi K3 posts some of the strongest published agentic numbers of any model, closed or open, and Moonshot has promised to release the weights — a rare combination of frontier capability now and self-hosting later. The 1M context and native vision make it a strong pick for long-horizon tool-use agents.',
+      'Kimi K3 posts some of the strongest published agentic numbers of any model, closed or open, and Moonshot has promised to release the weights, a rare combination of frontier capability now and self-hosting later. The 1M context and native vision make it a strong pick for long-horizon tool-use agents.',
     prosVsCompetitors: {
       'GPT-5.6 Sol': 'K3 is cheaper and matches Sol\'s published terminal scores; Sol has independent verification and a mature ecosystem.',
       'GLM-5.2': 'K3 posts higher published agentic scores; GLM-5.2 is already downloadable and MIT-licensed today.',
@@ -874,7 +874,7 @@ export const models: Model[] = [
       'The long-context champion. A 10-million-token window, enough to read hundreds of books at once.',
     useCases: ['analysis', 'summarization', 'research'],
     whyChooseThis:
-      'Scout has the largest context window of any model—10 million tokens. That\'s enough to load an entire codebase, hundreds of documents, or several books at once. Perfect for long-context retrieval and bulk processing tasks.',
+      'Scout has the largest context window of any model: 10 million tokens. That\'s enough to load an entire codebase, hundreds of documents, or several books at once. Perfect for long-context retrieval and bulk processing tasks.',
     prosVsCompetitors: {
       'Llama 4 Maverick': 'Scout has 10x more context but is less capable on reasoning; Maverick is more general.',
       'Grok 4.1 Fast': 'Scout is slightly longer (10M vs 2M) and more capable; Grok is cheaper.',

@@ -57,7 +57,7 @@ describe('SortableHeader', () => {
   it('moves the long explanation into a tooltip rather than the label', () => {
     renderHeader({ title: 'PhD-level science questions.' })
     const button = screen.getByRole('button')
-    expect(button).toHaveAttribute('title', 'GPQA — PhD-level science questions.')
+    expect(button).toHaveAttribute('title', 'GPQA: PhD-level science questions.')
     expect(button.getAttribute('aria-label')).toContain('PhD-level science questions.')
   })
 

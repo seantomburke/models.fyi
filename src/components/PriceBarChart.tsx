@@ -19,7 +19,7 @@ function formatPrice(price: number): string {
  * as GraphScatter: percent-positioned HTML/SVG styled by design tokens, so
  * dark mode and SSR come for free and no chart library is needed.
  *
- * The bars are decorative rendering of the sr-only table below the chart —
+ * The bars are decorative rendering of the sr-only table below the chart;
  * that table, not the aria-labels on 15 bars, is the screen-reader path.
  */
 export function PriceBars({ rows }: { rows: PriceRow[] }) {
@@ -74,7 +74,7 @@ export function PriceBars({ rows }: { rows: PriceRow[] }) {
                   <div
                     key={row.modelId}
                     className="relative flex h-full w-full max-w-10 items-end justify-center gap-px"
-                    title={`${row.model} — input ${formatPrice(row.inputPrice)}, output ${formatPrice(row.outputPrice)} per 1M tokens`}
+                    title={`${row.model}: input ${formatPrice(row.inputPrice)}, output ${formatPrice(row.outputPrice)} per 1M tokens`}
                   >
                     {/* Logo rides the taller (output) bar. */}
                     <span

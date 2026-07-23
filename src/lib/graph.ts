@@ -399,7 +399,7 @@ export function buildGraphSpec(
           y2: { field: 'y2', type: 'quantitative' },
           color: { field: 'series', type: 'nominal' },
           // Dash and opacity reach the rule renderer only through encodings
-          // bound to data fields — see CONNECTION_DASH.
+          // bound to data fields (see CONNECTION_DASH).
           strokeDash: { field: 'dash', type: 'nominal' },
           opacity: { field: 'lineOpacity', type: 'quantitative' },
         },

@@ -37,14 +37,14 @@ test('each chosen word is a dropdown of the candidates at that position, most li
   const [first, second] = screen.getAllByRole('combobox')
   // The first word's dropdown holds the sentence openers, sorted by probability.
   expect(within(first).getAllByRole('option').map((o) => o.textContent)).toEqual([
-    'the — 67%',
-    'a — 22%',
-    'my — 11%',
+    'the: 67%',
+    'a: 22%',
+    'my: 11%',
   ])
   // The second word's dropdown holds everything that can follow "the".
   const secondOptions = within(second).getAllByRole('option').map((o) => o.textContent)
   // "cat" follows "the" 3 of 13 times.
-  expect(secondOptions[0]).toBe('cat — 23%')
+  expect(secondOptions[0]).toBe('cat: 23%')
   expect(second).toHaveValue('cat')
 })
 

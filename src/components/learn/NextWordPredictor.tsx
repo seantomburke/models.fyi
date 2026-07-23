@@ -130,8 +130,8 @@ export function NextWordPredictor() {
                     {candidatesAt(words, wi).map((c) => (
                       <option key={c.word} value={c.word}>
                         {c.word === END
-                          ? `end here . — ${Math.round(c.prob * 100)}%`
-                          : `${c.word} — ${Math.round(c.prob * 100)}%`}
+                          ? `end here (.): ${Math.round(c.prob * 100)}%`
+                          : `${c.word}: ${Math.round(c.prob * 100)}%`}
                       </option>
                     ))}
                   </select>

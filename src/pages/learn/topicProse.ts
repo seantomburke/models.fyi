@@ -2,7 +2,7 @@
  * Lesson body copy for the Learn topics, split out of topics.ts.
  *
  * topics.ts is reachable from src/lib/routeMeta.ts, which every page imports for
- * metaFor/canonicalUrl — so anything it holds ships in the chunk all 58 routes
+ * metaFor/canonicalUrl, so anything it holds ships in the chunk all 58 routes
  * preload. The paragraph text is ~15kB gzip and is rendered by exactly one route,
  * so it lives here and is imported only by LearnTopic.
  *
@@ -39,14 +39,14 @@ export const topicProse: Record<string, string[]> = {
   ],
   "what-is-an-llm::One word at a time": [
       'When ChatGPT or Claude "writes" you an answer, it\'s predicting one word, adding it to the page, then predicting the next, thousands of times, fast. There\'s no separate "essay plan" hiding inside. The plan emerges from doing next-word prediction with superhuman skill.',
-      'This also explains the famous weakness. An LLM says what\'s likely, not what\'s verified. When likely and true disagree, you get confident nonsense. People call this a hallucination.',
+      'This also explains the famous weakness. An LLM says whatever is most likely. Nothing checks whether it is true. When likely and true disagree, you get confident nonsense. People call this a hallucination.',
   ],
   "what-is-an-llm::The models on this site": [
       'GPT, Claude, Gemini, Grok, Llama, DeepSeek: all LLMs. Same core idea, different training data, sizes, and tuning. That\'s why they have different personalities and different scores on our comparison table.',
   ],
   "what-is-gpt::Decode the letters": [
       'G is for Generative. It creates new text rather than picking from canned replies.',
-      'P is for Pre-trained. Before you ever talk to it, it spent months learning from a mountain of text, so you get the finished student, not the classroom.',
+      'P is for Pre-trained. Before you ever talk to it, it spent months learning from a mountain of text. By the time you arrive, the studying is done and you get the finished student.',
       'T is for Transformer, the 2017 invention that made all this work. It\'s a design that lets the model weigh every word in your message against every other word at once, instead of reading one word at a time and forgetting the start of the sentence.',
   ],
   "what-is-gpt::GPT vs ChatGPT": [
@@ -139,7 +139,7 @@ export const topicProse: Record<string, string[]> = {
       'For junior tasks (style fixes, tests, docs), use a mid-tier model and save money. For architecting a new system, use a flagship with reasoning. Speed models are fast but miss subtleties.',
   ],
   "best-model-for-writing::What writers need": [
-      'Writing needs tone, flow, and original voice. A model must adapt to your style, catch repetition, and know when to be formal vs casual. It should finish thoughts, not invent them.',
+      'Writing needs tone, flow, and original voice. A model must adapt to your style, catch repetition, and know when to be formal vs casual. Its job is to finish your thoughts in your voice.',
   ],
   "best-model-for-writing::Claude for writing": [
       'Claude is thoughtful and clear. It asks clarifying questions before drafting. Produces well-reasoned essays, explanations, and marketing copy.',
@@ -170,7 +170,7 @@ export const topicProse: Record<string, string[]> = {
       'A text-only model reads words. A vision model reads words and images. Show it a photo, ask a question about it, and it answers. Same magic as text models, but trained on billions of image-text pairs.',
   ],
   "vision-models::What they can do": [
-      'Read text in images (OCR). Describe what\'s happening. Spot objects and faces. Analyze charts and diagrams. Answer questions about visual content. All of this is trained-in, not programmed.',
+      'Read text in images (OCR). Describe what\'s happening. Spot objects and faces. Analyze charts and diagrams. Answer questions about visual content. All of this was learned from examples during training.',
   ],
   "vision-models::The models that see": [
       'Claude and GPT-5.6 have vision. So does Gemini and Grok. Vision is now standard in flagships. You usually pay a bit more per query when you include an image.',
@@ -185,7 +185,7 @@ export const topicProse: Record<string, string[]> = {
       'They\'re also how RAG systems work. You convert a document library to embeddings, search by meaning, then hand relevant excerpts to a language model to answer.',
   ],
   "embedding-models::When do you need one?": [
-      'If you\'re building search or recommendations, yes. If you\'re just chatting with a model, no. Most RAG systems use a cheap standalone embedding model, not the language model itself.',
+      'If you\'re building search or recommendations, yes. If you\'re just chatting with a model, no. Most RAG systems use a cheap standalone embedding model and save the big language model for answering.',
   ],
   "fine-tuning-models::The idea": [
       'A model is pre-trained on billions of words. Fine-tuning means showing it hundreds or thousands of your own examples (your style, your data, your format) and letting it adjust its dials slightly to match.',
@@ -196,7 +196,7 @@ export const topicProse: Record<string, string[]> = {
       'Start with prompting and RAG first. Fine-tuning is premature if a careful prompt or two examples get you there.',
   ],
   "fine-tuning-models::The trade-off": [
-      'Fine-tuning costs money upfront and takes time. But a fine-tuned model becomes cheaper to run than a flagship for high volume. It\'s a scaling play, not a starting play.',
+      'Fine-tuning costs money upfront and takes time. But a fine-tuned model becomes cheaper to run than a flagship for high volume. It pays off once you have real volume, so treat it as a scaling play.',
   ],
   "model-pricing-tokens::Tokens: the unit of price": [
       'A token is about 3/4 of a word. "Hamburger" = 3 tokens. "Hello" = 1 token. Pricing is per 1,000 tokens. So if you\'re charged $2 per 1K tokens, and you send 2,000 tokens, you pay $4.',
@@ -220,7 +220,7 @@ export const topicProse: Record<string, string[]> = {
       'For huge documents, chunk them and process separately, then synthesize. Cheaper than one gigantic query.',
   ],
   "prompt-engineering-basics::Clear beats clever": [
-      'Say what you want, not how to think. "Summarize this in three bullet points" beats "You are a concise summarizer, now summarize this." The model doesn\'t have an inner voice you need to talk to.',
+      'Describe the output you want. "Summarize this in three bullet points" beats "You are a concise summarizer, now summarize this." The model doesn\'t have an inner voice you need to talk to.',
   ],
   "prompt-engineering-basics::Context and examples": [
       'Tell the model your role, the stakes, and the format. "I\'m a startup founder, help me pitch this to investors in 2 minutes" is better than "write a pitch."',
@@ -250,7 +250,7 @@ export const topicProse: Record<string, string[]> = {
   ],
   "hallucinations::The fundamental problem": [
       'A language model predicts the next word based on patterns. "The capital of France is" -> model predicts "Paris." That happens to be true.',
-      '"The capital of Somalia is" -> model predicts based on statistical patterns, not a fact database. If Somalia appears often near "Mogadishu" and "capital" in the training data, it goes with that. But if it predicts something false, it still sounds confident. That\'s a hallucination.',
+      '"The capital of Somalia is" -> the model predicts from statistical patterns. There is no fact database inside. If Somalia appears often near "Mogadishu" and "capital" in the training data, it goes with that. But if it predicts something false, it still sounds confident. That\'s a hallucination.',
   ],
   "hallucinations::Common hallucinations": [
       'Fake citations: "A study by X shows Y" (no such study). Fake quotes: "Einstein said Z" (he didn\'t). Confident wrong facts: "The Earth\'s capital city" (doesn\'t exist). Inventing code that doesn\'t work.',
@@ -271,7 +271,7 @@ export const topicProse: Record<string, string[]> = {
   ],
   "open-source-vs-closed-source::The practical question": [
       'For consumer use: closed-source is simpler. For enterprises with privacy needs: open-source wins. For maximum capability: closed. For maximum control: open.',
-      'The gap is closing. Some open models rival closed flagships now. Check benchmarks, not ideology.',
+      'The gap is closing. Some open models rival closed flagships now. Let the benchmarks decide for you.',
   ],
   "how-do-neural-network-weights-work::What are weights?": [
       'Weights are numbers inside a neural network, like tiny dials on a massive control panel. During training, the network adjusts millions of these dials until it gets good at its job.',
@@ -312,7 +312,7 @@ export const topicProse: Record<string, string[]> = {
   "understand-image-classification::Why this matters for real models": [
       'Vision models like Claude\'s or GPT-4\'s vision capability work on the same principle, scaled up. They process photos, screenshots, charts. The network has learned to recognize objects, text, and patterns, all through millions of learned weights.',
       'Every model\'s understanding of images lives in those weights. That\'s why changing weights changes what the model sees, and why different models see images differently.',
-      'And it isn\'t just vision. An LLM answering "what comes next in this sentence?" is doing the same thing Doodle-64 does: multiply inputs by learned weights, add them up, and turn the scores into probabilities. Doodle-64 chooses between 2 answers with 64 parameters; an LLM chooses between ~200,000 possible next tokens with billions. The gap is size, not kind.',
+      'And it isn\'t just vision. An LLM answering "what comes next in this sentence?" is doing the same thing Doodle-64 does: multiply inputs by learned weights, add them up, and turn the scores into probabilities. Doodle-64 chooses between 2 answers with 64 parameters; an LLM chooses between ~200,000 possible next tokens with billions. The only gap is size.',
   ],
   "understand-image-classification::Try it yourself": [
       'Below, draw on the pixel grid or use the example buttons. You\'re seeing how a tiny network makes a prediction. The confidence score tells you how sure the classifier is. When you draw something ambiguous, halfway between 3 and E, watch the confidence drop, just like a real model.',
@@ -325,7 +325,7 @@ export const topicProse: Record<string, string[]> = {
       'The 3-vs-E classifier got away with a single layer because one pixel could settle the argument: ink on the left edge means E, ink on the right curve means 3. With ten digits that trick collapses. An 8 contains every pixel of a 3, a 9 contains every pixel of a 7, so no single pixel is evidence for exactly one digit.',
       'The fix is the most important idea in deep learning: don\'t go straight from pixels to answers. First recognize parts, then reason about combinations of parts. That "first" step is a hidden layer.',
   ],
-  "how-neural-networks-recognize-digits::Layer 1 finds strokes, not digits": [
+  "how-neural-networks-recognize-digits::Layer 1 finds strokes first": [
       'The demo below has seven hidden neurons, and each one is a stroke detector: a top bar, a middle bar, a bottom bar, and four vertical lines. Each detector\'s weights cover just the pixels of its stroke. You can see them as seven mini heatmaps, each in its own color. When you draw most of a stroke, its detector fires.',
       'Notice what these neurons don\'t know: anything about digits. The top-bar detector fires for a 5, a 7, and an 8 alike. It has one tiny job, done with a handful of weights.',
   ],
@@ -336,14 +336,14 @@ export const topicProse: Record<string, string[]> = {
   "how-neural-networks-recognize-digits::This is exactly what deep networks do": [
       'Real image models are this demo scaled up. Their early layers learn edge and color detectors, middle layers combine edges into textures and shapes, and late layers combine shapes into "cat ear" or "handwritten 7". Nobody programs those features. Training finds them, the way our stroke detectors were chosen by hand here.',
       '"Deep" in deep learning just means many hidden layers stacked, each reasoning about the patterns the previous one found. Two layers read seven strokes; a hundred layers can read a photograph.',
-      'If you want to see the next rung of that ladder, Doodle-918 does this same job with a second hidden layer that turns strokes into shapes — loops, curves and spines — before naming a digit. It is the same demo, one layer deeper, and it reads every digit at over 99% confidence.',
+      'If you want to see the next rung of that ladder, Doodle-918 does this same job with a second hidden layer that turns strokes into shapes (loops, curves and spines) before naming a digit. It is the same demo, one layer deeper, and it reads every digit at over 99% confidence.',
   ],
   "how-neural-networks-recognize-digits::Try it yourself": [
       'Use the example buttons to load a clean digit, then vandalize it. Erase one stroke, add another, and watch the stroke detectors switch on and off and the probabilities slide between the digits that share those strokes. Then press play on the network animation to watch the whole forward pass: pixels light detectors, detectors vote on digits.',
   ],
   "what-is-gradient-descent::Nobody chooses the weights": [
       'Every model in this lab so far arrived with its weights already set. Doodle-64 got its 64 numbers from a rule we wrote by hand: positive where a 3 has ink, negative where an E does. That was honest teaching but dishonest engineering, because no real model is built that way. Nobody at OpenAI sat down and picked a value for weight number 4,000,000,001.',
-      'Real weights are found, not chosen, and gradient descent is the basic procedure behind the models on this site. Doodle-64 makes that training loop small enough to inspect.',
+      'Real weights are found by training, and gradient descent is the basic procedure behind the models on this site. Doodle-64 makes that training loop small enough to inspect.',
   ],
   "what-is-gradient-descent::Start with a shrug": [
       'This training run starts by filling every weight with a small random number. The model has no information yet, so the values stay close to zero and its first predictions stay cautious. It begins with an honest "I have no idea" instead of a confident guess.',
@@ -354,8 +354,8 @@ export const topicProse: Record<string, string[]> = {
       'Now the whole of training has a shape: change the weights so the loss goes down. Nothing else. Every trick in modern machine learning is a variation on that one sentence.',
   ],
   "what-is-gradient-descent::The slope tells you which way is downhill": [
-      'Picture the loss as a landscape. Each of the 64 weights is a direction you can walk, and your altitude is how wrong you are. You want the valley. The catch is that you cannot see the landscape — you only feel the ground under your feet.',
-      'That is enough. Calculus hands you the slope in each direction: if I nudge this one weight up, does the loss rise or fall, and how steeply? The collection of all 64 slopes is called the gradient. Take a small step against it — downhill in every direction at once — and your loss is a little lower than before. Do it again. That is gradient descent, all of it.',
+      'Picture the loss as a landscape. Each of the 64 weights is a direction you can walk, and your altitude is how wrong you are. You want the valley. The catch: you cannot see the landscape. You can only feel the ground under your feet.',
+      'That is enough. Calculus hands you the slope in each direction: if I nudge this one weight up, does the loss rise or fall, and how steeply? The collection of all 64 slopes is called the gradient. Take a small step against it, downhill in every direction at once, and your loss is a little lower than before. Do it again. That is gradient descent, all of it.',
       'For our classifier the slope works out to something almost suspiciously simple: for each training image, take the model\'s prediction, subtract the true answer, and multiply by the pixel. Predicted 0.9 when the answer was 1? Barely wrong, tiny nudge. Predicted 0.9 when the answer was 0? Very wrong, big nudge, and every pixel that was lit takes the blame.',
   ],
   "what-is-gradient-descent::The learning rate is the size of your stride": [
@@ -369,12 +369,12 @@ export const topicProse: Record<string, string[]> = {
   "what-is-gradient-descent::Valleys that are not the valley": [
       'Doodle-64 has 65 adjustable numbers: 64 pixel weights and one bias. Its logistic loss is convex, so it does not contain the local valleys shown in the 2D and 3D teaching views above. Those polynomial views make slopes, basins, and starting points visible.',
       'Deep networks have non-convex loss surfaces in millions or billions of dimensions. No screen can show all of them at once, but a two-dimensional surface can still show what it means to follow a local slope.',
-      'A local minimum is a dip that is lower than everything immediately around it but not the lowest place on the map. Gradient descent only feels the ground beneath it, so at the bottom of a local dip the slope is flat and training stops improving — with weights that work, but not as well as they could have. A plateau is worse company: a wide flat stretch where the gradient is nearly zero and training seems to have stalled, sometimes for a very long time, even though better ground lies just ahead. Saddle points are flat in one direction and downhill in another, and in high dimensions they outnumber true local minima by a lot.',
-      'The escapes are mostly nudges. Noise helps: real training computes the gradient on a small random batch of examples at a time, so the path jitters and can rattle out of shallow dips. Momentum helps: keep some velocity from the last step so you roll across flat ground instead of stopping on it. And multiple random restarts help, which is the deepest reason those starting weights are random — different starting points explore different parts of the landscape.',
+      'A local minimum is a dip that is lower than everything immediately around it but not the lowest place on the map. Gradient descent only feels the ground beneath it, so at the bottom of a local dip the slope is flat and training stops improving. The weights work, just less well than they could have. A plateau is worse company: a wide flat stretch where the gradient is nearly zero and training seems to have stalled, sometimes for a very long time, even though better ground lies just ahead. Saddle points are flat in one direction and downhill in another, and in high dimensions they far outnumber true local minima.',
+      'The escapes are mostly nudges. Noise helps: real training computes the gradient on a small random batch of examples at a time, so the path jitters and can rattle out of shallow dips. Momentum helps: keep some velocity from the last step so you roll across flat ground instead of stopping on it. And multiple random restarts help, which is the deepest reason those starting weights are random. Different starting points explore different parts of the landscape.',
   ],
   "what-is-gradient-descent::This is how every model on this site was made": [
       'Scale is the only difference between the animation above and the training of a frontier model. Swap 64 weights for hundreds of billions. Swap ten pixel drawings for a large fraction of the public internet. Swap "is this a 3?" for "what token comes next?". Swap 120 epochs on your laptop for months on tens of thousands of GPUs.',
-      'The loop does not change: guess, measure how wrong you are, follow the slope downhill, repeat. When a lab says a model cost hundreds of millions of dollars to train, this is the thing that cost the money — an unfathomable number of very small steps down a hill nobody can see.',
+      'The loop does not change: guess, measure how wrong you are, follow the slope downhill, repeat. When a lab says a model cost hundreds of millions of dollars to train, this is the thing that cost the money: an unfathomable number of very small steps down a hill nobody can see.',
   ],
   "how-llms-predict-the-next-word::The smallest language model that could": [
       'Doodle-64 and Doodle-525 recognize things. Parrot-43 generates things, which makes it the closest cousin of ChatGPT and Claude in our lab. Its entire education is the nine sentences shown above, and its entire brain is 43 counts: how many times each word followed each other word in those sentences.',
@@ -393,28 +393,28 @@ export const topicProse: Record<string, string[]> = {
       'Parrot-43 also demonstrates the famous LLM failure mode in miniature. Ask it to continue "my" and it says "cat" or "homework". Neither is true. They\'re just the likeliest continuations of its training data. Likely and true are different things. An LLM with billions of parameters blurs that line much more convincingly, but the gap never fully closes. That\'s a hallucination, and now you\'ve watched one get built.',
   ],
   "bayesian-statistics::Beliefs as numbers": [
-      'Bayesian statistics starts from one idea: a probability is a degree of belief, and evidence should move it. You begin with a prior — what you believed before the new evidence — and end with a posterior — what you believe after. The rule for getting from one to the other is Bayes\' theorem, published in Thomas Bayes\' posthumous 1763 essay and in use ever since, from spam filters to medical screening to language models.',
+      'Bayesian statistics starts from one idea: a probability is a degree of belief, and evidence should move it. You begin with a prior (what you believed before the new evidence) and end with a posterior (what you believe after). The rule for getting from one to the other is Bayes\' theorem, published in Thomas Bayes\' posthumous 1763 essay and in use ever since, from spam filters to medical screening to language models.',
       'The classic setup is a medical test. Suppose 1% of people have an illness, the test catches 90% of the people who have it, and it also flags 10% of the people who don\'t. You test positive. How worried should you be? Most people guess "about 90%". The real answer is 1 in 12, and the tree below shows exactly why.',
   ],
   "bayesian-statistics::The theorem, in one line": [
-      'Bayes\' theorem says: P(A | B) = P(B | A) · P(A) / P(B). Read it as "the probability of A given that you observed B". For the test: P(sick | positive) = P(positive | sick) · P(sick) / P(positive). Three numbers you know — how accurate the test is, how common the illness is, how often the test comes back positive overall — combine into the one number you want.',
+      'Bayes\' theorem says: P(A | B) = P(B | A) · P(A) / P(B). Read it as "the probability of A given that you observed B". For the test: P(sick | positive) = P(positive | sick) · P(sick) / P(positive). Three numbers you know (how accurate the test is, how common the illness is, how often the test comes back positive overall) combine into the one number you want.',
       'The denominator, P(positive), is the piece people forget. It counts every way a positive can happen: true positives from the sick and false positives from the healthy. When the illness is rare, the healthy group is enormous, and even a small false-positive rate produces a crowd of false alarms that swamps the genuine cases.',
   ],
   "bayesian-statistics::Walk the tree": [
       'The tree makes the formula physical. The first fork splits 1000 people into sick and healthy. The second fork splits each group by test result. Multiply the probabilities along a path and you get the joint probability at the leaf: with the default numbers, 10 people are sick and 9 of them test positive, while 990 are healthy and 99 of them test positive anyway.',
-      'Now Bayes\' theorem is just reading the tree: of the 108 people holding a positive result, 9 are actually sick. 9 / 108 = 1/12 ≈ 8.3%. Drag the prior up and watch the posterior climb — a positive test means much more when the illness is common. Drag the false-positive rate to zero and the posterior snaps to 100%, because a test that never cries wolf is believed absolutely.',
+      'Now Bayes\' theorem is just reading the tree: of the 108 people holding a positive result, 9 are actually sick. 9 / 108 = 1/12 ≈ 8.3%. Drag the prior up and watch the posterior climb; a positive test means much more when the illness is common. Drag the false-positive rate to zero and the posterior snaps to 100%, because a test that never cries wolf is believed absolutely.',
   ],
   "bayesian-statistics::Why the answer feels wrong": [
       'The mistake the 90% guess makes has a name: base-rate neglect. It reads P(sick | positive) and P(positive | sick) as the same number, when the whole point of Bayes\' theorem is that they aren\'t. The test is 90% accurate about sick people; that says nothing by itself about how many positive results are sick people.',
-      'Psychologists Daniel Kahneman and Amos Tversky documented this bias in the 1970s, and Gerd Gigerenzer later showed the fix the tree uses: translate probabilities into natural frequencies — counts of people — and the confusion mostly disappears. "9 real cases out of 108 positives" is hard to misread in a way "90% sensitive" is not.',
+      'Psychologists Daniel Kahneman and Amos Tversky documented this bias in the 1970s, and Gerd Gigerenzer later showed the fix the tree uses: translate probabilities into natural frequencies, meaning counts of people, and the confusion mostly disappears. "9 real cases out of 108 positives" is very hard to misread. "90% sensitive" invites it.',
   ],
   "bayesian-statistics::The same math predicts the next word": [
-      'Language models live on conditional probability too: P(next word | words so far) is the quantity every LLM computes, over and over. The demo below adds the Bayesian twist. Its training data has a hidden variable — is this a weather sentence or a cooking sentence? — and every word you pick is evidence about it.',
+      'Language models live on conditional probability too: P(next word | words so far) is the quantity every LLM computes, over and over. The demo below adds the Bayesian twist. Its training data has a hidden variable (is this a weather sentence or a cooking sentence?) and every word you pick is evidence about it.',
       'Watch the belief bar. "the" opens sentences in both corpora, so it moves nothing. "rain" appears only in weather sentences, so Bayes\' theorem drops the cooking belief to zero, and the next-word prediction sharpens from a 50/50 blend of two topics into one confident voice.',
   ],
   "bayesian-statistics::From two topics to a trillion parameters": [
-      'This is the standard probabilistic view of language modeling — the chain rule of probability factors a sentence into next-word conditionals, the framing textbooks like Jurafsky and Martin\'s Speech and Language Processing build on. Our demo\'s two-topic mixture is the same trick at doll-house scale: infer what kind of text you\'re in, then predict accordingly.',
-      'A modern LLM doesn\'t keep an explicit topic variable or apply Bayes\' theorem symbol by symbol. It learns one giant conditional distribution directly from data. But the behavior you just produced by hand — early words acting as evidence that reshapes the probability of later words — is exactly what makes an LLM finish "the rain" differently from "the pan". Condition on evidence, update, predict. That\'s Bayes\' idea, running at a trillion parameters.',
+      'This is the standard probabilistic view of language modeling: the chain rule of probability factors a sentence into next-word conditionals, the framing textbooks like Jurafsky and Martin\'s Speech and Language Processing build on. Our demo\'s two-topic mixture is the same trick at doll-house scale: infer what kind of text you\'re in, then predict accordingly.',
+      'A modern LLM doesn\'t keep an explicit topic variable or apply Bayes\' theorem symbol by symbol. It learns one giant conditional distribution directly from data. But the behavior you just produced by hand, early words acting as evidence that reshapes the probability of later words, is exactly what makes an LLM finish "the rain" differently from "the pan". Condition on evidence, update, predict. That\'s Bayes\' idea, running at a trillion parameters.',
   ],
   "why-neural-networks-need-more-layers::Meet Doodle-918": [
       'Doodle-918 reads the same 8×8 grid as Doodle-525 and answers the same question. The difference is entirely in the middle. Where Doodle-525 goes pixels → strokes → digits, this one goes pixels → stroke primitives → shapes → digits, and that one extra stop is worth 393 parameters and a jump from 94% confidence on its worst digit to over 99%.',
@@ -422,14 +422,14 @@ export const topicProse: Record<string, string[]> = {
   ],
   "why-neural-networks-need-more-layers::What the two-layer model can't say": [
       'Doodle-525 works, and its stroke detectors are genuinely useful features. But look at what its output layer actually does: it tallies which of seven strokes are lit. To that model, a 0 is "six particular strokes present, one absent". It has no way to represent the fact that those six strokes form a closed loop, because "closed loop" is not a stroke.',
-      'That matters the moment a drawing gets messy. A checklist degrades one item at a time — smudge a stroke and the tally drifts toward whatever digit has the next-most-similar checklist. A model that knows the loop is still closed does not care that the line making it is thin.',
+      'That matters the moment a drawing gets messy. A checklist degrades one item at a time: smudge a stroke and the tally drifts toward whatever digit has the next-most-similar checklist. A model that knows the loop is still closed does not care that the line making it is thin.',
   ],
   "why-neural-networks-need-more-layers::Layer 1: smaller parts than before": [
-      'The first change is counterintuitive: Doodle-918\'s first layer finds smaller features than Doodle-525\'s, not bigger ones. Each horizontal bar is cut into a left half and a right half, giving 10 primitives instead of 7.',
+      'The first change is counterintuitive: Doodle-918\'s first layer finds smaller features than Doodle-525\'s. Each horizontal bar is cut into a left half and a right half, giving 10 primitives instead of 7.',
       'The reason is composition. You cannot build a loop out of pieces that are already loop-sized. If a "top bar" is atomic, the network can never notice that the left end of it joins the upper-left line while the right end joins the upper-right one. Finer parts give the next layer something to combine. Real convolutional networks make the same trade: their first layer finds tiny oriented edges, the least interesting features in the whole model, precisely because everything else is assembled from them.',
   ],
   "why-neural-networks-need-more-layers::Layer 2: where shapes live": [
-      'The second layer is the new one, and it holds eight shape detectors: a top loop, a bottom loop, a waist, two open curves, a straight right spine, a flat base and a flat cap. Each is an AND over primitives — it wants all of a specific set, and some of them also refuse to fire if a particular primitive is present.',
+      'The second layer is the new one, and it holds eight shape detectors: a top loop, a bottom loop, a waist, two open curves, a straight right spine, a flat base and a flat cap. Each is an AND over primitives. It wants all of a specific set, and some of them also refuse to fire if a particular primitive is present.',
       'That veto is what separates a circle from a corner. "Top loop" and "open curve, left gap" want the same cap and the same right-hand side; the only difference is that the loop requires the upper-left line and the curve requires its absence. One weight, negative instead of positive, and the model can tell a closed shape from an open one. This is exactly the pattern the issue behind this page asked for: circular tops in 8, 9 and 0, circular bottoms in 8, 6 and 0, open curves in 2, 5 and 3, straight lines in 1, 4 and 7.',
       'And these shapes are shared. A top loop is reused by three digits, a flat base by seven. Reuse is the whole economic argument for a hidden layer: eight shapes are cheaper than ten separate digit templates, and they generalize better, because a smudged loop is still a loop.',
   ],
@@ -439,8 +439,8 @@ export const topicProse: Record<string, string[]> = {
       'One honest wrinkle: a 0 is an 8 without the waist, and a 2 is a 3 leaning the other way, so a few pairs sit a single shape apart. Layer 3 therefore keeps a quiet direct line back to layer 1, consulting the raw primitives at about a third of the volume it gives the shapes. Real vision models do the same thing, and call it a skip connection. When an abstraction throws away something a later layer still needs, you let that layer look back.',
   ],
   "why-neural-networks-need-more-layers::What depth actually buys": [
-      'Load an 8 and rub out its lower-left line. Watch the bottom loop switch off, and the model read a 9 — because that is what a 9 is, an 8 with the bottom loop opened up. Rub out the middle bar instead and the waist goes quiet, so it reads a 0. Doodle-525 reaches the same answers, but by tallying strokes. Doodle-918 gets there by noticing a loop is gone, which is why it stays confident when the drawing is imperfect and the two-layer model wavers.',
-      'That difference is the entire reason deep learning is deep. Every layer you add lets the model describe its input in a vocabulary the previous layer couldn\'t reach: pixels, then edges, then shapes, then objects. A modern image model stacks dozens of these, and nobody writes the middle vocabularies down — training discovers them, the same way ours were chosen by hand here so you could read them.',
+      'Load an 8 and rub out its lower-left line. Watch the bottom loop switch off, and the model read a 9. That is what a 9 is: an 8 with the bottom loop opened up. Rub out the middle bar instead and the waist goes quiet, so it reads a 0. Doodle-525 reaches the same answers, but by tallying strokes. Doodle-918 gets there by noticing a loop is gone, which is why it stays confident when the drawing is imperfect and the two-layer model wavers.',
+      'That difference is the entire reason deep learning is deep. Every layer you add lets the model describe its input in a vocabulary the previous layer couldn\'t reach: pixels, then edges, then shapes, then objects. A modern image model stacks dozens of these, and nobody writes the middle vocabularies down. Training discovers them, the same way ours were chosen by hand here so you could read them.',
       'If you haven\'t yet, run the two-layer model on the same digits and compare. The interesting comparison isn\'t which one is right; both are. It\'s how sure each of them is, and what it takes to confuse them.',
   ],
   "why-neural-networks-need-more-layers::Try it yourself": [

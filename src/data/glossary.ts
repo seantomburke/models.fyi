@@ -112,7 +112,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'gpqa-diamond',
     term: 'GPQA Diamond',
     short: 'A benchmark of PhD-level science questions that can\'t be Googled.',
-    long: 'GPQA Diamond is a set of hard science questions written by PhDs (in chemistry, biology, physics, etc). The key: you can\'t just Google the answer. You have to reason through the science. It tests whether an AI model can think like a scientist, not just look things up.',
+    long: 'GPQA Diamond is a set of hard science questions written by PhDs (in chemistry, biology, physics, etc). The key: you can\'t just Google the answer. You have to reason through the science. It tests whether an AI model can think like a scientist. Looking things up is no help here.',
   },
   {
     id: 'prompt-engineering',
@@ -162,7 +162,7 @@ export const glossaryTerms: GlossaryTerm[] = [
   {
     id: 'closed-source',
     term: 'Closed Source',
-    short: 'AI models you access through an API, not by downloading.',
+    short: 'AI models you can only reach through an API.',
     long: 'Closed source models like GPT-5.6 Sol, Claude, and Gemini aren\'t available to download. You access them through an API: you send your text to OpenAI\'s servers, they run the model, and they send the result back. The advantage: these models are typically more powerful. The tradeoff: your data goes to their servers, and you depend on their service.',
   },
   {
@@ -290,7 +290,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'overfitting',
     term: 'Overfitting',
     short: 'When a model memorizes training data instead of learning general patterns.',
-    long: 'Overfitting is when an AI model gets very good at examples it saw during training but fails on new examples it\'s never seen. It\'s like if you memorized every practice SAT question but then bombed the real test. Good models generalize: they learn patterns, not individual examples.',
+    long: 'Overfitting is when an AI model gets very good at examples it saw during training but fails on new examples it\'s never seen. It\'s like if you memorized every practice SAT question but then bombed the real test. Good models generalize: they learn the underlying patterns and can handle examples they have never seen.',
   },
   {
     id: 'dataset',
@@ -396,7 +396,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'mixture-of-experts',
     term: 'Mixture of Experts',
     short: 'A model design where only the relevant "experts" activate for each question.',
-    long: 'A mixture of experts (MoE) model is built from many smaller specialist networks, with a router that picks which few to use for each token. It\'s like a hospital: you see the cardiologist for heart questions, not every doctor in the building. This lets a model have huge total knowledge while only running a fraction of it at a time, making inference faster and cheaper.',
+    long: 'A mixture of experts (MoE) model is built from many smaller specialist networks, with a router that picks which few to use for each token. It\'s like a hospital: for a heart question you see the cardiologist, and the rest of the building keeps working on other patients. This lets a model have huge total knowledge while only running a fraction of it at a time, making inference faster and cheaper.',
   },
   {
     id: 'streaming',
@@ -440,7 +440,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'vibe-coding',
     term: 'Vibe Coding',
     short: 'Building software by describing what you want and letting AI write the code.',
-    long: 'Vibe coding is a term coined by AI researcher Andrej Karpathy in early 2025. Instead of writing code line by line, you describe what you want in plain language, the AI writes the code, and you react to the result: "make the button bigger," "now it crashes, fix it." You focus on the vibes of the product, not the syntax. It\'s great for prototypes; production software still benefits from careful review.',
+    long: 'Vibe coding is a term coined by AI researcher Andrej Karpathy in early 2025. Instead of writing code line by line, you describe what you want in plain language, the AI writes the code, and you react to the result: "make the button bigger," "now it crashes, fix it." You focus on the vibes of the product and leave the syntax to the AI. It\'s great for prototypes; production software still benefits from careful review.',
   },
   {
     id: 'neural-network',
@@ -490,8 +490,8 @@ export const glossaryTerms: GlossaryTerm[] = [
   {
     id: 'semantic-search',
     term: 'Semantic Search',
-    short: 'Search that matches meaning, not just exact words.',
-    long: 'Semantic search understands what you mean, not just what you typed. Search for "how to make my laptop faster," and it can find an article titled "Speed up a slow computer" even though the words barely overlap. It works by converting text into embeddings (lists of numbers that capture meaning) and finding results whose numbers land nearby. Keyword search matches letters; semantic search matches ideas.',
+    short: 'Search that matches what you mean, even when the words differ.',
+    long: 'Semantic search understands the meaning behind your words. Search for "how to make my laptop faster," and it can find an article titled "Speed up a slow computer" even though the words barely overlap. It works by converting text into embeddings (lists of numbers that capture meaning) and finding results whose numbers land nearby. Keyword search matches letters; semantic search matches ideas.',
     relatedLearnTopic: 'embedding-models',
     category: 'search-ranking',
   },

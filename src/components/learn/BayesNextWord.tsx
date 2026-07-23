@@ -12,7 +12,7 @@ function pct(p: number): string {
  * model that mixes two tiny bigram corpora (weather and cooking). Each word
  * you pick is evidence; Bayes' theorem updates P(topic | words so far), and
  * the next-word distribution sharpens as the posterior does. All numbers come
- * from bayesModel.ts — counting and Bayes' theorem, nothing else.
+ * from bayesModel.ts: counting and Bayes' theorem, nothing else.
  */
 export function BayesNextWord() {
   const [words, setWords] = useState<string[]>([])
@@ -26,7 +26,7 @@ export function BayesNextWord() {
       <div className="rounded-lg border border-line bg-bg-secondary p-6">
         <h3 className="text-lg font-semibold">Build a sentence, watch the belief update</h3>
         <p className="mt-2 text-sm text-fg-secondary">
-          This model learned from ten sentences — five about weather, five about cooking — but
+          This model learned from ten sentences (five about weather, five about cooking) but
           it doesn't know which kind of sentence you're writing. Every word you pick is
           evidence. Bayes' theorem turns that evidence into an updated belief about the topic,
           and the belief sharpens the next-word prediction.
@@ -69,7 +69,7 @@ export function BayesNextWord() {
         {/* Next-word choices */}
         <div className="mt-5">
           <h4 className="text-sm font-medium">
-            {done ? 'No continuations left — the sentence ended.' : 'Predicted next word: P(word | sentence so far)'}
+            {done ? 'No continuations left. The sentence ended.' : 'Predicted next word: P(word | sentence so far)'}
           </h4>
           {!done && (
             <ul className="mt-2 space-y-1.5">
@@ -77,7 +77,7 @@ export function BayesNextWord() {
                 <li key={p.word}>
                   <button
                     onClick={() => setWords([...words, p.word])}
-                    aria-label={`Pick "${p.word}" — probability ${pct(p.prob)}`}
+                    aria-label={`Pick "${p.word}": probability ${pct(p.prob)}`}
                     className="flex w-full items-center gap-3 rounded border border-line bg-bg-tertiary px-3 py-2 text-left text-sm transition-colors hover:border-accent hover:bg-accent-soft"
                   >
                     <span className="w-16 font-mono font-medium">{p.word}</span>
@@ -106,7 +106,7 @@ export function BayesNextWord() {
         <p className="mt-4 border-t border-line pt-3 text-xs leading-relaxed text-fg-muted">
           Each prediction is the two topics' word probabilities, weighted by the current belief:
           P(word) = P(word | weather) · P(weather | context) + P(word | cooking) · P(cooking | context).
-          Pick "rain" and the cooking belief drops to zero — no cooking sentence ever contained it —
+          Pick "rain" and the cooking belief drops to zero (no cooking sentence ever contained it),
           so the model commits, and its next predictions get sharper.
         </p>
       </div>

@@ -17,7 +17,7 @@ interface SortableHeaderProps {
   /** Align right (for numeric columns) */
   textAlign?: 'left' | 'right'
   /**
-   * Rendered after the sort button — e.g. a source link. Kept outside the
+   * Rendered after the sort button, e.g. a source link. Kept outside the
    * button so it stays reachable by keyboard.
    */
   trailing?: ReactNode
@@ -64,7 +64,7 @@ export function SortableHeader({
   return (
     <th
       scope="col"
-      // aria-sort belongs on the columnheader itself, not the button inside it —
+      // aria-sort belongs on the columnheader itself rather than the button inside it;
       // it is not a supported attribute on a generic button role.
       aria-sort={isActive ? (isAscending ? 'ascending' : 'descending') : 'none'}
       className={`${alignRight ? 'text-right' : 'text-left'} whitespace-nowrap px-2 sm:px-3 py-3 font-medium text-fg-muted ${className}`}
@@ -75,7 +75,7 @@ export function SortableHeader({
         <button
           type="button"
           onClick={() => onSort(column)}
-          title={title ? `${label} — ${title}` : undefined}
+          title={title ? `${label}: ${title}` : undefined}
           aria-label={`${label}${title ? `. ${title}` : ''}. Sort ${nextDirection}`}
           className="inline-flex cursor-pointer items-center whitespace-nowrap rounded transition-colors hover:text-fg focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-deep"
         >

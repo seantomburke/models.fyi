@@ -107,8 +107,8 @@ export interface Recommendation {
 
 /**
  * Mean difficulty of each benchmark across every model that has a score for
- * it. Benchmarks are not equally hard — nearly everyone clears 80 on
- * SWE-bench Verified, while HLE tops out in the 60s — so a plain mean over
+ * it. Benchmarks are not equally hard (nearly everyone clears 80 on
+ * SWE-bench Verified, while HLE tops out in the 60s), so a plain mean over
  * whichever benchmarks a model happens to have punishes the well-measured
  * ones. Llama 4 Maverick, scored only on GPQA, would otherwise outrank
  * GLM-5.2, which carries four scores including a hard one.

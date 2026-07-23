@@ -41,13 +41,13 @@ export const faqs: FAQItem[] = [
     category: 'Model Selection',
     question: 'Which model is the best?',
     answer:
-      '"Best" depends on your task. A top-performing reasoning model might be too slow and expensive for a chatbot. A cheap, fast model might struggle with complex logic. That\'s why this site exists: to help you match the model to your needs, not just pick the highest benchmark score.',
+      '"Best" depends on your task. A top-performing reasoning model might be too slow and expensive for a chatbot. A cheap, fast model might struggle with complex logic. That\'s why this site exists: to help you match the model to your needs instead of chasing the highest benchmark score.',
   },
   {
     category: 'Model Selection',
     question: 'Should I use Claude or GPT?',
     answer:
-      'Both are excellent. Claude is made by Anthropic, GPT by OpenAI. Benchmark scores are close for many tasks. Claude may excel at long-context work and nuanced analysis. GPT may be faster for some use cases. Try both with your actual task and pick based on results, not brand loyalty.',
+      'Both are excellent. Claude is made by Anthropic, GPT by OpenAI. Benchmark scores are close for many tasks. Claude may excel at long-context work and nuanced analysis. GPT may be faster for some use cases. Try both with your actual task and let the results pick the winner.',
   },
   {
     category: 'Model Selection',
@@ -79,7 +79,7 @@ export const faqs: FAQItem[] = [
     category: 'Pricing',
     question: 'How do I calculate the cost of using a model?',
     answer:
-      'Models are priced per token (roughly a word). Input tokens (your prompt) and output tokens (the model\'s answer) are often priced differently. Use the Calculator tool on this site: paste your text, pick your model, and it shows total cost. Most providers also bill by the API call, not per token.',
+      'Models are priced per token (roughly a word). Input tokens (your prompt) and output tokens (the model\'s answer) are often priced differently. Use the Calculator tool on this site: paste your text, pick your model, and it shows total cost. Providers add up the tokens across your API calls and bill the total.',
   },
   {
     category: 'Pricing',

@@ -85,7 +85,7 @@ function LabelledTray({
             <button
               type="button"
               onClick={() => onUnlabel(index)}
-              title={`${example.label} — send back to the deck`}
+              title={`${example.label}: send back to the deck`}
               aria-label={`${example.label}, labelled ${label}. Send back to the deck.`}
               className="rounded border border-transparent hover:border-accent"
             >
@@ -162,7 +162,7 @@ export function TrainingLab() {
 
   /**
    * Add the current drawing to the training set. With a label it lands
-   * straight in that bucket — the author knows what they drew — and without
+   * straight in that bucket (the author knows what they drew) and without
    * one it joins the front of the deck to be judged like any other card.
    */
   const addDrawing = (label?: SwipeLabel) => {
@@ -204,7 +204,7 @@ export function TrainingLab() {
     <div className="space-y-8">
       <section className="rounded-lg border border-line p-4" aria-labelledby="training-lab-title">
         <h2 id="training-lab-title" className="text-lg font-semibold tracking-tight">Teach the model, one card at a time</h2>
-        <p className="mt-2 text-sm leading-relaxed text-fg-secondary">Each card is an E or a 3. Swipe it left for E, right for 3, or up to delete it from the training set — or use the buttons under the deck. The model only learns the labels you give it, and you can start training with as few as you like.</p>
+        <p className="mt-2 text-sm leading-relaxed text-fg-secondary">Each card is an E or a 3. Swipe it left for E, right for 3, or up to delete it from the training set, or use the buttons under the deck. The model only learns the labels you give it, and you can start training with as few as you like.</p>
         <div className="mt-4 flex flex-wrap items-end gap-3">
           <label className="text-sm font-medium">Random seed<input aria-label="Training random seed" type="number" min="0" max="4294967295" value={seedText} onChange={(event) => setSeedText(event.target.value)} className="mt-1 block w-44 rounded border border-line bg-surface-raised px-3 py-2 font-mono" /></label>
           <button type="button" onClick={generate} className="rounded border border-line px-3 py-2 text-sm font-medium hover:border-line-strong">Make new drawings</button>
@@ -222,7 +222,7 @@ export function TrainingLab() {
         </div>
         {/* The trays flank the deck like buckets: E on the left, 3 on the
             right, matching the swipe directions (left = E, right = 3). The
-            deck stays first in the DOM — it is the interaction — and on small
+            deck stays first in the DOM (it is the interaction) and on small
             screens it leads with the trays stacking beneath it. */}
         <div className="mt-4 grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
           <div className="md:order-2">
@@ -261,7 +261,7 @@ export function TrainingLab() {
 
       <section className="rounded-lg border border-line p-4" aria-labelledby="start-training-title">
         <h2 id="start-training-title" className="text-lg font-semibold tracking-tight">Start training</h2>
-        <p className="mt-2 text-sm text-fg-secondary">Gradient descent adjusts all 64 weights after seeing every drawing you labelled. You can train on as few as one card — a lopsided set makes a lopsided model, which is a lesson in itself.</p>
+        <p className="mt-2 text-sm text-fg-secondary">Gradient descent adjusts all 64 weights after seeing every drawing you labelled. You can train on as few as one card. A lopsided set makes a lopsided model, which is a lesson in itself.</p>
         <button type="button" onClick={train} disabled={assignedCount === 0} className="mt-4 rounded bg-accent px-4 py-2 text-sm font-medium text-white enabled:hover:bg-accent-deep disabled:cursor-not-allowed disabled:opacity-50">
           {assignedCount === 0 ? 'Start training' : `Train on ${assignedCount} labelled ${assignedCount === 1 ? 'drawing' : 'drawings'}`}
         </button>

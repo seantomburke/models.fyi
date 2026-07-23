@@ -14,8 +14,8 @@ function pct(p: number): string {
 }
 
 /**
- * The interactive probability tree: drag the three sliders — prior,
- * sensitivity, false-positive rate — and watch the branch probabilities,
+ * The interactive probability tree: drag the three sliders (prior,
+ * sensitivity, false-positive rate) and watch the branch probabilities,
  * the joint probabilities at the leaves, and the Bayes posterior update.
  * Plain SVG, computed at render time; SSR-safe by construction.
  */
@@ -81,7 +81,7 @@ export function BayesTreeExplorer() {
   }> = [
     {
       id: 'bayes-prior',
-      label: 'P(sick) — the prior',
+      label: 'P(sick): the prior',
       value: prior,
       set: setPrior,
       min: 0.001,
@@ -90,7 +90,7 @@ export function BayesTreeExplorer() {
     },
     {
       id: 'bayes-sensitivity',
-      label: 'P(positive | sick) — sensitivity',
+      label: 'P(positive | sick): sensitivity',
       value: sensitivity,
       set: setSensitivity,
       min: 0.5,
@@ -99,7 +99,7 @@ export function BayesTreeExplorer() {
     },
     {
       id: 'bayes-fpr',
-      label: 'P(positive | healthy) — false-positive rate',
+      label: 'P(positive | healthy): false-positive rate',
       value: fpr,
       set: setFpr,
       min: 0,

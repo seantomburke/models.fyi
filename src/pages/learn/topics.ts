@@ -5,7 +5,7 @@
  *
  * Section *body* copy lives in topicProse.ts, keyed by `<slug>::<heading>`.
  * This module is reachable from src/lib/routeMeta.ts, which every page imports,
- * so anything held here ships in the chunk all 58 routes preload — while the
+ * so anything held here ships in the chunk all 58 routes preload, while the
  * paragraphs are rendered by one route. Keep headings (routeMeta's JSON-LD
  * `teaches` list needs them) here and paragraphs there.
  */
@@ -460,7 +460,7 @@ const authored: Topic[] = [
     metaTitle: 'Bayesian statistics explained with an interactive probability tree | Models.fyi',
     metaDescription:
       'Bayes\' theorem explained with an interactive probability tree: drag the prior and test accuracy, watch the posterior update, then see how the same math predicts the next word in a sentence.',
-    hook: 'One formula for changing your mind with evidence — and it\'s hiding inside next-word prediction.',
+    hook: 'One formula for changing your mind with evidence, and it\'s hiding inside next-word prediction.',
     sections: [
       {
         heading: 'Beliefs as numbers',
@@ -611,16 +611,16 @@ const authored: Topic[] = [
     metaTitle: 'Image classification with neural networks - Interactive demo | Models.fyi',
     metaDescription:
       'See how neural networks classify images with an interactive 8x8 pixel demo. Draw a 3 or E and watch the classifier predict.',
-    hook: 'Meet Doodle-64, a 64-parameter classifier that tells 3 from E — and works exactly like the big models.',
+    hook: 'Meet Doodle-64, a 64-parameter classifier that tells 3 from E and works exactly like the big models.',
     interactive: PixelClassifier,
     modelSpec: {
       name: 'Doodle-64',
       type: 'Single-layer binary image classifier (a perceptron, the original neural network)',
-      parameters: '64 — one learned weight per pixel',
+      parameters: '64: one learned weight per pixel',
       layers: '1 (64 pixels → 1 score)',
       inputs: '64 numbers: the 8×8 grid, 1 where you drew ink and 0 where you didn\'t',
       outputs: '2 probabilities that sum to 100%: "this is a 3" vs "this is an E"',
-      scale: 'Frontier LLMs have hundreds of billions of parameters. Doodle-64 has 64 — about ten billion times smaller — but every one of them is the same kind of number doing the same multiply-and-add.',
+      scale: 'Frontier LLMs have hundreds of billions of parameters. Doodle-64 has 64, about ten billion times smaller, but every one of them is the same kind of number doing the same multiply-and-add.',
     },
     sections: [
       {
@@ -652,11 +652,11 @@ const authored: Topic[] = [
     modelSpec: {
       name: 'Doodle-525',
       type: 'Two-layer feed-forward neural network (a tiny multi-layer perceptron)',
-      parameters: '525 — 448 pixel-to-stroke weights + 7 stroke biases + 70 stroke-to-digit weights',
+      parameters: '525: 448 pixel-to-stroke weights + 7 stroke biases + 70 stroke-to-digit weights',
       layers: '2 (64 pixels → 7 stroke detectors → 10 digits)',
       inputs: '64 numbers: the 8×8 grid, 1 where you drew ink and 0 where you didn\'t',
       outputs: '10 probabilities, one per digit 0–9, summing to 100%',
-      scale: 'Same inputs as Doodle-64, eight times the parameters, and one hidden layer — the single upgrade that "deep" learning repeats hundreds of times in a billion-parameter LLM.',
+      scale: 'Same inputs as Doodle-64, eight times the parameters, and one hidden layer, the single upgrade that "deep" learning repeats hundreds of times in a billion-parameter LLM.',
     },
     sections: [
       {
@@ -666,7 +666,7 @@ const authored: Topic[] = [
         heading: 'Why one layer stops being enough',
       },
       {
-        heading: 'Layer 1 finds strokes, not digits',
+        heading: 'Layer 1 finds strokes first',
       },
       {
         heading: 'Layer 2 combines strokes into digits',
@@ -737,16 +737,16 @@ const authored: Topic[] = [
     metaTitle: 'How LLMs predict the next word - Interactive demo | Models.fyi',
     metaDescription:
       'Build a sentence one word at a time with a tiny language model trained on nine sentences. See exactly how next-word prediction comes from training data, then scale the idea to ChatGPT and Claude.',
-    hook: 'Meet Parrot-43, a language model trained on nine sentences. Watch it predict the next word — and see exactly where every prediction comes from.',
+    hook: 'Meet Parrot-43, a language model trained on nine sentences. Watch it predict the next word and see exactly where every prediction comes from.',
     interactive: NextWordPredictor,
     modelSpec: {
       name: 'Parrot-43',
-      type: 'Bigram language model — the smallest honest next-word predictor',
-      parameters: '43 — one count for every word pair it saw during training',
-      layers: '0 — it\'s a lookup table, not a network (that\'s the punchline, keep reading)',
+      type: 'Bigram language model, the smallest honest next-word predictor',
+      parameters: '43: one count for every word pair it saw during training',
+      layers: '0: it\'s a lookup table with zero network layers (that\'s the punchline, keep reading)',
       inputs: '1 word: the last word of the sentence so far',
       outputs: 'A probability for every word that could come next, summing to 100%',
-      scale: 'ChatGPT and Claude do this exact job — predict the next token, append it, repeat — with billions of parameters and thousands of words of context instead of one.',
+      scale: 'ChatGPT and Claude do this exact job (predict the next token, append it, repeat) with billions of parameters and thousands of words of context instead of one.',
     },
     sections: [
       {
@@ -775,11 +775,11 @@ const authored: Topic[] = [
     modelSpec: {
       name: 'Doodle-918',
       type: 'Three-layer feed-forward neural network with a skip connection',
-      parameters: '918 — 640 pixel-to-primitive weights + 10 primitive biases + 80 primitive-to-shape weights + 8 shape biases + 80 shape-to-digit weights + 100 skip weights',
+      parameters: '918: 640 pixel-to-primitive weights + 10 primitive biases + 80 primitive-to-shape weights + 8 shape biases + 80 shape-to-digit weights + 100 skip weights',
       layers: '3 (64 pixels → 10 stroke primitives → 8 shape detectors → 10 digits)',
       inputs: '64 numbers: the 8×8 grid, 1 where you drew ink and 0 where you didn\'t',
       outputs: '10 probabilities, one per digit 0–9, summing to 100%',
-      scale: 'Doodle-525\'s job with one more layer in the middle. It reads every canonical digit at over 99% confidence where the two-layer model manages 94%, and it stays right when a stroke is smudged — the payoff for features that compose.',
+      scale: 'Doodle-525\'s job with one more layer in the middle. It reads every canonical digit at over 99% confidence where the two-layer model manages 94%, and it stays right when a stroke is smudged. That is the payoff for features that compose.',
     },
     sections: [
       {

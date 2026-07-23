@@ -1,7 +1,7 @@
 import type { Benchmark } from './types.ts'
 
 /**
- * Only benchmarks with published scores in models.ts belong here — every
+ * Only benchmarks with published scores in models.ts belong here; every
  * entry becomes a Compare-page column, and the validator rejects columns
  * no model has data for. (2026-07-19: dropped 16 score-less definitions;
  * re-add one only together with its first scores.)
@@ -61,7 +61,7 @@ export const benchmarks: Benchmark[] = [
     id: 'aa-intelligence-index',
     name: 'Artificial Analysis Intelligence Index',
     shortName: 'AA Index',
-    eli5: 'A frequently refreshed overall score made from nine modern tests: real work, tool use, terminal tasks, science, hard questions, and long-context reasoning. It is a scorecard, not a percent correct.',
+    eli5: 'A frequently refreshed overall score made from nine modern tests: real work, tool use, terminal tasks, science, hard questions, and long-context reasoning. It is a scorecard rather than a percent correct.',
     unit: 'points',
     category: 'Reasoning',
     sourceUrl: 'https://artificialanalysis.ai/evaluations/intelligence-index',
