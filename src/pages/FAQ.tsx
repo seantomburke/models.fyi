@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor, provideCorpus } from '../lib/routeMeta.ts'
 import { faqs, faqsByCategory, faqCategories } from '../data/faqs.ts'
@@ -8,9 +9,36 @@ import { Breadcrumb } from '../components/Breadcrumb.tsx'
 // the /faq JSON-LD needs — keeping it out of every other route's bundle.
 provideCorpus({ faqs })
 
+/** Item ids whose question matches the ?q= deep-link query, in page order. */
+function matchingItemIds(query: string): string[] {
+  const q = query.toLowerCase().trim()
+  if (!q) return []
+  const ids: string[] = []
+  faqCategories.forEach((category, categoryIdx) => {
+    faqsByCategory(category).forEach((faq, itemIdx) => {
+      if (faq.question.toLowerCase().includes(q)) ids.push(`faq-${categoryIdx}-${itemIdx}`)
+    })
+  })
+  return ids
+}
+
 export function FAQ() {
   const meta = metaFor('/faq')
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
+  // ?q= comes from site-wide search: auto-expand the matching questions so the
+  // reader lands on the answer, not a wall of collapsed accordions.
+  const [searchParams] = useSearchParams()
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(
+    () => new Set(matchingItemIds(searchParams.get('q') ?? '')),
+  )
+
+  // Scroll the first match into view after mount. Guarded inside an effect so
+  // prerendering (which runs this module under SSR) never touches the DOM.
+  useEffect(() => {
+    const [first] = matchingItemIds(searchParams.get('q') ?? '')
+    // Optional-call: jsdom doesn't implement scrollIntoView.
+    if (first) document.getElementById(first)?.scrollIntoView?.({ block: 'start' })
+    // Mount-only: ?q= is a deep-link seed, not live state.
+  }, [])
 
   usePageMeta({
     title: meta.title,

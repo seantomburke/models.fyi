@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor, provideCorpus } from '../lib/routeMeta.ts'
 import { glossaryTerms } from '../data/index.ts'
@@ -20,7 +21,10 @@ export function Glossary() {
     structuredData: meta.structuredData,
   })
 
-  const [search, setSearch] = useState('')
+  // Seed the search box from ?q= so site-wide search can deep-link to a term,
+  // but keep typing local — every keystroke shouldn't rewrite the URL.
+  const [searchParams] = useSearchParams()
+  const [search, setSearch] = useState(() => searchParams.get('q') ?? '')
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
 
   const filtered = useMemo(() => {

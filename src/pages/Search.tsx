@@ -4,6 +4,8 @@ import { usePostHog } from '../lib/posthog-react.ts'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
 import { searchModels, groupSearchResults } from '../lib/search.ts'
+import { searchContent } from '../lib/contentSearch.ts'
+import type { ContentResult } from '../lib/contentSearch.ts'
 import { parseSearchParams, serializeSearchParams } from '../lib/searchUrlState.ts'
 import { models, providerById } from '../data/index.ts'
 import { SearchInput } from '../components/SearchInput.tsx'
@@ -34,7 +36,10 @@ export function Search() {
       // Replace rather than push: typing a word shouldn't bury the previous
       // page under a dozen history entries.
       setSearchParams(serializeSearchParams({ query: next }), { replace: true })
-      captureSearchPerformed(posthog, next ? searchModels(models, next).length : models.length)
+      captureSearchPerformed(
+        posthog,
+        next ? searchModels(models, next).length + searchContent(next).length : models.length,
+      )
     },
     [posthog, setSearchParams],
   )
@@ -50,22 +55,30 @@ export function Search() {
     return groupSearchResults(results)
   }, [results])
 
+  const contentResults = useMemo(() => (query ? searchContent(query) : []), [query])
+  const learnResults = contentResults.filter((r) => r.kind === 'learn')
+  const glossaryResults = contentResults.filter((r) => r.kind === 'glossary')
+  const faqResults = contentResults.filter((r) => r.kind === 'faq')
+
   return (
     <div className="space-y-6">
       <Breadcrumb items={[]} />
 
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Search Models</h1>
-        <p className="mt-2 text-fg-secondary">Find the right model by name, provider, or capability.</p>
+        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Search</h1>
+        <p className="mt-2 text-fg-secondary">
+          Find models by name, provider, or capability — or search the glossary, Learn topics, and FAQ.
+        </p>
       </section>
 
       <SearchInput value={query} onSearch={setQuery} className="max-w-lg" />
 
-      {query && results.length === 0 && (
+      {query && results.length === 0 && contentResults.length === 0 && (
         <div className="rounded-lg border border-line bg-surface-raised p-6 text-center">
-          <p className="text-fg-secondary">No models found matching "{query}"</p>
+          <p className="text-fg-secondary">No results found matching "{query}"</p>
           <p className="mt-2 text-sm text-fg-muted">
-            Try searching for a model name, provider (like "anthropic" or "openai"), or capability.
+            Try a model name, provider (like "anthropic" or "openai"), capability, or a term like
+            "context window".
           </p>
         </div>
       )}
@@ -74,7 +87,8 @@ export function Search() {
         <div className="space-y-6">
           {query && (
             <p className="text-sm text-fg-muted">
-              Found {results.length} result{results.length !== 1 ? 's' : ''}
+              Found {results.length + contentResults.length} result
+              {results.length + contentResults.length !== 1 ? 's' : ''}
             </p>
           )}
 
@@ -130,7 +144,73 @@ export function Search() {
           )}
         </div>
       )}
+
+      {query && contentResults.length > 0 && (
+        <div className="space-y-6">
+          {learnResults.length > 0 && (
+            <ContentSection
+              title="Learn"
+              results={learnResults}
+              onSelect={(r) => captureSearchResultClicked(posthog, r.to, r.kind)}
+            />
+          )}
+          {glossaryResults.length > 0 && (
+            <ContentSection
+              title="Glossary"
+              results={glossaryResults}
+              onSelect={(r) => captureSearchResultClicked(posthog, r.to, r.kind)}
+            />
+          )}
+          {faqResults.length > 0 && (
+            <ContentSection
+              title="FAQ"
+              results={faqResults}
+              onSelect={(r) => captureSearchResultClicked(posthog, r.to, r.kind)}
+            />
+          )}
+        </div>
+      )}
     </div>
+  )
+}
+
+const KIND_LABEL: Record<ContentResult['kind'], string> = {
+  learn: 'Learn',
+  glossary: 'Glossary',
+  faq: 'FAQ',
+}
+
+function ContentSection({
+  title,
+  results,
+  onSelect,
+}: {
+  title: string
+  results: ContentResult[]
+  onSelect: (result: ContentResult) => void
+}) {
+  return (
+    <section>
+      <h2 className="mb-3 text-lg font-semibold">{title}</h2>
+      <div className="space-y-2">
+        {results.map((result) => (
+          <Link
+            key={result.to}
+            to={result.to}
+            onClick={() => onSelect(result)}
+            className="block rounded-lg border border-line bg-surface-raised p-4 transition-colors hover:border-accent-deep hover:bg-surface"
+          >
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold">{result.title}</h3>
+              <span className="inline-block rounded bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent-deep">
+                {KIND_LABEL[result.kind]}
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-fg-secondary">{result.snippet}</p>
+          </Link>
+        ))}
+      </div>
+    </section>
   )
 }
 

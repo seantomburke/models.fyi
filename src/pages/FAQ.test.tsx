@@ -4,9 +4,9 @@ import { MemoryRouter } from 'react-router-dom'
 import { FAQ } from './FAQ'
 import { faqs } from '../data/faqs.ts'
 
-function renderFAQ() {
+function renderFAQ(initialEntry = '/faq') {
   render(
-    <MemoryRouter initialEntries={['/faq']}>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <FAQ />
     </MemoryRouter>,
   )
@@ -42,6 +42,26 @@ test('collapsed answers are hidden from assistive tech, expanded ones are not', 
   await user.click(first)
   expect(first).toHaveAttribute('aria-expanded', 'false')
   expect(panel).toHaveAttribute('inert')
+})
+
+test('?q= auto-expands FAQs whose question matches', () => {
+  renderFAQ('/faq?q=open-source models')
+  const match = screen.getByRole('button', { name: 'Can I use open-source models?' })
+  expect(match).toHaveAttribute('aria-expanded', 'true')
+
+  // Non-matching questions stay collapsed.
+  const other = screen.getByRole('button', { name: faqs[0].question })
+  expect(other).toHaveAttribute('aria-expanded', 'false')
+})
+
+test('a bare /faq starts with everything collapsed', () => {
+  renderFAQ()
+  for (const faq of faqs) {
+    expect(screen.getByRole('button', { name: faq.question })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    )
+  }
 })
 
 test('the answer panel is never removed by toggling', async () => {
