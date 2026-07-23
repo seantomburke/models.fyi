@@ -90,7 +90,7 @@ const authored: Topic[] = [
     slug: 'what-is-an-ai-model',
     level: 'basics',
     question: 'What is an AI model?',
-    metaTitle: 'What is an AI model? Explained simply - Models.fyi',
+    metaTitle: 'What is an AI model? Explained simply | Models.fyi',
     metaDescription:
       'What is an AI model, in plain language: a program with billions of tuned dials that learned patterns from data. No math, no jargon, explained like you\'re five.',
     hook: 'A program that learned from examples instead of being told the rules.',
@@ -110,7 +110,7 @@ const authored: Topic[] = [
     slug: 'what-is-an-llm',
     level: 'basics',
     question: 'What is an LLM?',
-    metaTitle: 'What is an LLM? Large Language Models explained - Models.fyi',
+    metaTitle: 'What is an LLM? Large Language Models explained | Models.fyi',
     metaDescription:
       'What is an LLM? A Large Language Model is a giant autocomplete trained on much of the internet. How next-word prediction turns into intelligence, explained simply.',
     hook: 'The world\'s most powerful autocomplete, and that\'s not an insult.',
@@ -130,7 +130,7 @@ const authored: Topic[] = [
     slug: 'what-is-gpt',
     level: 'basics',
     question: 'What is GPT?',
-    metaTitle: 'What is GPT? What the letters mean - Models.fyi',
+    metaTitle: 'What is GPT? What the letters mean | Models.fyi',
     metaDescription:
       'What does GPT stand for? Generative Pre-trained Transformer, decoded word by word in plain language, and how GPT differs from ChatGPT.',
     hook: 'Three ordinary words hiding behind one famous acronym.',
@@ -147,7 +147,7 @@ const authored: Topic[] = [
     slug: 'what-is-a-context-window',
     level: 'basics',
     question: 'What is a context window?',
-    metaTitle: 'What is a context window? AI memory explained - Models.fyi',
+    metaTitle: 'What is a context window? AI memory explained | Models.fyi',
     metaDescription:
       'What is a context window in AI? The model\'s working memory: how much text it can consider at once, why it\'s measured in tokens, and why size matters.',
     hook: 'The size of the model\'s desk, and what falls off the edge.',
@@ -164,7 +164,7 @@ const authored: Topic[] = [
     slug: 'what-is-a-token',
     level: 'basics',
     question: 'What is a token?',
-    metaTitle: 'What is a token? AI tokenization explained - Models.fyi',
+    metaTitle: 'What is a token? AI tokenization explained | Models.fyi',
     metaDescription:
       'What is a token in AI? How text gets broken into chunks, why tokens matter for cost and context, and how to estimate your API bills.',
     hook: 'The billing unit for AI: about 3/4 of a word, but not always.',
@@ -182,7 +182,7 @@ const authored: Topic[] = [
     slug: 'reasoning-models',
     level: 'intermediate',
     question: 'What is a reasoning model?',
-    metaTitle: 'Reasoning vs non-reasoning AI models explained - Models.fyi',
+    metaTitle: 'Reasoning vs non-reasoning AI models explained | Models.fyi',
     metaDescription:
       'What is a reasoning or thinking AI model? Why some models pause to think step by step before answering, when that helps, and when it\'s a waste of money.',
     hook: 'Some models blurt out answers. Others grab scratch paper first.',
@@ -199,7 +199,7 @@ const authored: Topic[] = [
     slug: 'which-model-should-i-use',
     level: 'basics',
     question: 'Which model should I use?',
-    metaTitle: 'Which AI model should I use? A plain answer - Models.fyi',
+    metaTitle: 'Which AI model should I use? A plain answer | Models.fyi',
     metaDescription:
       'Which AI model should you use? The short answer for most people, plus an interactive quiz that matches a model to your task, budget, and preferences.',
     hook: 'The honest short answer, and a quiz for the real one.',
@@ -217,7 +217,7 @@ const authored: Topic[] = [
     slug: 'claude-vs-gpt',
     level: 'intermediate',
     question: 'Claude vs GPT: Which should I use?',
-    metaTitle: 'Claude vs GPT - head-to-head comparison - Models.fyi',
+    metaTitle: 'Claude vs GPT - head-to-head comparison | Models.fyi',
     metaDescription:
       'Claude vs ChatGPT: how they differ in reasoning, coding, tone, pricing, and when to pick each. Direct comparison of Anthropic\'s and OpenAI\'s flagship models.',
     hook: 'The two heavyweight champions, compared where it actually matters.',
@@ -240,7 +240,7 @@ const authored: Topic[] = [
     slug: 'claude-vs-gemini',
     level: 'intermediate',
     question: 'Claude vs Gemini: Which is better?',
-    metaTitle: 'Claude vs Gemini - comparison and when to use each - Models.fyi',
+    metaTitle: 'Claude vs Gemini - comparison and when to use each | Models.fyi',
     metaDescription:
       'Claude vs Google Gemini: strengths, weaknesses, pricing, and when Anthropic\'s Claude or Google\'s Gemini is the right pick for your task.',
     hook: 'Anthropic\'s focused bet vs Google\'s everything-plus approach.',
@@ -263,7 +263,7 @@ const authored: Topic[] = [
     slug: 'grok-vs-gpt',
     level: 'intermediate',
     question: 'Grok vs GPT: Where Grok stands',
-    metaTitle: 'Grok vs GPT - xAI\'s answer to OpenAI - Models.fyi',
+    metaTitle: 'Grok vs GPT - xAI\'s answer to OpenAI | Models.fyi',
     metaDescription:
       'Grok vs ChatGPT: how xAI\'s Grok compares to OpenAI\'s GPT, when to use each, and what makes Grok different.',
     hook: 'The new kid trying to outrun the established name.',
@@ -287,7 +287,7 @@ const authored: Topic[] = [
     slug: 'best-model-for-coding',
     level: 'intermediate',
     question: 'What\'s the best AI model for coding?',
-    metaTitle: 'Best AI model for coding - comparison and tips - Models.fyi',
+    metaTitle: 'Best AI model for coding - comparison and tips | Models.fyi',
     metaDescription:
       'Best AI model for software engineering and coding: how to pick between Claude, GPT, and others for different coding tasks, from quick fixes to system design.',
     hook: 'The models that can actually write your code without breaking it.',
@@ -310,7 +310,7 @@ const authored: Topic[] = [
     slug: 'best-model-for-writing',
     level: 'intermediate',
     question: 'What\'s the best AI model for writing?',
-    metaTitle: 'Best AI model for writing and content creation - Models.fyi',
+    metaTitle: 'Best AI model for writing and content creation | Models.fyi',
     metaDescription:
       'Best AI model for writing blog posts, essays, emails, and content: how to pick between Claude, GPT, and others for different writing tasks.',
     hook: 'The models that sound human and finish your thoughts.',
@@ -333,7 +333,7 @@ const authored: Topic[] = [
     slug: 'best-model-for-research',
     level: 'intermediate',
     question: 'What\'s the best AI model for research?',
-    metaTitle: 'Best AI model for research and analysis - Models.fyi',
+    metaTitle: 'Best AI model for research and analysis | Models.fyi',
     metaDescription:
       'Best AI model for research, data analysis, and complex problem-solving: how to pick between Claude, GPT, and others for academic and professional research.',
     hook: 'The models that cite sources and admit what they don\'t know.',
@@ -357,7 +357,7 @@ const authored: Topic[] = [
     slug: 'vision-models',
     level: 'intermediate',
     question: 'What are vision models?',
-    metaTitle: 'What are vision models? AI that sees images - Models.fyi',
+    metaTitle: 'What are vision models? AI that sees images | Models.fyi',
     metaDescription:
       'What are vision models? How AI models understand and analyze images, the difference from text models, and which models have vision today.',
     hook: 'Text models that learned to see.',
@@ -377,7 +377,7 @@ const authored: Topic[] = [
     slug: 'embedding-models',
     level: 'advanced',
     question: 'What are embedding models?',
-    metaTitle: 'What are embeddings? How AI finds meaning in text - Models.fyi',
+    metaTitle: 'What are embeddings? How AI finds meaning in text | Models.fyi',
     metaDescription:
       'What are embeddings and embedding models? How semantic search works, why they matter for RAG and similarity, and how to use them.',
     hook: 'The glue between meaning and numbers.',
@@ -397,7 +397,7 @@ const authored: Topic[] = [
     slug: 'fine-tuning-models',
     level: 'advanced',
     question: 'What is fine-tuning?',
-    metaTitle: 'Fine-tuning AI models: when and why - Models.fyi',
+    metaTitle: 'Fine-tuning AI models: when and why | Models.fyi',
     metaDescription:
       'What is fine-tuning? Why companies fine-tune language models, how it works, and when fine-tuning makes sense vs using prompts or RAG.',
     hook: 'Teaching an old model new tricks without retraining from scratch.',
@@ -417,7 +417,7 @@ const authored: Topic[] = [
     slug: 'model-pricing-tokens',
     level: 'intermediate',
     question: 'How does AI pricing work - input vs output tokens',
-    metaTitle: 'AI model pricing explained: input vs output tokens - Models.fyi',
+    metaTitle: 'AI model pricing explained: input vs output tokens | Models.fyi',
     metaDescription:
       'How AI model pricing works: why input and output tokens cost differently, how tokens are counted, and how to estimate your bills.',
     hook: 'Why that question you asked cost 3 cents instead of 1.',
@@ -437,7 +437,7 @@ const authored: Topic[] = [
     slug: 'context-window-strategies',
     level: 'advanced',
     question: 'How to make the most of context windows',
-    metaTitle: 'Context window strategies: when big isn\'t better - Models.fyi',
+    metaTitle: 'Context window strategies: when big isn\'t better | Models.fyi',
     metaDescription:
       'Strategies for using large context windows effectively: when bigger is worth the cost, how to structure documents, and when a smaller context is fine.',
     hook: 'Your desk is huge. Here\'s how to use it without wasting money.',
@@ -457,7 +457,7 @@ const authored: Topic[] = [
     slug: 'bayesian-statistics',
     level: 'advanced',
     question: 'What is Bayesian statistics?',
-    metaTitle: 'Bayesian statistics explained with an interactive probability tree - Models.fyi',
+    metaTitle: 'Bayesian statistics explained with an interactive probability tree | Models.fyi',
     metaDescription:
       'Bayes\' theorem explained with an interactive probability tree: drag the prior and test accuracy, watch the posterior update, then see how the same math predicts the next word in a sentence.',
     hook: 'One formula for changing your mind with evidence — and it\'s hiding inside next-word prediction.',
@@ -488,7 +488,7 @@ const authored: Topic[] = [
     slug: 'prompt-engineering-basics',
     level: 'intermediate',
     question: 'Prompt engineering basics: how to get better answers',
-    metaTitle: 'Prompt engineering 101: tips to get better AI answers - Models.fyi',
+    metaTitle: 'Prompt engineering 101: tips to get better AI answers | Models.fyi',
     metaDescription:
       'Prompt engineering basics: how to write prompts that get better answers from AI models, with examples and common mistakes to avoid.',
     hook: 'Ask better, get better. No wizardry, just clarity.',
@@ -511,7 +511,7 @@ const authored: Topic[] = [
     slug: 'web-search-models',
     level: 'intermediate',
     question: 'When to use a model with web search',
-    metaTitle: 'Web search in AI models: when you need real-time data - Models.fyi',
+    metaTitle: 'Web search in AI models: when you need real-time data | Models.fyi',
     metaDescription:
       'When to use models with web search: how real-time data works, why models can\'t be current without it, and which models have search built in.',
     hook: 'Your model knows yesterday\'s news. Yesterday.',
@@ -534,7 +534,7 @@ const authored: Topic[] = [
     slug: 'hallucinations',
     level: 'intermediate',
     question: 'What are AI hallucinations and why they happen',
-    metaTitle: 'AI hallucinations explained: why models make things up - Models.fyi',
+    metaTitle: 'AI hallucinations explained: why models make things up | Models.fyi',
     metaDescription:
       'What are AI hallucinations? Why language models confidently say false things, examples, and strategies to reduce them.',
     hook: 'Confident nonsense is the core bug of next-word prediction.',
@@ -554,7 +554,7 @@ const authored: Topic[] = [
     slug: 'open-source-vs-closed-source',
     level: 'intermediate',
     question: 'Open source vs closed-source AI models',
-    metaTitle: 'Open source vs closed source models: the trade-offs - Models.fyi',
+    metaTitle: 'Open source vs closed source models: the trade-offs | Models.fyi',
     metaDescription:
       'Open source vs closed source AI models: how they differ, when to pick each, and why some companies open-source and others don\'t.',
     hook: 'Free and transparent vs refined and safe: pick your own trade-off.',
@@ -577,7 +577,7 @@ const authored: Topic[] = [
     slug: 'how-do-neural-network-weights-work',
     level: 'lab',
     question: 'How do neural network weights work?',
-    metaTitle: 'How neural network weights work - Interactive explainer - Models.fyi',
+    metaTitle: 'How neural network weights work - Interactive explainer | Models.fyi',
     metaDescription:
       'Understand neural network weights with an interactive explainer. See how inputs multiply by weights and sum to create outputs. No math jargon needed.',
     hook: 'The tiny dials that make neural networks learn anything.',
@@ -608,7 +608,7 @@ const authored: Topic[] = [
     slug: 'understand-image-classification',
     level: 'lab',
     question: 'How do neural networks classify images?',
-    metaTitle: 'Image classification with neural networks - Interactive demo - Models.fyi',
+    metaTitle: 'Image classification with neural networks - Interactive demo | Models.fyi',
     metaDescription:
       'See how neural networks classify images with an interactive 8x8 pixel demo. Draw a 3 or E and watch the classifier predict.',
     hook: 'Meet Doodle-64, a 64-parameter classifier that tells 3 from E — and works exactly like the big models.',
@@ -644,7 +644,7 @@ const authored: Topic[] = [
     slug: 'how-neural-networks-recognize-digits',
     level: 'lab',
     question: 'How do neural networks recognize digits?',
-    metaTitle: 'How neural networks recognize digits 0-9 - Interactive two-layer demo - Models.fyi',
+    metaTitle: 'How neural networks recognize digits 0-9 - Interactive two-layer demo | Models.fyi',
     metaDescription:
       'Draw any digit 0-9 and watch a two-layer neural network recognize it. The hidden layer spots strokes, the output layer combines them into digits. Interactive demo.',
     hook: 'Meet Doodle-525: draw any digit and watch its hidden layer find the strokes before it names the number.',
@@ -683,7 +683,7 @@ const authored: Topic[] = [
     slug: 'what-is-gradient-descent',
     level: 'lab',
     question: 'What is gradient descent?',
-    metaTitle: 'What is gradient descent? Watch 64 weights train - Models.fyi',
+    metaTitle: 'What is gradient descent? Watch 64 weights train | Models.fyi',
     metaDescription:
       'Train a real 64-weight classifier in your browser, test its predictions, and explore gradient descent on accessible 2D and 3D loss views.',
     hook: 'Choose the starting noise, train Doodle-64 in your browser, then test the weights it learned.',
@@ -719,7 +719,7 @@ const authored: Topic[] = [
     slug: 'train-a-neural-network',
     level: 'lab',
     question: 'How do you train a neural network?',
-    metaTitle: 'Train a neural network yourself - Interactive lab - Models.fyi',
+    metaTitle: 'Train a neural network yourself - Interactive lab | Models.fyi',
     metaDescription: 'Label 50 tiny images, train a real 64-weight neural network in your browser, and test the weights it learned.',
     hook: 'You are the teacher: label the drawings, then watch the model turn your answers into weights.',
     interactive: TrainingLab,
@@ -734,7 +734,7 @@ const authored: Topic[] = [
     slug: 'how-llms-predict-the-next-word',
     level: 'lab',
     question: 'How do LLMs predict the next word?',
-    metaTitle: 'How LLMs predict the next word - Interactive demo - Models.fyi',
+    metaTitle: 'How LLMs predict the next word - Interactive demo | Models.fyi',
     metaDescription:
       'Build a sentence one word at a time with a tiny language model trained on nine sentences. See exactly how next-word prediction comes from training data, then scale the idea to ChatGPT and Claude.',
     hook: 'Meet Parrot-43, a language model trained on nine sentences. Watch it predict the next word — and see exactly where every prediction comes from.',
@@ -767,7 +767,7 @@ const authored: Topic[] = [
     slug: 'why-neural-networks-need-more-layers',
     level: 'lab',
     question: 'Why do neural networks need more than one hidden layer?',
-    metaTitle: 'Why neural networks need more layers - Interactive three-layer digit demo - Models.fyi',
+    metaTitle: 'Why neural networks need more layers - Interactive three-layer digit demo | Models.fyi',
     metaDescription:
       'Draw a digit and watch a three-layer neural network turn pixels into strokes, strokes into shapes, and shapes into an answer. See exactly what the extra layer buys you.',
     hook: 'Meet Doodle-918: it doesn\'t just count strokes, it sees loops and curves. Draw a digit and watch parts become shapes become an answer.',

@@ -241,7 +241,7 @@ test('compare lists every model, each linked to its own detail page', () => {
 test('the interactive tools are WebApplications with a name and description', () => {
   for (const path of ['/calculator', '/quiz', '/graph']) {
     const node = nodeOfType(path, 'WebApplication')
-    expect(node.name).toBe(metaFor(path).title.replace(/ — Models\.fyi$/, ''))
+    expect(node.name).toBe(metaFor(path).title.replace(/ \| Models\.fyi$/, ''))
     expect(node.url).toBe(canonicalUrl(path))
     expect(node.description).toBe(metaFor(path).description)
     expect(node.applicationCategory).toBeDefined()

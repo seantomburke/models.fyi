@@ -23,7 +23,7 @@ export function LearnTopic() {
   // Hooks must run unconditionally; harmless values for the not-found case.
   const baseMeta = topic ? metaFor(`/learn/${slug}`) : metaFor('/learn')
   usePageMeta({
-    title: topic?.metaTitle ?? 'Not found — Models.fyi',
+    title: topic?.metaTitle ?? 'Not found | Models.fyi',
     description: topic?.metaDescription ?? "That explainer doesn't exist.",
     image: baseMeta.image,
     type: baseMeta.type,

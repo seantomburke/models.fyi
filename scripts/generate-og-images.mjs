@@ -157,7 +157,7 @@ const learnSvg = (topic) => frame(titleBlock('Learn', topic.question, [truncateL
 
 /** Everything else: the page title (site suffix stripped) plus its description. */
 const genericSvg = (meta) => {
-  const title = meta.title.replace(/\s*—\s*(latest AI model releases\s*—\s*)?Models\.fyi$/, '')
+  const title = meta.title.replace(/\s*\|\s*Models\.fyi$/, '')
   const allLines = wrapText(meta.description, 30, MAX_TEXT_WIDTH)
   const descLines = allLines.slice(0, 2)
   // Descriptions longer than two lines are cut — make the cut visible rather

@@ -22,7 +22,7 @@ export interface RouteMeta {
 }
 
 export const notFoundMeta = {
-  title: 'Page not found — Models.fyi',
+  title: 'Page not found | Models.fyi',
   description: 'The page you\'re looking for doesn\'t exist.',
 } as const
 
@@ -51,7 +51,7 @@ export function ogImageFor(path: string): string {
 export const routeMeta: RouteMeta[] = [
   {
     path: '/',
-    title: 'Models.fyi — Which AI model should I use?',
+    title: 'Models.fyi | Which AI model should I use?',
     description:
       'Compare flagship AI models from OpenAI, Anthropic, Google, and xAI across benchmarks, cost, and capability. Plain language, no PhD required.',
     type: 'website',
@@ -59,7 +59,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/compare',
-    title: 'Compare AI models — Models.fyi',
+    title: 'Compare AI models | Models.fyi',
     description:
       'Every flagship AI model side by side: benchmark scores, prices, and context windows from OpenAI, Anthropic, Google, and xAI, in plain language.',
     type: 'website',
@@ -67,7 +67,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/graph',
-    title: 'AI models on a graph — Models.fyi',
+    title: 'AI models on a graph | Models.fyi',
     description:
       'Plot AI model performance against price on axes you choose. Compare GPT, Claude, Gemini, Grok, and open-source models visually.',
     type: 'website',
@@ -75,7 +75,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/calculator',
-    title: 'AI token cost calculator — Models.fyi',
+    title: 'AI token cost calculator | Models.fyi',
     description:
       'Compare what AI models charge per million tokens, then paste your own text to price input, output, and thinking tokens across GPT, Claude, and Gemini.',
     type: 'website',
@@ -83,7 +83,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/quiz',
-    title: 'Which AI model should I use? — Models.fyi',
+    title: 'Which AI model should I use? | Models.fyi',
     description:
       'Answer a few plain-language questions: who you are, what you want to do, and your budget, and get an AI model recommendation with the reasoning spelled out.',
     type: 'website',
@@ -91,7 +91,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/search',
-    title: 'Search AI models — Models.fyi',
+    title: 'Search AI models | Models.fyi',
     description:
       'Search and find AI models by name, provider, or capability. Quickly locate the model you\'re looking for from our comprehensive database.',
     type: 'website',
@@ -99,7 +99,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/learn',
-    title: 'Learn how AI models work — Models.fyi',
+    title: 'Learn how AI models work | Models.fyi',
     description:
       'A plain-language learning path for AI models: basics, intermediate, and advanced explainers, plus a lab of tiny models you can train in your browser.',
     type: 'website',
@@ -107,7 +107,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/faq',
-    title: 'FAQ — Models.fyi',
+    title: 'FAQ | Models.fyi',
     description:
       'Frequently asked questions about AI models, benchmarks, pricing, and model selection. Get answers to common questions in plain language.',
     type: 'website',
@@ -115,7 +115,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/glossary',
-    title: 'Glossary — Models.fyi',
+    title: 'Glossary | Models.fyi',
     description:
       'AI and model terminology explained in plain language. Search for terms like LLM, token, context window, hallucination, and more.',
     type: 'website',
@@ -123,7 +123,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/whats-new',
-    title: "What's New — latest AI model releases — Models.fyi",
+    title: "What's New: latest AI model releases | Models.fyi",
     description:
       'The latest AI model releases, updates, and announcements from OpenAI, Anthropic, Google, xAI, and the open-source community, in one chronological feed.',
     type: 'website',
@@ -131,7 +131,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/models',
-    title: 'All AI models — benchmarks, pricing, and specs — Models.fyi',
+    title: 'All AI models: benchmarks, pricing, and specs | Models.fyi',
     description:
       'Browse every AI model we track, grouped by provider. One page each with benchmark scores, prices, context window, and who the model actually suits.',
     type: 'website',
@@ -146,7 +146,7 @@ export const routeMeta: RouteMeta[] = [
   })),
   ...models.map((m) => ({
     path: `/models/${m.id}`,
-    title: `${m.name} — benchmarks, pricing, and specs — Models.fyi`,
+    title: `${m.name}: benchmarks, pricing, and specs | Models.fyi`,
     description: m.blurb,
     type: 'article' as const,
     image: ogImageFor(`/models/${m.id}`),
@@ -154,7 +154,7 @@ export const routeMeta: RouteMeta[] = [
   })),
   ...providers.map((p) => ({
     path: `/providers/${p.id}`,
-    title: `${p.name} AI models — lineup, pricing, and releases — Models.fyi`,
+    title: `${p.name} AI models: lineup, pricing, and releases | Models.fyi`,
     description: p.blurb,
     type: 'article' as const,
     image: ogImageFor(`/providers/${p.id}`),
@@ -475,7 +475,7 @@ export function toolSchema(path: string): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: meta.title.replace(/ — Models\.fyi$/, ''),
+    name: meta.title.replace(/ \| Models\.fyi$/, ''),
     url: canonicalUrl(path),
     description: meta.description,
     applicationCategory: 'UtilityApplication',
@@ -491,7 +491,7 @@ export function webPageSchema(path: string, extra: Record<string, unknown> = {})
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: meta.title.replace(/ — Models\.fyi$/, ''),
+    name: meta.title.replace(/ \| Models\.fyi$/, ''),
     url: canonicalUrl(path),
     description: meta.description,
     inLanguage: 'en',
