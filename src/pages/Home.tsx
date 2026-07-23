@@ -6,6 +6,7 @@ import { models, providers, providerById } from '../data/index.ts'
 import { loadBookmarks } from '../lib/bookmarks.ts'
 import { ProviderLogo } from '../components/ProviderLogo.tsx'
 import { formatTokens } from '../lib/format.ts'
+import { capture } from '../lib/analytics.ts'
 
 export function Home() {
   const meta = metaFor('/')
@@ -45,6 +46,8 @@ export function Home() {
       <section className="grid gap-4 sm:grid-cols-2">
         <Link
           to="/quiz"
+          data-attr="home-cta-quiz"
+          onClick={() => capture('home_cta_clicked', { destination: 'quiz' })}
           className="group rounded-xl border border-line bg-surface-raised p-6 transition-colors duration-150 hover:border-line-strong sm:col-span-2"
         >
           <span className="text-xs font-medium uppercase tracking-wide text-accent-deep">
@@ -61,6 +64,8 @@ export function Home() {
 
         <Link
           to="/compare"
+          data-attr="home-cta-compare"
+          onClick={() => capture('home_cta_clicked', { destination: 'compare' })}
           className="group rounded-xl border border-line bg-surface-raised p-6 transition-colors duration-150 hover:border-line-strong"
         >
           <h2 className="text-lg font-semibold tracking-tight group-hover:text-accent-deep">
@@ -74,6 +79,8 @@ export function Home() {
 
         <Link
           to="/graph"
+          data-attr="home-cta-graph"
+          onClick={() => capture('home_cta_clicked', { destination: 'graph' })}
           className="group rounded-xl border border-line bg-surface-raised p-6 transition-colors duration-150 hover:border-line-strong"
         >
           <h2 className="text-lg font-semibold tracking-tight group-hover:text-accent-deep">
@@ -96,6 +103,8 @@ export function Home() {
                 <Link
                   key={m.id}
                   to={`/models/${m.id}`}
+                  data-attr="home-saved-model"
+                  onClick={() => capture('home_saved_model_clicked', { model_id: m.id })}
                   className="group rounded-lg border border-line bg-surface-raised p-4 transition-colors duration-150 hover:border-line-strong hover:bg-surface-raised/80"
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -128,6 +137,8 @@ export function Home() {
         </p>
         <Link
           to="/learn"
+          data-attr="home-cta-learn"
+          onClick={() => capture('home_cta_clicked', { destination: 'learn' })}
           className="mt-4 inline-block rounded-lg bg-accent-deep px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-accent-deep/90 dark:text-surface"
         >
           Learn the basics

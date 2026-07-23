@@ -1,11 +1,17 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
 import { Home } from './Home'
+
+const { capture } = vi.hoisted(() => ({ capture: vi.fn() }))
+
+vi.mock('../lib/analytics.ts', () => ({ capture }))
 
 describe('Home', () => {
   beforeEach(() => {
     localStorage.clear()
+    capture.mockClear()
   })
 
   afterEach(() => {
@@ -59,5 +65,20 @@ describe('Home', () => {
 
     const contextWindows = screen.getAllByText(/context window/i)
     expect(contextWindows.length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('identifies homepage destination choices without collecting visitor input', async () => {
+    const user = userEvent.setup()
+    render(
+      <BrowserRouter>
+        <Home />
+      </BrowserRouter>,
+    )
+
+    const quiz = screen.getByRole('link', { name: /which model should i use/i })
+    expect(quiz).toHaveAttribute('data-attr', 'home-cta-quiz')
+    await user.click(quiz)
+
+    expect(capture).toHaveBeenCalledWith('home_cta_clicked', { destination: 'quiz' })
   })
 })

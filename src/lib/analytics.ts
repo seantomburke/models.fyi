@@ -92,8 +92,23 @@ export const loadAnalytics = async (): Promise<PostHog | null> => {
       posthog.init(token, {
         api_host: import.meta.env.VITE_POSTHOG_HOST,
         defaults: '2026-05-30',
+        // Let the SDK own SPA pageviews. Capturing them in a React effect as
+        // well records each navigation twice once history-change support is on.
+        capture_pageview: 'history_change',
         capture_pageleave: true,
         disable_session_recording: false,
+        // Autocapture complements the explicit funnel events in page handlers.
+        // It is limited to named interactive elements so selectors stay stable
+        // and text typed into the site never becomes analytics data.
+        autocapture: {
+          css_selector_allowlist: ['[data-attr]'],
+          css_selector_ignorelist: ['.ph-no-capture', '[data-ph-no-autocapture]', '[data-ph-no-capture]'],
+          element_attribute_ignorelist: ['aria-label', 'name', 'placeholder', 'value'],
+          capture_copied_text: false,
+        },
+        mask_all_text: true,
+        mask_personal_data_properties: true,
+        custom_personal_data_properties: ['query', 'search', 'q'],
         debug: import.meta.env.DEV,
       })
 

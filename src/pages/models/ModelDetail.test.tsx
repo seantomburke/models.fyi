@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { models } from '../../data/models'
 import { benchmarks, providers } from '../../data'
@@ -65,6 +66,27 @@ describe('ModelDetail page', () => {
       'href',
       '/compare',
     )
+  })
+
+  test('records which compare path a model detail visitor chooses', async () => {
+    const user = userEvent.setup()
+    const model = models[0]
+    render(
+      <MemoryRouter initialEntries={[`/models/${model.id}`]}>
+        <Routes>
+          <Route path="/models/:id" element={<ModelDetail />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    const link = screen.getByRole('link', { name: /compare every model/i })
+    expect(link).toHaveAttribute('data-attr', 'model-compare-all-link')
+    await user.click(link)
+
+    expect(capture).toHaveBeenCalledWith('model_compare_clicked', {
+      model_id: model.id,
+      destination: 'all',
+    })
   })
 
   test('page accepts model id parameter', () => {

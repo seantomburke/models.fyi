@@ -4,7 +4,6 @@ import { Layout, ClientSuspense } from './components/Layout.tsx'
 import { Home } from './pages/Home.tsx'
 import { GraphSkeleton } from './components/GraphSkeleton.tsx'
 import { CalculatorSkeleton } from './components/CalculatorSkeleton.tsx'
-import { usePostHogPageView } from './hooks/usePostHogPageView'
 import { createPreloadedRoute, routeLoaders } from './routePreload.ts'
 
 // Every route but Home is lazy. Home stays static because it is the most
@@ -27,8 +26,6 @@ const ProviderDetail = createPreloadedRoute(routeLoaders.providerDetail)
 const NotFound = createPreloadedRoute(routeLoaders.notFound)
 
 function App() {
-  usePostHogPageView()
-
   return (
     <ErrorBoundary>
       <Routes>

@@ -70,6 +70,7 @@ export function Layout() {
         >
           <Link
             to="/"
+            data-attr="site-logo-link"
             className="mr-4 text-base font-semibold tracking-tight text-fg transition-colors duration-150 hover:text-accent-deep focus:outline-none focus:ring-2 focus:ring-accent rounded-lg"
             title="Home (go to compare)"
           >
@@ -92,6 +93,7 @@ export function Layout() {
                 <NavLink
                   key={to}
                   to={to}
+                  data-attr={`main-nav-${to.slice(1)}`}
                   className={({ isActive }) =>
                     `whitespace-nowrap rounded-lg px-3 py-1.5 text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent ${
                       isActive
@@ -116,6 +118,7 @@ export function Layout() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle mobile menu"
             aria-expanded={isMobileMenuOpen}
+            data-attr="mobile-menu-toggle"
           >
             <svg
               className="h-6 w-6 text-fg"
@@ -145,6 +148,7 @@ export function Layout() {
                 <NavLink
                   key={to}
                   to={to}
+                  data-attr={`mobile-nav-${to.slice(1)}`}
                   onClick={closeMobileMenu}
                   className={({ isActive }) =>
                     `block rounded-lg px-3 py-2.5 text-sm transition-colors duration-150 ${

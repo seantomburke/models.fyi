@@ -79,7 +79,16 @@ describe('analytics', () => {
     await Promise.all([loadAnalytics(), loadAnalytics(), loadAnalytics()])
 
     expect(init).toHaveBeenCalledTimes(1)
-    expect(init).toHaveBeenCalledWith('test-token', expect.objectContaining({ defaults: '2026-05-30' }))
+    expect(init).toHaveBeenCalledWith('test-token', expect.objectContaining({
+      defaults: '2026-05-30',
+      capture_pageview: 'history_change',
+      mask_all_text: true,
+      mask_personal_data_properties: true,
+      autocapture: expect.objectContaining({
+        css_selector_allowlist: ['[data-attr]'],
+        capture_copied_text: false,
+      }),
+    }))
   })
 
   it('skips loading when no project token is configured', async () => {

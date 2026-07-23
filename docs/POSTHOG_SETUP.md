@@ -1,167 +1,46 @@
-# PostHog Setup & Integration Guide
+# PostHog analytics
 
-Models.fyi now has comprehensive PostHog integration for error tracking, session recording, and user behavior analytics.
+Models.fyi uses PostHog for anonymous product analytics, session recordings, and client-side performance signals.
 
-## What's Enabled
+## What we track
 
-### 1. **Error Tracking**
-- **Console errors**: Automatically captured by PostHog
-- **Component errors**: Caught by ErrorBoundary, sent with component stack trace
-- **Page leave tracking**: Captures when users navigate away or close the site
-- **Dead click detection**: PostHog's built-in feature detects clicks that didn't trigger expected interactions
+- The PostHog SDK records one pageview on the first page and every client-side navigation.
+- Explicit events record meaningful decisions, such as a homepage destination, a provider model choice, a comparison action, a quiz answer, or a completed calculator action.
+- `data-attr` identifies important links and controls for autocapture. Use a short, stable value such as `home-cta-quiz`.
 
-### 2. **Session Recording**
-- Records all user interactions on your site
-- Captures mouse movements, clicks, and form inputs
-- Helps identify usability issues and dead clicks
-- **Note**: Canvas recording disabled; text/input masking disabled for full context
+Do not send search text, model prompts, error messages, stack traces, names, email addresses, or other visitor-provided content as event properties or `data-attr` values.
 
-### 3. **Performance Monitoring**
-- Automatically captures Core Web Vitals
-- Logs page view events with route information
+## Adding an event
 
-### 4. **Automatic Events**
-- `$pageview` - Fired on each route change
-- `error_boundary_caught` - React component errors
-- `dead_click` - Unresponsive elements (PostHog built-in)
+Capture an action in its event handler through the deferred analytics helper:
 
-## Usage in Code
+```ts
+import { capture } from '../lib/analytics.ts'
 
-### Tracking Page Views
-Page views are automatically tracked via `usePostHogPageView` in the App component.
-
-### Tracking User Interactions
-Import and use tracking functions from `src/lib/posthog.ts`:
-
-```typescript
-import { trackModelInteraction, trackSearch, trackCalculatorUsage } from '@/lib/posthog'
-
-// When user clicks a model
-trackModelInteraction('click', 'Opus 4.8', { source: 'comparison' })
-
-// When user executes a search
-trackSearch('GPT-4', 5)
-
-// When user opens calculator
-trackCalculatorUsage('open', { page: '/calculator' })
+capture('provider_model_clicked', {
+  provider_id: provider.id,
+  model_id: model.id,
+})
 ```
 
-### Available Tracking Functions
+Event names use lowercase snake case. Properties use stable IDs, counts, booleans, and small fixed categories. Use a property for a changing value instead of constructing an event name from it.
 
-- `trackModelInteraction(action, modelName, properties)`
-  - Actions: 'view', 'compare', 'click'
-- `trackSearch(query, resultCount)`
-- `trackQuizInteraction(action, properties)`
-  - Actions: 'start', 'answer', 'complete'
-- `trackCalculatorUsage(action, properties)`
-  - Actions: 'open', 'calculate', 'change_model'
-- `trackGraphInteraction(action, properties)`
-  - Actions: 'view', 'filter', 'interact'
-- `trackLearnAccess(topicSlug)`
-- `trackUIError(errorType, message, context)`
-- `trackPerformance(metricName, duration, properties)`
+## Privacy defaults
 
-## Viewing Data in PostHog
+- The SDK loads after first paint, so analytics never delays the page.
+- Text content is masked in autocapture.
+- Only elements with `data-attr` are eligible for autocapture.
+- Input values, names, placeholders, and accessible labels are excluded from autocapture.
+- Search-shaped URL parameters are masked before they leave the browser.
+- Session recording stays enabled. Do not add text or form controls to `data-attr` containers.
 
-### Dashboard Access
-- Project: models.fyi (id: 516228)
-- Base URL: https://us.posthog.com/project/516228
+## Configuration
 
-### Key Views
+Set these values in your local environment and deployment settings:
 
-**Errors & Issues**
-- Navigate to Errors in the left sidebar
-- Filter by error_boundary_caught to see React component errors
-- See dead click heatmaps to identify unresponsive UI elements
-
-**Session Recordings**
-- Navigate to Recordings in the sidebar
-- Watch individual user sessions to debug issues
-- Filter by dead clicks to find problem areas
-
-**Events**
-- View Events to see all captured interactions
-- Search by event name (e.g., "model_click", "search_executed")
-- Analyze user behavior flows
-
-**Funnels**
-- Create funnels to understand conversion flows (e.g., Home → Quiz → Complete)
-
-## Environment Variables
-
-PostHog is configured via `.env.production`:
-
-```
-VITE_POSTHOG_PROJECT_TOKEN=phc_uEJzDBgxU2kY9mLgtnwcha52PC4kU2T9iLLxuDHpsCoZ
+```sh
+VITE_POSTHOG_PROJECT_TOKEN=<project-token>
 VITE_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
-In development, PostHog runs in debug mode and logs to console.
-
-## Product Improvement Workflow
-
-1. **Identify Issues**
-   - Check PostHog Errors for crashes/exceptions
-   - Review Session Recordings for dead clicks and usability issues
-   - Analyze event funnels to find drop-off points
-
-2. **Investigate**
-   - Watch specific sessions that had errors
-   - Review console logs and component stack traces
-   - Look at interaction patterns before the error
-
-3. **Fix & Deploy**
-   - Fix the issue in code
-   - Deploy to production
-   - Monitor new sessions to confirm the fix
-
-4. **Track Impact**
-   - Create dashboards to track key metrics
-   - Monitor error rates over time
-   - Track user engagement on fixed features
-
-## Common Debugging Scenarios
-
-### Dead Clicks Appearing on Buttons
-1. Go to Errors → Dead Clicks in PostHog
-2. Click the heatmap to see which buttons are problematic
-3. Watch a recording of a session where it happened
-4. Check if the button has proper click handlers or if it's disabled during async operations
-
-### High Error Rate on Specific Page
-1. Filter errors by URL in PostHog
-2. Watch recordings of sessions on that page
-3. Check component stack trace for the specific component
-4. Review recent code changes to that route
-
-### Users Getting Lost in Navigation
-1. Create a funnel for your key flow (Home → Search → Compare)
-2. Identify where users drop off
-3. Watch recordings of sessions that didn't complete the flow
-4. Test the UX yourself and improve navigation
-
-## Tips & Best Practices
-
-- **Add context to events**: When tracking, include enough properties to understand the action
-- **Avoid PII**: Don't track sensitive information (emails, passwords, etc.)
-- **Use meaningful names**: Event names should be clear (prefer 'model_click' over 'click')
-- **Test in dev**: Run with `npm run dev` and check browser console for PostHog debug output
-- **Regular reviews**: Check PostHog dashboards weekly to catch new issues early
-
-## Configuration Reference
-
-The PostHog initialization in `src/main.tsx` includes:
-
-```typescript
-session_recording: {
-  recordCanvas: false,        // Don't record chart canvas
-  maskAllInputs: false,       // Record what users type (for context)
-  maskAllText: false,         // Record text (for context)
-  collectWindowErrors: true,  // Capture console errors
-}
-dead_clicks_enabled: true,    // Detect unresponsive UI
-capture_pageleave: true,      // Track when users leave
-capture_performance: true,    // Track Core Web Vitals
-```
-
-Adjust these settings in `src/main.tsx` if you need to mask sensitive data in recordings.
+The site continues to work when these variables are absent. Set them before testing analytics in a real browser.

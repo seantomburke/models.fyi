@@ -3,10 +3,18 @@ import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { ErrorBoundary } from './ErrorBoundary'
 
+const { capture } = vi.hoisted(() => ({ capture: vi.fn() }))
+
+vi.mock('../lib/analytics.ts', () => ({ capture }))
+
 // Suppress console errors during error boundary tests
 const originalError = console.error
 beforeAll(() => {
   console.error = vi.fn()
+})
+
+beforeEach(() => {
+  capture.mockClear()
 })
 
 afterAll(() => {
@@ -51,6 +59,10 @@ describe('ErrorBoundary', () => {
     expect(
       screen.getByText('We encountered an unexpected error. Please try again.'),
     ).toBeInTheDocument()
+    expect(capture).toHaveBeenCalledWith('error_boundary_caught', {
+      error_name: 'Error',
+      has_component_stack: true,
+    })
   })
 
   test('displays "Try again" button', () => {

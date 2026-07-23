@@ -1,9 +1,18 @@
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { describe, expect, test } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { models } from '../../data/models'
 import { benchmarks, providers, releases } from '../../data'
 import { ProviderDetail, headlineBenchmark, releasesForProvider } from './ProviderDetail'
+
+const { capture } = vi.hoisted(() => ({ capture: vi.fn() }))
+
+vi.mock('../../lib/analytics', () => ({ capture }))
+
+beforeEach(() => {
+  capture.mockClear()
+})
 
 function renderProvider(id: string) {
   return render(
@@ -22,6 +31,11 @@ describe('ProviderDetail page', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: provider.name })).toBeInTheDocument()
     expect(screen.getByText(provider.blurb)).toBeInTheDocument()
+    expect(capture).toHaveBeenCalledWith('provider_detail_viewed', {
+      provider_id: provider.id,
+      model_count: models.filter((model) => model.providerId === provider.id).length,
+      is_open_source: provider.openSource,
+    })
   })
 
   test('shows the open-source badge only for open-source providers', () => {
@@ -111,6 +125,22 @@ describe('ProviderDetail page', () => {
       'href',
       '/models',
     )
+  })
+
+  test('records a provider model choice with stable autocapture selectors', async () => {
+    const user = userEvent.setup()
+    const provider = providers.find((p) => models.some((m) => m.providerId === p.id))!
+    const model = models.find((item) => item.providerId === provider.id)!
+    renderProvider(provider.id)
+
+    const link = screen.getByRole('link', { name: model.name })
+    expect(link).toHaveAttribute('data-attr', 'provider-model-link')
+    await user.click(link)
+
+    expect(capture).toHaveBeenCalledWith('provider_model_clicked', {
+      provider_id: provider.id,
+      model_id: model.id,
+    })
   })
 
   test('renders NotFound for an unknown provider id', () => {

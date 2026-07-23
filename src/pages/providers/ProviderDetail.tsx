@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { models } from '../../data/models'
 import { benchmarks, providers, releases } from '../../data'
@@ -11,6 +11,7 @@ import { formatBenchmarkScore } from '../../lib/benchmarkScore'
 import { ProviderLogo } from '../../components/ProviderLogo'
 import { Breadcrumb } from '../../components/Breadcrumb'
 import { NotFound } from '../NotFound'
+import { capture } from '../../lib/analytics'
 
 export function ProviderDetail() {
   const { id } = useParams<{ id: string }>()
@@ -93,6 +94,14 @@ function ProviderDetailContent({ provider }: { provider: Provider }) {
     structuredData: meta.structuredData,
   })
 
+  useEffect(() => {
+    capture('provider_detail_viewed', {
+      provider_id: provider.id,
+      model_count: providerModels.length,
+      is_open_source: provider.openSource,
+    })
+  }, [provider.id, provider.openSource, providerModels.length])
+
   return (
     <div className="mx-auto max-w-4xl space-y-12">
       <Breadcrumb
@@ -146,6 +155,11 @@ function ProviderDetailContent({ provider }: { provider: Provider }) {
                     <td className="px-4 py-3">
                       <Link
                         to={`/models/${model.id}`}
+                        data-attr="provider-model-link"
+                        onClick={() => capture('provider_model_clicked', {
+                          provider_id: provider.id,
+                          model_id: model.id,
+                        })}
                         className="font-medium text-accent-deep hover:underline"
                       >
                         {model.name}
@@ -211,12 +225,18 @@ function ProviderDetailContent({ provider }: { provider: Provider }) {
         {providerModels.length > 0 && (
           <Link
             to={`/compare?filter=${provider.id}`}
+            data-attr="provider-compare-link"
+            onClick={() => capture('provider_compare_clicked', { provider_id: provider.id })}
             className="text-sm font-medium text-accent-deep hover:underline"
           >
             Compare these models →
           </Link>
         )}
-        <Link to="/models" className="text-sm font-medium text-accent-deep hover:underline">
+        <Link
+          to="/models"
+          data-attr="provider-all-models-link"
+          className="text-sm font-medium text-accent-deep hover:underline"
+        >
           Browse every model →
         </Link>
       </nav>

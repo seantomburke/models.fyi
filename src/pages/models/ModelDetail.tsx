@@ -105,6 +105,11 @@ function ModelDetailContent({ model }: { model: Model }) {
           {provider && (
             <Link
               to={`/compare?filter=${model.providerId}`}
+              data-attr="model-compare-provider-link"
+              onClick={() => capture('model_compare_clicked', {
+                model_id: model.id,
+                destination: 'provider',
+              })}
               className="text-sm font-medium text-accent-deep hover:underline"
             >
               Compare all {provider.name} models →
@@ -112,6 +117,11 @@ function ModelDetailContent({ model }: { model: Model }) {
           )}
           <Link
             to="/compare"
+            data-attr="model-compare-all-link"
+            onClick={() => capture('model_compare_clicked', {
+              model_id: model.id,
+              destination: 'all',
+            })}
             className="text-sm font-medium text-accent-deep hover:underline"
           >
             Compare every model →
