@@ -11,6 +11,28 @@ describe('searchContent', () => {
     expect(searchContent('zzzznonexistentquery123')).toEqual([])
   })
 
+  it('ranks a provider name match at 100 and links to the provider page', () => {
+    const results = searchContent('anthropic')
+    const provider = results.filter((r) => r.kind === 'provider')
+    expect(provider.length).toBe(1)
+    expect(provider[0].title).toBe('Anthropic')
+    expect(provider[0].relevance).toBe(100)
+    expect(provider[0].to).toBe('/providers/anthropic')
+  })
+
+  it('finds providers by blurb text at lower relevance', () => {
+    const results = searchContent('shocked the field')
+    const provider = results.filter((r) => r.kind === 'provider')
+    expect(provider.length).toBe(1)
+    expect(provider[0].title).toBe('DeepSeek')
+    expect(provider[0].relevance).toBe(50)
+  })
+
+  it('returns no provider results when nothing in providers matches', () => {
+    const results = searchContent('hallucination')
+    expect(results.filter((r) => r.kind === 'provider')).toEqual([])
+  })
+
   it('ranks an exact glossary term match first', () => {
     const results = searchContent('hallucination')
     expect(results.length).toBeGreaterThan(0)

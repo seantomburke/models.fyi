@@ -1,19 +1,22 @@
 /**
- * Site-wide content search: glossary terms, Learn topics, and FAQs.
+ * Site-wide content search: provider pages, glossary terms, Learn topics, and FAQs.
  *
  * Lives apart from search.ts on purpose. Compare imports searchModels, and
  * Rollup chunks at module granularity — importing the glossary and FAQ corpora
  * from search.ts pulled both datasets into /compare's preload graph. Only the
  * Search page imports this module, so the corpora stay in their own chunks.
  * topics.ts already ships in the shared meta chunk (routeMeta.ts imports it),
- * so reading it here adds no bundle weight.
+ * so reading it here adds no bundle weight. providers.ts is tiny and the
+ * Search page already loads the data index, so it costs nothing here either —
+ * but keep it out of search.ts for the same chunking reason.
  */
 import { glossaryTerms } from '../data/glossary.ts'
 import { faqs } from '../data/faqs.ts'
 import { topics } from '../pages/learn/topics.ts'
+import { providers } from '../data/providers.ts'
 
 export interface ContentResult {
-  kind: 'glossary' | 'learn' | 'faq'
+  kind: 'provider' | 'glossary' | 'learn' | 'faq'
   title: string
   snippet: string
   /** Router path the result links to, including any query/hash. */
@@ -41,6 +44,23 @@ export function searchContent(query: string): ContentResult[] {
   if (!q) return []
 
   const results: ContentResult[] = []
+
+  for (const provider of providers) {
+    const nameLower = provider.name.toLowerCase()
+    let relevance = 0
+    if (nameLower === q || nameLower.startsWith(q)) relevance = 100
+    else if (nameLower.includes(q)) relevance = 90
+    else if (provider.blurb.toLowerCase().includes(q)) relevance = 50
+    if (relevance > 0) {
+      results.push({
+        kind: 'provider',
+        title: provider.name,
+        snippet: clip(provider.blurb),
+        to: `/providers/${provider.id}`,
+        relevance,
+      })
+    }
+  }
 
   for (const term of glossaryTerms) {
     const termLower = term.term.toLowerCase()

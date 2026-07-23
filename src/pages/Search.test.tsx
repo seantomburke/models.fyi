@@ -49,6 +49,14 @@ test('clearing the query drops the param from the URL', async () => {
   expect(screen.getByTestId('location').textContent).toBe('/search')
 })
 
+test('a provider-name query shows the Providers section linking to the provider page', () => {
+  renderSearch('/search?q=anthropic')
+  expect(screen.getByRole('heading', { level: 2, name: 'Providers' })).toBeInTheDocument()
+  const headings = screen.getAllByRole('heading', { level: 3, name: 'Anthropic' })
+  const hrefs = headings.map((h) => h.closest('a')?.getAttribute('href'))
+  expect(hrefs).toContain('/providers/anthropic')
+})
+
 test('a glossary-term query shows the Glossary section with a deep link', () => {
   renderSearch('/search?q=hallucination')
   expect(screen.getByRole('heading', { level: 2, name: 'Glossary' })).toBeInTheDocument()

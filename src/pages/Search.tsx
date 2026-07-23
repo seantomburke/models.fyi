@@ -56,6 +56,7 @@ export function Search() {
   }, [results])
 
   const contentResults = useMemo(() => (query ? searchContent(query) : []), [query])
+  const providerResults = contentResults.filter((r) => r.kind === 'provider')
   const learnResults = contentResults.filter((r) => r.kind === 'learn')
   const glossaryResults = contentResults.filter((r) => r.kind === 'glossary')
   const faqResults = contentResults.filter((r) => r.kind === 'faq')
@@ -67,7 +68,7 @@ export function Search() {
       <section>
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Search</h1>
         <p className="mt-2 text-fg-secondary">
-          Find models by name, provider, or capability — or search the glossary, Learn topics, and FAQ.
+          Find models by name, provider, or capability — or jump to a provider's page, the glossary, Learn topics, and FAQ.
         </p>
       </section>
 
@@ -77,8 +78,8 @@ export function Search() {
         <div className="rounded-lg border border-line bg-surface-raised p-6 text-center">
           <p className="text-fg-secondary">No results found matching "{query}"</p>
           <p className="mt-2 text-sm text-fg-muted">
-            Try a model name, provider (like "anthropic" or "openai"), capability, or a term like
-            "context window".
+            Try a model name, a provider like "anthropic" or "openai" (each has its own page),
+            a capability, or a term like "context window".
           </p>
         </div>
       )}
@@ -147,6 +148,13 @@ export function Search() {
 
       {query && contentResults.length > 0 && (
         <div className="space-y-6">
+          {providerResults.length > 0 && (
+            <ContentSection
+              title="Providers"
+              results={providerResults}
+              onSelect={(r) => captureSearchResultClicked(posthog, r.to, r.kind)}
+            />
+          )}
           {learnResults.length > 0 && (
             <ContentSection
               title="Learn"
@@ -175,6 +183,7 @@ export function Search() {
 }
 
 const KIND_LABEL: Record<ContentResult['kind'], string> = {
+  provider: 'Provider',
   learn: 'Learn',
   glossary: 'Glossary',
   faq: 'FAQ',
