@@ -56,15 +56,6 @@ export const releases: Release[] = [
     link: 'https://thinkingmachines.ai/news/introducing-inkling/',
   },
   {
-    id: 'claude-fable-5-launch',
-    modelId: 'claude-fable-5',
-    type: 'new',
-    title: 'Claude Fable 5 released',
-    description: 'Anthropic launches its most capable reasoning model with 1M token context and state-of-the-art performance on SWE-Bench.',
-    date: '2026-07-15',
-    link: 'https://www.anthropic.com/news/claude-fable-5',
-  },
-  {
     id: 'gpt-5-6-family-launch',
     modelId: 'gpt-5-6-sol',
     type: 'new',
@@ -91,6 +82,15 @@ export const releases: Release[] = [
     description:
       "xAI's new flagship pairs strong terminal and coding performance with real-time access to X (Twitter) data, at a mid-tier $2/$6 per million tokens with a 500K context window.",
     date: '2026-07-08',
+  },
+  {
+    id: 'claude-fable-5-launch',
+    modelId: 'claude-fable-5',
+    type: 'new',
+    title: 'Claude Fable 5 released',
+    description: 'Anthropic launches its most capable reasoning model with 1M token context and state-of-the-art performance on SWE-Bench. Access was paused June 12 under a US export directive and restored July 1.',
+    date: '2026-06-09',
+    link: 'https://www.anthropic.com/news/claude-fable-5-mythos-5',
   },
   {
     id: 'sonnet-5-launch',

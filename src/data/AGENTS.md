@@ -1,6 +1,6 @@
 # Data Guidance (src/data/)
 
-Extends the root `AGENTS.md`. Read `README.md` in this directory for the refresh workflow and sourcing rules. Never write benchmark or model facts from memory; missing beats fabricated.
+Extends the root `AGENTS.md`. Data refreshes go through `.agents/skills/refreshing-model-data/SKILL.md` (workflow, source registry, self-improvement rules). Read `README.md` in this directory for sourcing rules and the dated refresh history. Never write benchmark or model facts from memory; missing beats fabricated.
 
 ## Refresh gotchas
 

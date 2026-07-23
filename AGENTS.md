@@ -62,6 +62,7 @@ The repo IS the persistent memory for every agent. When you learn a durable, non
 | `.agents/skills/handling-errors/` | Designing try/catch, error propagation, Result patterns |
 | `.agents/skills/systematic-debugging/` | Investigating bugs, errors, unexpected behavior |
 | `.agents/skills/design/` | Building data-heavy or dashboard-style UI |
+| `.agents/skills/refreshing-model-data/` | Refreshing model/benchmark data, adding new model releases |
 
 ## Copy
 

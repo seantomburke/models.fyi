@@ -27,6 +27,16 @@ export function ModelDetail() {
   return <ModelDetailContent model={model} />
 }
 
+function formatReleaseDate(date: string): string {
+  // ISO dates parse as UTC midnight; format in UTC so the day never shifts.
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
 function ModelDetailContent({ model }: { model: Model }) {
   const provider = providers.find((p) => p.id === model.providerId)
   const relevantBenchmarks = benchmarks.filter((b) => model.scores[b.id] !== undefined)
@@ -68,7 +78,14 @@ function ModelDetailContent({ model }: { model: Model }) {
         <ModelHeader model={model} provider={provider} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <ModelSpecs model={model} relevantBenchmarks={relevantBenchmarks} />
+          <div className="space-y-6">
+            {model.releaseDate && (
+              <p className="text-sm text-fg-muted">
+                Released {formatReleaseDate(model.releaseDate)}
+              </p>
+            )}
+            <ModelSpecs model={model} relevantBenchmarks={relevantBenchmarks} />
+          </div>
 
           {model.useCases && model.useCases.length > 0 && (
             <UseCasesSection useCases={model.useCases} />

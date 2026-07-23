@@ -2,11 +2,27 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { usePageMeta } from '../lib/meta.ts'
 import { metaFor } from '../lib/routeMeta.ts'
-import { models, providers, providerById } from '../data/index.ts'
+import { models, providers, providerById, releases } from '../data/index.ts'
 import { loadBookmarks } from '../lib/bookmarks.ts'
 import { ProviderLogo } from '../components/ProviderLogo.tsx'
 import { formatTokens } from '../lib/format.ts'
 import { capture } from '../lib/analytics.ts'
+
+// Release dates are date-only strings ("2026-07-15"), which parse as midnight
+// UTC, so format in UTC and viewers west of Greenwich won't see the prior day.
+function formatReleaseDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+// Copy before sorting; sort() in place would mutate the shared module array.
+const latestReleases = [...releases]
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .slice(0, 4)
 
 export function Home() {
   const meta = metaFor('/')
@@ -126,6 +142,55 @@ export function Home() {
           </div>
         </section>
       )}
+
+      <section className="space-y-3">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="text-lg font-semibold tracking-tight">Latest releases</h2>
+          <Link
+            to="/whats-new"
+            data-attr="home-releases-see-all"
+            onClick={() => capture('home_cta_clicked', { destination: 'whats-new' })}
+            className="text-sm font-medium text-accent-deep transition-colors duration-150 hover:text-accent-deep/80"
+          >
+            See all releases →
+          </Link>
+        </div>
+        <p className="max-w-2xl text-sm leading-relaxed text-fg-secondary">
+          These are the newest model launches and updates we track. You can open any model page
+          to see how it compares.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {latestReleases.map((release) => {
+            const model = release.modelId ? models.find((m) => m.id === release.modelId) : null
+            return (
+              <article
+                key={release.id}
+                className="rounded-xl border border-line bg-surface-raised p-4 transition-colors duration-150 hover:border-line-strong"
+              >
+                <p className="text-xs font-medium text-fg-muted">{formatReleaseDate(release.date)}</p>
+                {model ? (
+                  <Link
+                    to={`/models/${model.id}`}
+                    data-attr="home-release-model"
+                    onClick={() => capture('home_release_clicked', { model_id: model.id })}
+                    className="group mt-1 inline-flex items-center gap-2"
+                  >
+                    <ProviderLogo providerId={model.providerId} size={16} />
+                    <h3 className="font-medium text-fg transition-colors duration-150 group-hover:text-accent-deep">
+                      {release.title}
+                    </h3>
+                  </Link>
+                ) : (
+                  <h3 className="mt-1 font-medium text-fg">{release.title}</h3>
+                )}
+                <p className="mt-1 text-sm leading-relaxed text-fg-secondary">
+                  {release.description}
+                </p>
+              </article>
+            )
+          })}
+        </div>
+      </section>
 
       <section className="rounded-xl border border-line bg-accent-soft/60 p-6">
         <h2 className="text-lg font-semibold tracking-tight">

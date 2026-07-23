@@ -89,6 +89,44 @@ describe('ModelDetail page', () => {
     })
   })
 
+  test('shows the release date, human-readably, for a model that has one', () => {
+    const model = models.find((m) => m.releaseDate !== undefined)!
+    render(
+      <MemoryRouter initialEntries={[`/models/${model.id}`]}>
+        <Routes>
+          <Route path="/models/:id" element={<ModelDetail />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    const expected = new Date(model.releaseDate!).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC',
+    })
+    expect(screen.getByText(`Released ${expected}`)).toBeInTheDocument()
+  })
+
+  test('renders no release label for a model without a release date', () => {
+    const model = models[0]
+    const savedDate = model.releaseDate
+    delete model.releaseDate
+    try {
+      render(
+        <MemoryRouter initialEntries={[`/models/${model.id}`]}>
+          <Routes>
+            <Route path="/models/:id" element={<ModelDetail />} />
+          </Routes>
+        </MemoryRouter>,
+      )
+
+      expect(screen.queryByText(/^Released\b/)).not.toBeInTheDocument()
+    } finally {
+      model.releaseDate = savedDate
+    }
+  })
+
   test('page accepts model id parameter', () => {
     const testModel = models[0]
     expect(testModel.id).toBeDefined()

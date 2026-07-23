@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
 import { Home } from './Home'
+import { releases } from '../data/index.ts'
 
 const { capture } = vi.hoisted(() => ({ capture: vi.fn() }))
 
@@ -65,6 +66,42 @@ describe('Home', () => {
 
     const contextWindows = screen.getAllByText(/context window/i)
     expect(contextWindows.length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('shows the newest releases with a link to the full list', () => {
+    render(
+      <BrowserRouter>
+        <Home />
+      </BrowserRouter>,
+    )
+
+    expect(screen.getByRole('heading', { name: /latest releases/i })).toBeInTheDocument()
+
+    const newest = [...releases].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    )[0]
+    expect(screen.getByText(newest.title)).toBeInTheDocument()
+    expect(screen.getByText(newest.description)).toBeInTheDocument()
+
+    const seeAll = screen.getByRole('link', { name: /see all releases/i })
+    expect(seeAll).toHaveAttribute('href', '/whats-new')
+  })
+
+  it('links a release to its model page when the release names a model', () => {
+    render(
+      <BrowserRouter>
+        <Home />
+      </BrowserRouter>,
+    )
+
+    const newestWithModel = [...releases]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .find((r) => r.modelId)
+    if (!newestWithModel) throw new Error('expected at least one release with a modelId')
+
+    const title = screen.getByText(newestWithModel.title)
+    const link = title.closest('a')
+    expect(link).toHaveAttribute('href', `/models/${newestWithModel.modelId}`)
   })
 
   it('identifies homepage destination choices without collecting visitor input', async () => {

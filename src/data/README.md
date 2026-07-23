@@ -24,6 +24,10 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 
 ## Refresh process
 
+Follow the skill at `.agents/skills/refreshing-model-data/SKILL.md`. It carries
+the full workflow, the maintained source registry, and the self-improvement
+rules; the short version:
+
 1. Re-research each provider's current lineup, pricing, and context windows
    (provider docs first, then leaderboards such as vals.ai, llm-stats.com,
    artificialanalysis.ai for scores).
@@ -34,6 +38,48 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 Last refreshed: **2026-07-23, seventh pass** (four independently measured
 Artificial Analysis Intelligence Index results added for exact model and
 effort configurations).
+
+2026-07-23 release-date backfill notes:
+
+- **Ten missing `releaseDate` values backfilled**, each from a verifiable
+  public source (provider announcements first, dated launch coverage where
+  the provider page publishes no date). All 21 models now carry one:
+  - Claude Fable 5, **2026-06-09**:
+    [Anthropic's launch announcement](https://www.anthropic.com/news/claude-fable-5-mythos-5)
+    (the model was paused June 12 under the export directive and
+    [redeployed July 1](https://www.anthropic.com/news/redeploying-fable-5);
+    the date shown is the original release).
+  - Claude Opus 4.8, **2026-05-28**:
+    [Anthropic's launch announcement](https://www.anthropic.com/news/claude-opus-4-8).
+  - Claude Haiku 4.5, **2025-10-15**:
+    [Anthropic's launch announcement](https://www.anthropic.com/news/claude-haiku-4-5).
+  - Gemini 3.1 Pro, **2026-02-19**:
+    [Google's launch blog](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-pro/),
+    which states 3.1 Pro rolled out in preview the same day.
+  - Grok 4.1 Fast, **2025-11-19**:
+    [xAI's launch announcement on X](https://x.com/xai/status/1991284813727474073)
+    introducing Grok 4.1 Fast and the Agent Tools API, corroborated by
+    [dated launch coverage](https://www.eonmsk.com/2025/11/19/xai-grok-4-1-fast/).
+  - GLM-5.2, **2026-06-13**: Z.AI's Coding Plan launch, per
+    [dated launch coverage](https://www.kucoin.com/news/flash/zhipu-ai-launches-glm-5-2-with-1m-context-support-api-and-open-source-release-scheduled-for-next-week);
+    the MIT weights and standalone API followed June 17.
+  - DeepSeek V4 Pro, **2026-04-24**:
+    [DeepSeek's V4 Preview release note](https://api-docs.deepseek.com/news/news260424/)
+    (V4-Pro and V4-Flash open-sourced that day).
+  - Qwen 3.6, **2026-04-16**:
+    [the QwenLM GitHub news log](https://github.com/QwenLM/Qwen3.6)
+    ("2026-04-16: Qwen3.6-35B-A3B is now available on Hugging Face Hub").
+  - Llama 4 Maverick and Llama 4 Scout, **2025-04-05**: Meta's "Llama 4
+    herd" launch announcement, corroborated by
+    [dated launch coverage](https://www.idlen.io/news/meta-llama-4-scout-maverick-open-weight-multimodal-moe-10m-context/).
+- Dates record the provider's original public release of the model. Later
+  redeployments, weights drops, and GA re-announcements are noted in the
+  entries above where they exist.
+- The `releases.ts` Fable 5 What's New entry previously said 2026-07-15, a
+  date no source supports. It now reads 2026-06-09 to match the sourced
+  launch (the schema validator requires launch entries to agree with
+  `releaseDate`), links to the verified announcement URL, and notes the
+  June 12 pause and July 1 restoration in its description.
 
 2026-07-23 seventh-pass refresh notes:
 

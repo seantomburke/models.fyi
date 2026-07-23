@@ -28,6 +28,7 @@ export const models: Model[] = [
     internetAccess: true,
     vision: true, // Anthropic model overview: all current Claude models support text and image input
     imageGeneration: false, // same doc: text output only
+    releaseDate: '2026-06-09', // Anthropic launch announcement (redeployed July 1 after the June export pause)
     scores: {
       'swe-bench-verified': 95.0, // Anthropic-published (averaged over 5 trials)
       'swe-bench-pro': 80.0, // Anthropic-published via BenchLM (July 2026)
@@ -71,6 +72,7 @@ export const models: Model[] = [
     internetAccess: true,
     vision: true, // Anthropic model overview: all current Claude models support text and image input
     imageGeneration: false, // same doc: text output only
+    releaseDate: '2026-05-28', // Anthropic launch announcement
     scores: {
       'swe-bench-verified': 88.6,
       'swe-bench-pro': 69.2,
@@ -161,6 +163,7 @@ export const models: Model[] = [
     internetAccess: true,
     vision: true, // Anthropic model overview: all current Claude models support text and image input
     imageGeneration: false, // same doc: text output only
+    releaseDate: '2025-10-15', // Anthropic launch announcement
     scores: {
       'swe-bench-verified': 73.3,
     },
@@ -334,6 +337,7 @@ export const models: Model[] = [
     internetAccess: true,
     vision: true, // Gemini API model card: inputs are text, image, video, audio, PDF
     imageGeneration: false, // same card: output is text; image generation listed as not supported
+    releaseDate: '2026-02-19', // Google launch blog: rolled out in preview the day of the announcement
     scores: {
       'swe-bench-verified': 80.6, // Google-published
       'swe-bench-pro': 54.2, // from Anthropic's comparison table; Google published none
@@ -538,6 +542,7 @@ export const models: Model[] = [
     // Modality intentionally omitted: xAI retired both API variants on May 15, 2026,
     // and the surviving slugs now redirect to Grok 4.3. The original 4.1 Fast
     // launch material never documented image input or output.
+    releaseDate: '2025-11-19', // xAI launch announcement (with the Agent Tools API)
     scores: {
       'swe-bench-pro': 70.0, // xAI-published (July 2026)
       'gpqa-diamond': 85.3, // Artificial Analysis independent reasoning run; replaces non-reasoning 63.7
@@ -709,6 +714,7 @@ export const models: Model[] = [
     internetAccess: false,
     vision: false, // Z.AI GLM-5.2 model card is text-generation only (third-party 'multimodal' claims contradict it)
     imageGeneration: false, // same card: text output only
+    releaseDate: '2026-06-13', // Z.AI launch; MIT open weights and API followed June 17
     scores: {
       'swe-bench-pro': 62.1,
       'gpqa-diamond': 91.2,
@@ -750,6 +756,7 @@ export const models: Model[] = [
     internetAccess: false,
     vision: false, // DeepSeek-V4-Pro model card: text-generation MoE, no image input
     imageGeneration: false, // same card: text output only
+    releaseDate: '2026-04-24', // DeepSeek API news: V4 Preview (V4-Pro + V4-Flash) open-sourced this day
     scores: {
       // DeepSeek technical report figures for V4 Pro in "Think Max" mode.
       'swe-bench-verified': 80.6,
@@ -803,6 +810,7 @@ export const models: Model[] = [
     internetAccess: false,
     vision: true, // Qwen3.6-35B-A3B card: image-text-to-text, 'Causal Language Model with Vision Encoder'
     imageGeneration: false, // same card: text output only
+    releaseDate: '2026-04-16', // QwenLM GitHub news: Qwen3.6-35B-A3B published to Hugging Face this day
     scores: {
       // Alibaba-published figures for Qwen3.6-35B-A3B, the flagship open release.
       'swe-bench-verified': 73.4,
@@ -839,6 +847,7 @@ export const models: Model[] = [
     internetAccess: false,
     vision: true, // Llama 4 Maverick card: input modalities 'Multilingual text and image'
     imageGeneration: false, // same card: output modalities 'Multilingual text and code'
+    releaseDate: '2025-04-05', // Meta 'Llama 4 herd' launch announcement
     scores: {
       'gpqa-diamond': 69.8, // Meta-published (April 2026)
     },
@@ -867,6 +876,7 @@ export const models: Model[] = [
     internetAccess: false,
     vision: true, // Llama 4 Scout card: input modalities 'Multilingual text and image'
     imageGeneration: false, // same card: output modalities 'Multilingual text and code'
+    releaseDate: '2025-04-05', // Meta 'Llama 4 herd' launch announcement
     scores: {
       'gpqa-diamond': 57.2, // Meta-published (April 2026)
     },
