@@ -119,6 +119,7 @@ export const models: Model[] = [
       'gpqa-diamond': 91.1, // Artificial Analysis independent run (Anthropic published none)
       'terminal-bench': 80.4, // Anthropic-published; tbench.ai independent run (Claude Code) lands 74.6
       'hle': 57.4, // BenchLM independent run (July 2026)
+      'aa-intelligence-index': 53.0, // Artificial Analysis v4.1, adaptive reasoning / max effort
     },
     scoreProvenance: {
       'gpqa-diamond': { source: 'independent', runner: 'Artificial Analysis' },
@@ -128,6 +129,11 @@ export const models: Model[] = [
         independentRunner: 'tbench.ai (Claude Code)',
       },
       'hle': { source: 'independent', runner: 'BenchLM' },
+      'aa-intelligence-index': {
+        source: 'independent',
+        runner: 'Artificial Analysis',
+        sourceUrl: 'https://artificialanalysis.ai/models/claude-sonnet-5/',
+      },
     },
     blurb:
       'The most agentic Sonnet yet, released June 30. Can make plans and run tools autonomously. Best value for daily work, now at intro pricing.',
@@ -239,6 +245,7 @@ export const models: Model[] = [
       'gpqa-diamond': 92.9, // OpenAI-published
       'terminal-bench': 87.4, // OpenAI-published; tbench.ai independent run (Codex) lands 78.4
       'hle': 41.8, // Artificial Analysis independent run (max effort, closed-book)
+      'aa-intelligence-index': 55.0, // Artificial Analysis v4.1, max effort
     },
     scoreProvenance: {
       'terminal-bench': {
@@ -247,6 +254,11 @@ export const models: Model[] = [
         independentRunner: 'tbench.ai (Codex)',
       },
       'hle': { source: 'independent', runner: 'Artificial Analysis' },
+      'aa-intelligence-index': {
+        source: 'independent',
+        runner: 'Artificial Analysis',
+        sourceUrl: 'https://artificialanalysis.ai/models/gpt-5-6-terra/',
+      },
     },
     blurb:
       'The balanced middle tier of the GPT-5.6 family. Most of Sol\'s ability at half the cost.',
@@ -280,6 +292,7 @@ export const models: Model[] = [
       'gpqa-diamond': 92.3, // OpenAI-published
       'terminal-bench': 84.7, // OpenAI-published; tbench.ai independent run (Codex) lands 75.7
       'hle': 37.2, // Artificial Analysis independent run (medium effort, closed-book)
+      'aa-intelligence-index': 46.0, // Artificial Analysis v4.1, high effort
     },
     scoreProvenance: {
       'swe-bench-verified': { source: 'independent', runner: 'Vals AI (mini-swe-agent)' },
@@ -289,6 +302,11 @@ export const models: Model[] = [
         independentRunner: 'Vals AI (Terminus 2)',
       },
       'hle': { source: 'independent', runner: 'Artificial Analysis' },
+      'aa-intelligence-index': {
+        source: 'independent',
+        runner: 'Artificial Analysis',
+        sourceUrl: 'https://artificialanalysis.ai/models/gpt-5-6-luna-high/',
+      },
     },
     blurb:
       'The fastest, most cost-efficient GPT-5.6 tier. Built for speed and high-volume simple tasks.',
@@ -741,6 +759,7 @@ export const models: Model[] = [
       // Tech report gives 37.7 closed-book and 48.2 with tools; the column is
       // closed-book across the dataset.
       'hle': 37.7,
+      'aa-intelligence-index': 44.0, // Artificial Analysis v4.1, max reasoning effort
     },
     scoreProvenance: {
       'gpqa-diamond': {
@@ -752,6 +771,11 @@ export const models: Model[] = [
         source: 'provider',
         independentScore: 50.19,
         independentRunner: 'Vals AI (Terminus 2)',
+      },
+      'aa-intelligence-index': {
+        source: 'independent',
+        runner: 'Artificial Analysis',
+        sourceUrl: 'https://artificialanalysis.ai/models/deepseek-v4-pro/',
       },
     },
     blurb:

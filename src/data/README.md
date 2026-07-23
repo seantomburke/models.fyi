@@ -31,12 +31,26 @@ All model and benchmark data is static and hardcoded here. This is deliberate
 3. Bump `dataSourcedAt` in `index.ts`.
 4. Run `npm run validate` (schema + sanity checks; also runs in CI).
 
-Last refreshed: **2026-07-22, fifth pass** (gap-filling sweep over the 22
-remaining empty benchmark cells: three resolved and added, one stale score
-corrected, and the other 19 confirmed unpublished or protocol-incompatible).
-Provider-published evals win over
-third-party harness runs; where a number is third-party or contested,
-`models.ts` carries an inline comment saying so.
+Last refreshed: **2026-07-23, seventh pass** (four independently measured
+Artificial Analysis Intelligence Index results added for exact model and
+effort configurations).
+
+2026-07-23 seventh-pass refresh notes:
+
+- **Four Intelligence Index gaps filled.** Artificial Analysis v4.1 now
+  publishes directly comparable results for Claude Sonnet 5 (**53**, adaptive
+  reasoning / max effort), GPT-5.6 Terra (**55**, max effort), GPT-5.6 Luna
+  (**46**, high effort), and DeepSeek V4 Pro (**44**, max effort). Each score
+  is independently measured, links to its model-level source, and uses the
+  documented reasoning configuration rather than a non-reasoning variant.
+- **Grok 4.1 Fast remains omitted from this column.** Artificial Analysis
+  labels its 31-point reasoning result an estimate, rather than an independent
+  evaluation. Per the data-layer rule, it is not comparable enough to publish.
+
+Sources checked 2026-07-23: [Claude Sonnet 5](https://artificialanalysis.ai/models/claude-sonnet-5/),
+[GPT-5.6 Terra](https://artificialanalysis.ai/models/gpt-5-6-terra/),
+[GPT-5.6 Luna](https://artificialanalysis.ai/models/gpt-5-6-luna-high/), and
+[DeepSeek V4 Pro](https://artificialanalysis.ai/models/deepseek-v4-pro/).
 
 2026-07-22 fifth-pass refresh notes:
 
