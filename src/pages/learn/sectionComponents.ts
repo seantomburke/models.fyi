@@ -26,6 +26,7 @@ import { CodingModelPicker } from './components/CodingModelPicker'
 import { EmbeddingExplorer } from '../../components/learn/EmbeddingExplorer'
 import { VisionCapabilityDemo } from '../../components/learn/VisionCapabilityDemo'
 import { FineTuningDemo } from '../../components/learn/FineTuningDemo'
+import { OpenClosedTradeoffGuide } from './components/OpenClosedTradeoffGuide'
 
 export const sectionComponents: Record<string, ComponentType> = {
   'bayesian-statistics::Walk the tree': BayesTreeExplorer,
@@ -41,4 +42,5 @@ export const sectionComponents: Record<string, ComponentType> = {
   'embedding-models::Converting meaning to numbers': EmbeddingExplorer,
   'vision-models::What they can do': VisionCapabilityDemo,
   'fine-tuning-models::When to fine-tune': FineTuningDemo,
+  'open-source-vs-closed-source::The practical question': OpenClosedTradeoffGuide,
 }

@@ -40,3 +40,16 @@ test('the coding guide mounts the model picker at the first coding section', () 
   expect(screen.getByRole('heading', { level: 3, name: 'Match the model to the job' })).toBeInTheDocument()
   expect(screen.getByRole('radio', { name: /a quick change/i })).toBeChecked()
 })
+
+test('the open and closed source page mounts the tradeoff choice map', () => {
+  render(
+    <MemoryRouter initialEntries={['/learn/open-source-vs-closed-source']}>
+      <Routes>
+        <Route path="/learn/:slug" element={<LearnTopic />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+
+  expect(screen.getByRole('heading', { level: 3, name: 'Start with the constraint that matters most' })).toBeInTheDocument()
+  expect(screen.getByRole('radio', { name: /keep the model and data under your control/i })).toBeChecked()
+})
