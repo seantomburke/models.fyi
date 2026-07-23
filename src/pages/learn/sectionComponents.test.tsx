@@ -27,3 +27,16 @@ test('the Bayesian statistics page mounts both interactive demos', () => {
   // The next-word demo, waiting for a first word.
   expect(screen.getByText(/pick a first word/i)).toBeInTheDocument()
 })
+
+test('the coding guide mounts the model picker at the first coding section', () => {
+  render(
+    <MemoryRouter initialEntries={['/learn/best-model-for-coding']}>
+      <Routes>
+        <Route path="/learn/:slug" element={<LearnTopic />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+
+  expect(screen.getByRole('heading', { level: 3, name: 'Match the model to the job' })).toBeInTheDocument()
+  expect(screen.getByRole('radio', { name: /a quick change/i })).toBeChecked()
+})

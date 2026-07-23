@@ -14,14 +14,15 @@ import type { ComponentType } from 'react'
 import { BayesTreeExplorer } from '../../components/learn/BayesTreeExplorer'
 import { BayesNextWord } from '../../components/learn/BayesNextWord'
 import { WeightedSumEquation } from '../../components/learn/WeightedSumEquation'
-import { HallucinationDemo } from '../../components/learn/HallucinationDemo'
 import { ContextWindowVisualizer } from '../../components/learn/ContextWindowVisualizer'
-import { TokenCostVisualizer } from '../../components/learn/TokenCostVisualizer'
+import { HallucinationDemo } from '../../components/learn/HallucinationDemo'
 import {
-  ClaudeVsGptFaceOff,
   ClaudeVsGeminiFaceOff,
+  ClaudeVsGptFaceOff,
   GrokVsGptFaceOff,
 } from '../../components/learn/ModelFaceOff'
+import { TokenCostVisualizer } from '../../components/learn/TokenCostVisualizer'
+import { CodingModelPicker } from './components/CodingModelPicker'
 
 export const sectionComponents: Record<string, ComponentType> = {
   'bayesian-statistics::Walk the tree': BayesTreeExplorer,
@@ -33,4 +34,5 @@ export const sectionComponents: Record<string, ComponentType> = {
   "claude-vs-gpt::What they're good at": ClaudeVsGptFaceOff,
   'claude-vs-gemini::Capabilities': ClaudeVsGeminiFaceOff,
   'grok-vs-gpt::What Grok does well': GrokVsGptFaceOff,
+  'best-model-for-coding::What coders need': CodingModelPicker,
 }
