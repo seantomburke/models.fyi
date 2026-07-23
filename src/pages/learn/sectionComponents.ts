@@ -23,6 +23,8 @@ import {
 } from '../../components/learn/ModelFaceOff'
 import { TokenCostVisualizer } from '../../components/learn/TokenCostVisualizer'
 import { CodingModelPicker } from './components/CodingModelPicker'
+import { EmbeddingExplorer } from '../../components/learn/EmbeddingExplorer'
+import { VisionCapabilityDemo } from '../../components/learn/VisionCapabilityDemo'
 
 export const sectionComponents: Record<string, ComponentType> = {
   'bayesian-statistics::Walk the tree': BayesTreeExplorer,
@@ -35,4 +37,6 @@ export const sectionComponents: Record<string, ComponentType> = {
   'claude-vs-gemini::Capabilities': ClaudeVsGeminiFaceOff,
   'grok-vs-gpt::What Grok does well': GrokVsGptFaceOff,
   'best-model-for-coding::What coders need': CodingModelPicker,
+  'embedding-models::Converting meaning to numbers': EmbeddingExplorer,
+  'vision-models::What they can do': VisionCapabilityDemo,
 }
