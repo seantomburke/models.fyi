@@ -23,6 +23,7 @@ import {
 } from '../../components/learn/ModelFaceOff'
 import { TokenCostVisualizer } from '../../components/learn/TokenCostVisualizer'
 import { CodingModelPicker } from './components/CodingModelPicker'
+import { WritingModelPicker, ResearchModelPicker } from './components/TaskModelPicker'
 import { EmbeddingExplorer } from '../../components/learn/EmbeddingExplorer'
 import { VisionCapabilityDemo } from '../../components/learn/VisionCapabilityDemo'
 import { FineTuningDemo } from '../../components/learn/FineTuningDemo'
@@ -39,6 +40,8 @@ export const sectionComponents: Record<string, ComponentType> = {
   'claude-vs-gemini::Capabilities': ClaudeVsGeminiFaceOff,
   'grok-vs-gpt::What Grok does well': GrokVsGptFaceOff,
   'best-model-for-coding::What coders need': CodingModelPicker,
+  'best-model-for-writing::What writers need': WritingModelPicker,
+  'best-model-for-research::What research needs': ResearchModelPicker,
   'embedding-models::Converting meaning to numbers': EmbeddingExplorer,
   'vision-models::What they can do': VisionCapabilityDemo,
   'fine-tuning-models::When to fine-tune': FineTuningDemo,
