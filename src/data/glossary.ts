@@ -428,7 +428,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     id: 'function-calling',
     term: 'Function Calling',
     short: 'A structured way for an AI model to request that your code run a specific function.',
-    long: 'Function calling is how tool use works under the hood. You describe your functions to the model ("book_flight takes a date and a city"), and instead of answering in plain text, the model replies with a structured request: "call book_flight with these arguments." Your code runs the function and sends the result back. The model never runs code itself; it just fills out a very precise order form.',
+    long: 'Function calling is how tool use works under the hood. You describe your functions to the model ("book_flight takes a date and a city"), and instead of answering in plain text, the model replies with a structured request: "call book_flight with these arguments." Your code runs the function and sends the result back. The model only fills out a very precise order form. Your code does all the running.',
   },
   {
     id: 'code-mode',

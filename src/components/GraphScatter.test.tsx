@@ -224,7 +224,7 @@ test('a cropped axis is called out so a reader cannot assume a zero baseline', (
   renderScatter({ connections: 'off' })
   const notice = screen.getByText(/zoomed in to the data/i)
   expect(notice).toHaveTextContent(/score \(%\) starts at/i)
-  expect(notice).toHaveTextContent(/not zero/i)
+  expect(notice).toHaveTextContent(/baseline is not zero/i)
 })
 
 test('an axis that genuinely starts at zero gets no cropped-baseline notice', () => {

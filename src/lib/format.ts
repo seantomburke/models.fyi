@@ -80,7 +80,7 @@ export function describePricing(
   outputPerMTok: number | null,
 ): string {
   if (inputPerMTok === null || outputPerMTok === null) {
-    return 'Free to download and run on your own computer. You pay for the hardware, not per message.'
+    return 'Free to download and run on your own computer. The only cost is the hardware you run it on.'
   }
   const exact = `(${formatPrice(inputPerMTok)} in / ${formatPrice(outputPerMTok)} out per million tokens, roughly 750,000 words)`
   if (inputPerMTok < 0.5) return `Very cheap to run. A long conversation costs well under a penny ${exact}.`

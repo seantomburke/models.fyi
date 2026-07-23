@@ -78,8 +78,9 @@ export function PolynomialDescent2D() {
         One weight, two valleys
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-fg-secondary">
-        This polynomial is a teaching model, not Doodle-64's real loss. Pick a reproducible random
-        start, change the stride, then watch the same downhill rule settle in a local minimum.
+        This polynomial is a simplified teaching model of Doodle-64's real loss. Pick a
+        reproducible random start, change the stride, then watch the same downhill rule settle in
+        a local minimum.
       </p>
 
       <svg
@@ -181,7 +182,7 @@ export function PolynomialDescent2D() {
       </label>
       <p className="mt-2 text-xs leading-relaxed text-fg-muted">
         A small rate creeps steadily downhill. Near the high end, each stride can leap over the
-        valley and bounce back; this is overshooting, not a better route.
+        valley and bounce back. That bouncing is called overshooting, and it wastes steps.
       </p>
       <label className="mt-4 block text-xs text-fg-muted">
         Descent step

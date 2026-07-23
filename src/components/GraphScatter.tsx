@@ -409,7 +409,7 @@ export function GraphScatter({
               </span>
             </span>
           ))}
-          , not zero.
+          . The baseline is not zero.
         </p>
       )}
 

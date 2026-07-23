@@ -8,7 +8,7 @@ The canonical style rules live in `.agents/rules/writing-style.md`. Read that fi
 
 - Concrete, specific, short sentences. One warm reader. Every word earns its place.
 - No em dashes or en dashes anywhere. Split the thought or use a comma.
-- No "X, not Y" contrast framing. State the intended claim directly.
+- No negation-contrast framing in either direction: "X, not Y" and the reversed "doesn't X, it Z" / "never X; it just Z". State the intended claim directly.
 - No filler intensifiers or throat-clearing rhetorical questions.
 - Prefer visuals, diagrams, and animations over paragraph blocks. Flag any run of three or more paragraphs without a visual.
 - Math goes through the `MathBlock` KaTeX component with a plain-text fallback.
@@ -16,7 +16,7 @@ The canonical style rules live in `.agents/rules/writing-style.md`. Read that fi
 
 ## Preserve
 
-- Factual accuracy, caveats, meaning, and implications. Removing a "X, not Y" frame is the easiest place to accidentally assert a NEW fact: restate the original claim, never substitute a different one. If the original claim looks factually wrong, flag it instead of silently "fixing" it in the rewrite.
+- Factual accuracy, caveats, meaning, and implications. Removing a negation-contrast frame is the easiest place to accidentally assert a NEW fact: restate the original claim, never substitute a different one. If the original claim looks factually wrong, flag it instead of silently "fixing" it in the rewrite.
 - Dynamic template values such as `${variableName}` and `${percent}%` exactly as written.
 - SEO length constraints. Preserve the original length or ask before changing it materially.
 - Existing structured-data shapes and field names.

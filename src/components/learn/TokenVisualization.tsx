@@ -161,7 +161,7 @@ export function TokenVisualization() {
         <ul className="space-y-2 text-sm text-fg-secondary">
           <li className="flex gap-2">
             <span className="text-accent-deep">•</span>
-            <span>Models charge per token, not per word</span>
+            <span>Models charge per token. The word count is a rough guide at best.</span>
           </li>
           <li className="flex gap-2">
             <span className="text-accent-deep">•</span>

@@ -8,9 +8,10 @@ import { join } from 'node:path'
  *    code comments, docs. The one exception is the standalone em dash used as
  *    an empty-cell placeholder glyph (the dash by itself in a string literal or
  *    JSX cell), which is data display rather than prose.
- * 2. No same-sentence "X, not Y" contrast framing in user-facing prose
- *    surfaces. State the claim directly; if the contrast is essential, give
- *    the negation its own sentence.
+ * 2. No same-sentence negation-contrast framing in user-facing prose
+ *    surfaces, in either direction: "X, not Y" and the reversed
+ *    "doesn't X, it Z" / "never X; it just Z". State the claim directly;
+ *    if the contrast is essential, give the negation its own sentence.
  *
  * scripts/check-agent-config.mjs covers the agent guidance docs; this test
  * covers the application source and content.
@@ -34,7 +35,7 @@ const ANY_DASH = new RegExp(`[${EM_DASH}${EN_DASH}]`)
  */
 const PLACEHOLDER_GLYPH = new RegExp(`(['"\`])${EM_DASH}\\1|>${EM_DASH}<`, 'g')
 
-/** Prose surfaces the negation-contrast heuristic runs over. */
+/** Prose surfaces the negation-contrast heuristic runs over (string literals). */
 const PROSE_FILES = [
   'src/data/glossary.ts',
   'src/data/faqs.ts',
@@ -46,14 +47,28 @@ const PROSE_FILES = [
   'src/pages/learn/topicProse.ts',
   'src/lib/routeMeta.ts',
   'src/lib/quiz.ts',
+  'src/lib/format.ts',
 ]
 
 /**
- * ", not X" and "not just X but Y" in a string literal. The heuristic only
- * looks inside quoted strings so code (negations in conditions, comments
- * about behavior) never trips it.
+ * Component/page directories whose JSX text is also user-facing prose. The
+ * JSX scan strips comments, expressions, and tags, then flattens whitespace
+ * so prose spanning multiple JSX lines is checked as one run of text.
  */
-const CONTRAST_PATTERNS = [/,\s+not\s+[a-z"']/i, /\bnot\s+(?:just|only|merely|simply)\b[^.!?]*\bbut\b/i]
+const JSX_PROSE_DIRS = ['src/pages', 'src/components']
+
+/**
+ * Negation-contrast shapes in a string literal: ", not X", "not just X but
+ * Y", and the reversed "doesn't X, it Z" / "never X; it just Z" where a
+ * comma or semicolon splices the negation to its correction. The heuristic
+ * only looks inside quoted strings so code (negations in conditions,
+ * comments about behavior) never trips it.
+ */
+const CONTRAST_PATTERNS = [
+  /,\s+not\s+[a-z"']/i,
+  /\bnot\s+(?:just|only|merely|simply)\b[^.!?]*\bbut\b/i,
+  /\b(?:doesn't|don't|isn't|aren't|won't|can't|cannot|never)\b[^.!?;,]{0,90}[,;]\s+(?:it|they)\b/i,
+]
 
 /**
  * Deliberate negations where the contrast carries essential meaning and has
@@ -94,13 +109,18 @@ test('no em or en dashes outside the placeholder glyph', () => {
   expect(violations).toEqual([])
 })
 
-/** Extract the contents of every string literal in a source file. */
+/**
+ * Extract the contents of every string literal in a source file. Escape
+ * sequences are unescaped (\' -> ', \" -> ", \\ -> \) so patterns like
+ * "doesn't" match even when the source spells it doesn\'t.
+ */
 function stringLiterals(source: string): Array<{ text: string; line: number }> {
   const out: Array<{ text: string; line: number }> = []
   const re = /(['"`])((?:\\.|(?!\1)[^\\\n])*)\1/g
   const lineOf = (index: number) => source.slice(0, index).split('\n').length
   for (const m of source.matchAll(re)) {
-    if (m[2].length > 20) out.push({ text: m[2], line: lineOf(m.index) })
+    const text = m[2].replace(/\\(.)/g, '$1')
+    if (text.length > 20) out.push({ text, line: lineOf(m.index) })
   }
   return out
 }
@@ -114,6 +134,42 @@ test('prose surfaces avoid same-sentence contrast framing', () => {
       for (const pattern of CONTRAST_PATTERNS) {
         if (pattern.test(text)) {
           violations.push(`${rel}:${line} "${text.slice(0, 90)}"`)
+          break
+        }
+      }
+    }
+  }
+  expect(violations).toEqual([])
+})
+
+/**
+ * Reduce a .tsx file to its user-facing prose: strip comments (code
+ * commentary is exempt from the contrast ban), drop JSX expressions and
+ * tags, unescape quotes, and flatten whitespace so prose spanning multiple
+ * JSX lines is matched as one run of text.
+ */
+function jsxProse(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/(^|[^:"'])\/\/[^\n]*/g, '$1')
+    .replace(/\\(['"])/g, '$1')
+    .replace(/\{[^{}]*\}/g, ' ')
+    .replace(/<[^<>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+}
+
+test('JSX prose in pages and components avoids contrast framing', () => {
+  const violations: string[] = []
+  for (const dir of JSX_PROSE_DIRS) {
+    for (const file of walk(join(ROOT, dir))) {
+      if (!file.endsWith('.tsx') || file.includes('.test.')) continue
+      const flat = jsxProse(readFileSync(file, 'utf8'))
+      if (ALLOWED_CONTRASTS.some((allowed) => flat.includes(allowed))) continue
+      for (const pattern of CONTRAST_PATTERNS) {
+        const m = flat.match(pattern)
+        if (m && m.index !== undefined) {
+          const excerpt = flat.slice(Math.max(0, m.index - 40), m.index + m[0].length + 30).trim()
+          violations.push(`${file.slice(ROOT.length + 1)} "...${excerpt}..."`)
           break
         }
       }

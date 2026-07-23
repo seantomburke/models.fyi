@@ -770,7 +770,7 @@ const authored: Topic[] = [
     metaTitle: 'Why neural networks need more layers - Interactive three-layer digit demo | Models.fyi',
     metaDescription:
       'Draw a digit and watch a three-layer neural network turn pixels into strokes, strokes into shapes, and shapes into an answer. See exactly what the extra layer buys you.',
-    hook: 'Meet Doodle-918: it doesn\'t just count strokes, it sees loops and curves. Draw a digit and watch parts become shapes become an answer.',
+    hook: 'Meet Doodle-918: it sees loops and curves, the shapes that make a digit a digit. Draw one and watch parts become shapes become an answer.',
     interactive: DeepDigitClassifier,
     modelSpec: {
       name: 'Doodle-918',
