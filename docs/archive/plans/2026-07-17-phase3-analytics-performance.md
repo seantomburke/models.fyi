@@ -12,7 +12,7 @@
 5. No breadcrumb navigation on sub-pages
 6. Incomplete benchmark source linking
 
-**Goal:** Transform models.fyi into a fully accessible, analytics-rich application with measurable performance and user engagement insights. Enable power users with keyboard shortcuts, improve content discoverability with breadcrumbs, and ensure WCAG 2.1 AA compliance.
+**Goal:** Transform models.wtf into a fully accessible, analytics-rich application with measurable performance and user engagement insights. Enable power users with keyboard shortcuts, improve content discoverability with breadcrumbs, and ensure WCAG 2.1 AA compliance.
 
 **Scope:**
 

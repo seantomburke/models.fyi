@@ -1,4 +1,4 @@
-const BOOKMARKS_KEY = 'models-fyi-bookmarks'
+const BOOKMARKS_KEY = 'models-wtf-bookmarks'
 
 export function loadBookmarks(): Set<string> {
   try {

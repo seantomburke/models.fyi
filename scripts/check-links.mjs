@@ -20,7 +20,7 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(__dirname, '..')
 const distDir = path.resolve(projectRoot, 'dist')
-const BASE = '/models.fyi'
+const BASE = '/models.wtf'
 
 /** Every file under a directory, as paths relative to dist/. */
 function walk(dir, onFile) {

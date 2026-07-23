@@ -20,13 +20,13 @@ describe('bookmarks', () => {
     const bookmarks = new Set(['model-1', 'model-2'])
     saveBookmarks(bookmarks)
 
-    const stored = JSON.parse(localStorage.getItem('models-fyi-bookmarks') || '[]')
+    const stored = JSON.parse(localStorage.getItem('models-wtf-bookmarks') || '[]')
     expect(stored).toContain('model-1')
     expect(stored).toContain('model-2')
   })
 
   it('loads bookmarks from localStorage', () => {
-    localStorage.setItem('models-fyi-bookmarks', JSON.stringify(['model-1', 'model-2']))
+    localStorage.setItem('models-wtf-bookmarks', JSON.stringify(['model-1', 'model-2']))
     const bookmarks = loadBookmarks()
 
     expect(bookmarks.has('model-1')).toBe(true)
@@ -58,7 +58,7 @@ describe('bookmarks', () => {
   })
 
   it('handles corrupted localStorage gracefully', () => {
-    localStorage.setItem('models-fyi-bookmarks', 'invalid json')
+    localStorage.setItem('models-wtf-bookmarks', 'invalid json')
     const bookmarks = loadBookmarks()
 
     expect(bookmarks).toEqual(new Set())

@@ -43,7 +43,7 @@ const themes = ['light', 'dark'] as const
 
 function setTheme(theme: (typeof themes)[number]) {
   const dark = theme === 'dark'
-  localStorage.setItem('models-fyi-dark-mode', String(dark))
+  localStorage.setItem('models-wtf-dark-mode', String(dark))
   document.documentElement.classList.toggle('dark', dark)
 }
 

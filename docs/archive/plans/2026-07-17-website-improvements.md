@@ -37,7 +37,7 @@
 - [ ] 404 page shows helpful links to main pages
 - [ ] Dark mode toggle in header, preference persists across sessions
 - [ ] Skeleton loaders visible while Graph and Calculator load
-- [ ] `sitemap.xml` auto-generated at build time, discoverable at `/models.fyi/sitemap.xml`
+- [ ] `sitemap.xml` auto-generated at build time, discoverable at `/models.wtf/sitemap.xml`
 - [ ] All existing tests pass (69 tests)
 - [ ] New tests added for Error Boundary and dark mode hook
 - [ ] No breaking changes to existing component APIs
@@ -92,7 +92,7 @@ ls -la src/pages/
 
 1. [ ] Create `src/lib/darkMode.ts` hook:
    - `useDarkMode()` hook that:
-     - Reads initial preference from localStorage (key: `models-fyi-dark-mode`)
+     - Reads initial preference from localStorage (key: `models-wtf-dark-mode`)
      - Falls back to system preference via `window.matchMedia('(prefers-color-scheme: dark)')`
      - Returns `[isDark: boolean, setIsDark: (v: boolean) => void]`
      - Applies `dark` class to document root
@@ -262,7 +262,7 @@ ls -la src/pages/
    User-agent: *
    Allow: /
 
-   Sitemap: https://models.fyi/models.fyi/sitemap.xml
+   Sitemap: https://models.wtf/models.wtf/sitemap.xml
    ```
 
 5. [ ] Verify in production build:

@@ -1,6 +1,6 @@
 # Performance Budget & Monitoring
 
-This document outlines the performance targets, budgets, and monitoring processes for models.fyi.
+This document outlines the performance targets, budgets, and monitoring processes for models.wtf.
 
 ## Overview
 

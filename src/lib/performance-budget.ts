@@ -1,5 +1,5 @@
 /**
- * Performance budget definitions for models.fyi
+ * Performance budget definitions for models.wtf
  * These thresholds help maintain fast, responsive user experience
  */
 

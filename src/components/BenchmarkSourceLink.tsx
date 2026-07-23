@@ -14,7 +14,7 @@ interface BenchmarkSourceLinkProps {
 
 function addUtmSource(url: string): string {
   const urlObj = new URL(url)
-  urlObj.searchParams.set('utm_source', 'www.models.fyi')
+  urlObj.searchParams.set('utm_source', 'www.models.wtf')
   return urlObj.toString()
 }
 

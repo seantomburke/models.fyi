@@ -2,7 +2,7 @@
 
 ## Summary
 
-Completed a comprehensive audit of models.fyi and implemented Phase 1 improvements focusing on SEO, metadata, and search engine discoverability.
+Completed a comprehensive audit of models.wtf and implemented Phase 1 improvements focusing on SEO, metadata, and search engine discoverability.
 
 ### What Changed
 
@@ -74,7 +74,7 @@ See `PHASE1_PLAN.md` and `PHASE2_PLAN.md` for details.
 ### Impact
 
 **User-facing:**
-- Better social media previews when sharing models.fyi links
+- Better social media previews when sharing models.wtf links
 - Data freshness transparent to users
 - Improved SEO = higher search ranking
 - Cleaner, more professional footer

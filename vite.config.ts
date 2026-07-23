@@ -6,9 +6,9 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   // Deployed as a GitHub Pages project page at
-  // seantomburke.github.io/models.fyi. Change to '/' once the
-  // custom domain (models.fyi) is set up.
-  base: '/models.fyi/',
+  // seantomburke.github.io/models.wtf. Change to '/' once the
+  // custom domain (models.wtf) is set up.
+  base: '/models.wtf/',
   build: {
     // The prerender step uses this to add route-specific module/CSS preloads
     // for direct visits without pulling chart assets into every page.

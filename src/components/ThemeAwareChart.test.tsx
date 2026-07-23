@@ -111,8 +111,8 @@ test('updates an existing chart when the site theme changes', async () => {
   expect(screen.getByText('Chart theme: off')).toBeInTheDocument()
 
   act(() => {
-    localStorage.setItem('models-fyi-dark-mode', 'true')
-    window.dispatchEvent(new Event('models-fyi-dark-mode-change'))
+    localStorage.setItem('models-wtf-dark-mode', 'true')
+    window.dispatchEvent(new Event('models-wtf-dark-mode-change'))
   })
 
   expect(screen.getByText('Chart theme: force')).toBeInTheDocument()

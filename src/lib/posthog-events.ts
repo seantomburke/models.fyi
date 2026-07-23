@@ -1,7 +1,7 @@
 import { usePostHog } from './posthog-react.ts'
 
 /**
- * Centralized PostHog event tracking system for models.fyi.
+ * Centralized PostHog event tracking system for models.wtf.
  * Defines all event types and provides helper functions for consistent event capture.
  */
 

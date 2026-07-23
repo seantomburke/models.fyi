@@ -1,6 +1,6 @@
 ---
 name: refreshing-model-data
-description: Refresh models.fyi model and benchmark data. Discovers newly released models from news (public availability optional), pulls benchmark scores from trusted sources, updates the data layer end to end, and improves its own source registry every run.
+description: Refresh models.wtf model and benchmark data. Discovers newly released models from news (public availability optional), pulls benchmark scores from trusted sources, updates the data layer end to end, and improves its own source registry every run.
 ---
 
 # Refreshing Model Data

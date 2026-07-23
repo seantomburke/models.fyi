@@ -20,15 +20,15 @@ test('an extensionless lazy route replaces an unrelated SPA fallback instead of 
   container.innerHTML = '<main><h1>Pick the right AI model</h1></main>'
   document.body.append(container)
 
-  await preloadInitialRoute('/models.fyi/graph', '/models.fyi/')
+  await preloadInitialRoute('/models.wtf/graph', '/models.wtf/')
   const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
   let root: ReturnType<typeof renderRoot> | undefined
   await act(async () => {
     root = renderRoot(
       container,
       <main><h1>See it on a graph</h1></main>,
-      '/models.fyi/graph',
-      '/models.fyi/',
+      '/models.wtf/graph',
+      '/models.wtf/',
     )
   })
 
@@ -53,7 +53,7 @@ test('matching prerendered route markup is hydrated without recovery', async () 
   const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
   let root: ReturnType<typeof renderRoot> | undefined
   await act(async () => {
-    root = renderRoot(container, app, '/models.fyi/graph/', '/models.fyi/')
+    root = renderRoot(container, app, '/models.wtf/graph/', '/models.wtf/')
   })
 
   expect(container).toHaveTextContent('See it on a graph')
@@ -107,7 +107,7 @@ test('the responsive graph preserves its server markup during hydration', async 
   const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
   let root: ReturnType<typeof renderRoot> | undefined
   await act(async () => {
-    root = renderRoot(container, graph, '/models.fyi/graph/', '/models.fyi/')
+    root = renderRoot(container, graph, '/models.wtf/graph/', '/models.wtf/')
   })
 
   expect(container.innerHTML).toBe(serverMarkup)

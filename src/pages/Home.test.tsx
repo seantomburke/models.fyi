@@ -43,7 +43,7 @@ describe('Home', () => {
   })
 
   it('shows saved models section when bookmarks exist', () => {
-    localStorage.setItem('models-fyi-bookmarks', JSON.stringify(['claude-opus-4-8']))
+    localStorage.setItem('models-wtf-bookmarks', JSON.stringify(['claude-opus-4-8']))
 
     render(
       <BrowserRouter>
@@ -56,7 +56,7 @@ describe('Home', () => {
   })
 
   it('shows context window for bookmarked models', () => {
-    localStorage.setItem('models-fyi-bookmarks', JSON.stringify(['claude-opus-4-8']))
+    localStorage.setItem('models-wtf-bookmarks', JSON.stringify(['claude-opus-4-8']))
 
     render(
       <BrowserRouter>

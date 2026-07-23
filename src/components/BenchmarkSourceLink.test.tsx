@@ -19,7 +19,7 @@ describe('BenchmarkSourceLink', () => {
 
     const link = screen.getByRole('link')
     expect(link.getAttribute('href')).toContain('https://github.com/princeton-nlp/SWE-bench')
-    expect(link.getAttribute('href')).toContain('utm_source=www.models.fyi')
+    expect(link.getAttribute('href')).toContain('utm_source=www.models.wtf')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener noreferrer')
   })
@@ -136,7 +136,7 @@ describe('BenchmarkSourceLink', () => {
 
     const link = screen.getByRole('link')
     expect(link).toHaveTextContent('85.2%')
-    expect(link.getAttribute('href')).toContain('utm_source=www.models.fyi')
+    expect(link.getAttribute('href')).toContain('utm_source=www.models.wtf')
   })
 
   it('renders children with no sourceUrl when provided', () => {
@@ -165,7 +165,7 @@ describe('BenchmarkSourceLink', () => {
     const link = screen.getByRole('link', { name: 'View GPQA Diamond source' })
     expect(link).toHaveTextContent('↗')
     expect(link).not.toHaveTextContent('source ')
-    expect(link.getAttribute('href')).toContain('utm_source=www.models.fyi')
+    expect(link.getAttribute('href')).toContain('utm_source=www.models.wtf')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener noreferrer')
   })
@@ -186,7 +186,7 @@ describe('BenchmarkSourceLink', () => {
     )
 
     let link = screen.getByRole('link')
-    expect(link.getAttribute('href')).toContain('utm_source=www.models.fyi')
+    expect(link.getAttribute('href')).toContain('utm_source=www.models.wtf')
 
     rerender(
       <BenchmarkSourceLink
@@ -196,7 +196,7 @@ describe('BenchmarkSourceLink', () => {
     )
 
     link = screen.getByRole('link')
-    expect(link.getAttribute('href')).toContain('utm_source=www.models.fyi')
+    expect(link.getAttribute('href')).toContain('utm_source=www.models.wtf')
     expect(link.getAttribute('href')).toContain('param=value')
   })
 })

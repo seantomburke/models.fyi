@@ -192,7 +192,7 @@ export function Layout() {
             <p className="text-fg-muted">
               Benchmarks are provider-published evals. Treat small differences with healthy skepticism.
               <a
-                href="https://github.com/seantomburke/models.fyi/tree/main/src/data"
+                href="https://github.com/seantomburke/models.wtf/tree/main/src/data"
                 className="ml-1 text-accent-deep underline underline-offset-1 focus:outline-none focus:ring-2 focus:ring-accent rounded-lg"
               >
                 Data sources
@@ -222,7 +222,7 @@ export function Layout() {
             </p>
           </div>
           <a
-            href="https://github.com/seantomburke/models.fyi"
+            href="https://github.com/seantomburke/models.wtf"
             className="w-fit whitespace-nowrap rounded-lg bg-surface-raised px-3 py-2 underline decoration-line-strong underline-offset-2 transition-colors duration-150 hover:text-fg-secondary focus:outline-none focus:ring-2 focus:ring-accent"
           >
             GitHub

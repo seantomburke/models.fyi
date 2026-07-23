@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react'
 import { useDarkMode } from './darkMode'
 
-const STORAGE_KEY = 'models-fyi-dark-mode'
+const STORAGE_KEY = 'models-wtf-dark-mode'
 
 beforeEach(() => {
   // jsdom provides localStorage, but clear it to be safe

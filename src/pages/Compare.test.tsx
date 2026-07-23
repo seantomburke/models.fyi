@@ -222,7 +222,7 @@ test('benchmark headers use short labels, are sortable, and keep their source li
 
   // The source link stays beside the button, reachable on its own.
   const sourceLink = within(header).getByRole('link', { name: `View ${gpqa.name} source` })
-  expect(sourceLink.getAttribute('href')).toContain('utm_source=www.models.fyi')
+  expect(sourceLink.getAttribute('href')).toContain('utm_source=www.models.wtf')
 })
 
 test('view toggle switches from table to cards and back', async () => {
@@ -252,7 +252,7 @@ test('view mode preference persists to localStorage', async () => {
   const user = userEvent.setup()
   renderCompare()
   await user.click(screen.getByRole('button', { name: 'cards' }))
-  expect(localStorage.getItem('models-fyi-view-mode')).toBe('cards')
+  expect(localStorage.getItem('models-wtf-view-mode')).toBe('cards')
 })
 
 test.each(['table', 'cards'] as const)(
@@ -270,11 +270,11 @@ test.each(['table', 'cards'] as const)(
     expect(bookmark).toHaveAttribute('title', 'Add bookmark')
     await user.click(bookmark)
     expect(bookmark).toHaveAttribute('title', 'Remove bookmark')
-    expect(JSON.parse(localStorage.getItem('models-fyi-bookmarks')!)).toEqual([model.id])
+    expect(JSON.parse(localStorage.getItem('models-wtf-bookmarks')!)).toEqual([model.id])
 
     await user.click(bookmark)
     expect(bookmark).toHaveAttribute('title', 'Add bookmark')
-    expect(JSON.parse(localStorage.getItem('models-fyi-bookmarks')!)).toEqual([])
+    expect(JSON.parse(localStorage.getItem('models-wtf-bookmarks')!)).toEqual([])
     expect(posthogCapture).toHaveBeenNthCalledWith(1, 'compare_bookmark_toggled', {
       model_id: model.id,
       action: 'add',

@@ -27,7 +27,7 @@ export const notFoundMeta = {
 } as const
 
 /** Absolute base URL of the deployed site; og:image and canonical URLs must be absolute. */
-export const SITE_URL = 'https://seantomburke.github.io/models.fyi'
+export const SITE_URL = 'https://seantomburke.github.io/models.wtf'
 
 /**
  * The canonical absolute URL for a route path, always with a trailing slash.
@@ -247,7 +247,7 @@ export function organizationSchema() {
     url: canonicalUrl('/'),
     description:
       'Compare flagship AI models from OpenAI, Anthropic, Google, and xAI across benchmarks, cost, and capability.',
-    sameAs: ['https://github.com/seantomburke/models.fyi'],
+    sameAs: ['https://github.com/seantomburke/models.wtf'],
   }
 }
 

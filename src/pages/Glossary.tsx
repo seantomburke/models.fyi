@@ -159,7 +159,7 @@ export function Glossary() {
 
       <div className="text-xs text-fg-muted">
         <p>
-          Can't find a term? <a href="/models.fyi/search" className="text-accent-deep hover:underline">Search models</a> or <a href="/models.fyi/faq" className="text-accent-deep hover:underline">check the FAQ</a>.
+          Can't find a term? <a href="/models.wtf/search" className="text-accent-deep hover:underline">Search models</a> or <a href="/models.wtf/faq" className="text-accent-deep hover:underline">check the FAQ</a>.
         </p>
       </div>
     </div>
@@ -201,7 +201,7 @@ function TermCard({
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
             {term.relatedLearnTopic && (
               <a
-                href={`/models.fyi/learn/${term.relatedLearnTopic}`}
+                href={`/models.wtf/learn/${term.relatedLearnTopic}`}
                 className="inline-flex items-center gap-1 rounded bg-accent-soft px-2 py-1 font-medium text-accent-deep transition-colors hover:bg-accent-soft/80"
               >
                 Learn more →

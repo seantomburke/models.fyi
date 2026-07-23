@@ -1,4 +1,4 @@
-const VIEW_MODE_KEY = 'models-fyi-view-mode'
+const VIEW_MODE_KEY = 'models-wtf-view-mode'
 
 /** Below this viewport width the card layout is the friendlier default. */
 export const MOBILE_BREAKPOINT = 768

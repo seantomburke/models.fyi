@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from 'react'
 
-const STORAGE_KEY = 'models-fyi-dark-mode'
-const CHANGE_EVENT = 'models-fyi-dark-mode-change'
+const STORAGE_KEY = 'models-wtf-dark-mode'
+const CHANGE_EVENT = 'models-wtf-dark-mode-change'
 const QUERY = '(prefers-color-scheme: dark)'
 
 function getSnapshot() {

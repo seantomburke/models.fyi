@@ -27,6 +27,6 @@ test('saved preference wins over the viewport default', () => {
 })
 
 test('load ignores corrupt stored values', () => {
-  localStorage.setItem('models-fyi-view-mode', 'sideways')
+  localStorage.setItem('models-wtf-view-mode', 'sideways')
   expect(loadViewMode(1024)).toBe('table')
 })

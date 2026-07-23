@@ -1,10 +1,10 @@
-# models.fyi
+# models.wtf
 
 Pick the right AI model without needing a PhD in benchmarks.
 
-**Live site:** [seantomburke.github.io/models.fyi](https://seantomburke.github.io/models.fyi/)
+**Live site:** [seantomburke.github.io/models.wtf](https://seantomburke.github.io/models.wtf/)
 
-models.fyi tracks the flagship models from OpenAI, Anthropic, Google, xAI, Meta, and others, and explains them in plain language. Compare benchmarks side by side, estimate what a workload costs, or start from "what is a token?" and work up from there. Everything is written for the person who has heard of ChatGPT but has no idea what a context window is.
+models.wtf tracks the flagship models from OpenAI, Anthropic, Google, xAI, Meta, and others, and explains them in plain language. Compare benchmarks side by side, estimate what a workload costs, or start from "what is a token?" and work up from there. Everything is written for the person who has heard of ChatGPT but has no idea what a context window is.
 
 ## What's on the site
 

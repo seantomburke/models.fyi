@@ -622,7 +622,7 @@ npm run dev
 
 1. [ ] Create `src/lib/bookmarks.ts`:
    ```typescript
-   const STORAGE_KEY = 'models-fyi-bookmarks'
+   const STORAGE_KEY = 'models-wtf-bookmarks'
    
    export function getBookmarkedModelIds(): string[] {
      const data = localStorage.getItem(STORAGE_KEY)
@@ -1069,7 +1069,7 @@ lighthouse http://localhost:5173/ --view
 
 ## Conclusion
 
-Phase 4B-4E represents a comprehensive expansion of the models.fyi platform, transitioning from a comparison tool to a comprehensive AI model discovery and education platform. With strong SEO fundamentals, rich content, and engagement features, we expect significant growth in both organic traffic and user engagement.
+Phase 4B-4E represents a comprehensive expansion of the models.wtf platform, transitioning from a comparison tool to a comprehensive AI model discovery and education platform. With strong SEO fundamentals, rich content, and engagement features, we expect significant growth in both organic traffic and user engagement.
 
 **Expected Outcome:**
 - 50-60 pages (up from 8)

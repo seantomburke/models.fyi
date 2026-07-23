@@ -1,6 +1,6 @@
 # Accessibility Audit & WCAG 2.1 AA Compliance Checklist
 
-This document tracks the accessibility compliance status for models.fyi.
+This document tracks the accessibility compliance status for models.wtf.
 
 ## Overview
 
@@ -207,4 +207,4 @@ Recommended combinations:
 
 ## Accessibility Statement
 
-models.fyi is committed to accessibility. We strive to ensure our website is usable by everyone, including people with disabilities. If you encounter any accessibility issues, please report them via our GitHub repository or by contacting the maintainers.
+models.wtf is committed to accessibility. We strive to ensure our website is usable by everyone, including people with disabilities. If you encounter any accessibility issues, please report them via our GitHub repository or by contacting the maintainers.

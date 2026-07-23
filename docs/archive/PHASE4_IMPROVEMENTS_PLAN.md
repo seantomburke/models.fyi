@@ -23,7 +23,7 @@ Phase 4 focuses on enhancing user experience, completing missing features, impro
 **Implementation Details:**
 - Add search state to Layout component
 - Create SearchResults page
-- Implement client-side fuzzy search (models.fyi already has data)
+- Implement client-side fuzzy search (models.wtf already has data)
 - Add search input in header navigation
 - Link to search from `?` help dialog
 - Add keyboard shortcut support (already wired)

@@ -213,7 +213,7 @@ interface Model {
 - `src/pages/Home.tsx` (show saved models if any)
 
 **Deliverables:**
-- localStorage persistence (key: "models-fyi-bookmarks")
+- localStorage persistence (key: "models-wtf-bookmarks")
 - Star icon on Compare page rows
 - Click to toggle bookmark
 - "Bookmarked only" filter on Compare
