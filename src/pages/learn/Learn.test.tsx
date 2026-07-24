@@ -122,6 +122,20 @@ test('lab topics with a named model render its model card', () => {
   expect(screen.getByText('Doodle-525')).toBeInTheDocument()
 })
 
+test('the Parrot-2D and Finch-4 labs link to each other', () => {
+  renderAt('/learn/how-word-embeddings-predict-the-next-word')
+  expect(screen.getByRole('link', { name: /Finch-4's position and attention lab/i })).toHaveAttribute(
+    'href',
+    '/learn/how-position-and-attention-make-language-models-grammatical',
+  )
+  document.body.innerHTML = ''
+  renderAt('/learn/how-position-and-attention-make-language-models-grammatical')
+  expect(screen.getByRole('link', { name: /the Parrot-2D embedding lab/i })).toHaveAttribute(
+    'href',
+    '/learn/how-word-embeddings-predict-the-next-word',
+  )
+})
+
 test('unknown topic slug shows not-found with a way back', () => {
   renderAt('/learn/nope')
   expect(screen.getByRole('heading', { level: 1, name: /page not found/i })).toBeInTheDocument()

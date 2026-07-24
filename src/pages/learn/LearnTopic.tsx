@@ -131,6 +131,29 @@ export function LearnTopic() {
         )
       })}
 
+      {topic.slug === 'how-position-and-attention-make-language-models-grammatical' && (
+        <p className="mt-8 text-sm text-fg-secondary">
+          Finch-4 continues{' '}
+          <Link to="/learn/how-word-embeddings-predict-the-next-word" className="text-accent-deep underline underline-offset-2">
+            the Parrot-2D embedding lab
+          </Link>
+          , where the two readable meaning signals begin.
+        </p>
+      )}
+
+      {topic.slug === 'how-word-embeddings-predict-the-next-word' && (
+        <p className="mt-8 text-sm text-fg-secondary">
+          Parrot-2D leads to{' '}
+          <Link
+            to="/learn/how-position-and-attention-make-language-models-grammatical"
+            className="text-accent-deep underline underline-offset-2"
+          >
+            Finch-4&apos;s position and attention lab
+          </Link>
+          , where a sentence can use earlier words as context.
+        </p>
+      )}
+
       <div className="mt-10 rounded-xl border border-line bg-accent-soft/60 p-5">
         <h2 className="text-sm font-semibold">Put it to use</h2>
         <ul className="mt-2 space-y-1.5 text-sm">

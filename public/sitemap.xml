@@ -206,6 +206,11 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://seantomburke.github.io/models.wtf/learn/how-position-and-attention-make-language-models-grammatical/</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://seantomburke.github.io/models.wtf/learn/why-neural-networks-need-more-layers/</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>

@@ -30,6 +30,7 @@ export type Motif =
   | 'pricing'
   | 'vision'
   | 'embedding'
+  | 'attention'
   | 'reasoning'
   | 'search'
   | 'tuning'
@@ -391,6 +392,16 @@ function Embedding({ phase }: { phase: number }) {
   )
 }
 
+/** A final token pulls more context from the first word than the second. */
+function Attention({ phase }: { phase: number }) {
+  const weight = 0.35 + pulse(phase) * 0.45
+  return <>
+    {[36, 92, 150].map((x, index) => <circle key={x} cx={x} cy={28} r={index === 2 ? 8 : 6} fill={index === 2 ? ACCENT_DEEP : ACCENT} opacity={0.85} />)}
+    <line x1={150} y1={24} x2={36} y2={24} stroke={GREEN} strokeWidth={2 + weight * 2} opacity={weight} />
+    <line x1={150} y1={32} x2={92} y2={32} stroke={ACCENT} strokeWidth={1.5} opacity={0.35} />
+  </>
+}
+
 /** A chain of thought: dots connecting one at a time before the answer lands. */
 function Reasoning({ phase }: { phase: number }) {
   const count = 5
@@ -684,6 +695,7 @@ const MOTIFS: Record<Motif, (props: { phase: number }) => React.ReactElement> = 
   pricing: Pricing,
   vision: Vision,
   embedding: Embedding,
+  attention: Attention,
   reasoning: Reasoning,
   search: Search,
   tuning: Tuning,

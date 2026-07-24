@@ -49,7 +49,7 @@ export const levels: Array<{ id: TopicLevel; title: string; blurb: string }> = [
   {
     id: 'lab',
     title: 'The model lab',
-    blurb: 'Tiny models small enough to see through, running in your browser. Meet Doodle-64, Doodle-525, Doodle-918, Parrot-43, and Parrot-2D, then scale the same ideas up to billion-parameter LLMs.',
+    blurb: 'Tiny models small enough to see through, running in your browser. Meet Doodle-64, Doodle-525, Doodle-918, Parrot-43, Parrot-2D, and Finch-4, then scale the same ideas up to billion-parameter LLMs.',
   },
 ]
 
@@ -801,6 +801,30 @@ const authored: Topic[] = [
       {
         heading: 'This is what frontier embeddings do',
       },
+    ],
+  },
+  {
+    slug: 'how-position-and-attention-make-language-models-grammatical',
+    level: 'lab',
+    question: 'How do position and attention make language models grammatical?',
+    metaTitle: 'Position and attention in language models - Interactive lab | Models.wtf',
+    metaDescription:
+      'Meet Finch-4, a tiny language model with word position and attention. See why Bob means something different as a subject or object, then generate grammatical sentences.',
+    hook: 'Meet Finch-4. This is a model that adds a position signal and a small attention head to Parrot-2D, so it can build a subject, verb, object sentence.',
+    modelSpec: {
+      name: 'Finch-4',
+      type: 'Tiny position-aware language model with one attention head',
+      parameters: 'Four readable signals per step: friendliness, role, position, and a small attention weight',
+      layers: 'A word map, a position input, one attention head, and a next-word output',
+      inputs: 'The words so far plus each word\'s position in the sentence',
+      outputs: 'A probability for the next word or the period that ends the sentence',
+      scale: 'Frontier transformers repeat this pattern across many layers and heads. Finch-4 keeps one small head visible so you can follow its choice.',
+    },
+    sections: [
+      { heading: 'Parrot-2D needs a place for each word' },
+      { heading: 'Position changes the input' },
+      { heading: 'Attention carries context forward' },
+      { heading: 'Generate a grammatical sentence' },
     ],
   },
   {

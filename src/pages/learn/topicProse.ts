@@ -418,6 +418,22 @@ export const topicProse: Record<string, string[]> = {
       'Parrot-2D has two dimensions you can read. A frontier model has thousands you cannot. The job is the same in both. Look up the current word as a point, find the points that tend to come next, and turn how close they are into probabilities. If you can read the prediction off this little map, you have seen the first thing every frontier model does with your words.',
       'There is one thing two numbers cannot do. Parrot-2D sees only the single word in front of it, so it cannot tell "Bob" the speaker from "Bob" the one being spoken to. Fixing that needs a sense of where a word sits in the sentence, and a way to look back at the words before it. That idea is called attention, and it is the subject of the next lab model.',
   ],
+  "how-position-and-attention-make-language-models-grammatical::Parrot-2D needs a place for each word": [
+      'Parrot-2D gives Bob the same two numbers every time. That works when Bob begins a sentence. It loses an important clue when Bob comes after a verb, because the model cannot see whether Bob is the subject or the object.',
+      'Finch-4 starts from the same friendly and role meanings. It adds one small number for the word\'s place in the sentence. This is enough to let the model treat Bob at the start differently from Bob near the end.',
+  ],
+  "how-position-and-attention-make-language-models-grammatical::Position changes the input": [
+      'The position signal is a label for the slot. A subject gets minus one, a verb gets zero, and an object gets plus one. The word and its slot travel into the model together.',
+      'Choose Bob in the visual. As a subject, Bob leads toward “ignores”. As an object, Bob leads toward the period. The same spelling now carries a different job in the sentence.',
+  ],
+  "how-position-and-attention-make-language-models-grammatical::Attention carries context forward": [
+      'Position says where each word sits. Attention lets the object slot look back at the earlier words. The object query gives each earlier word a weight, then carries the useful pieces forward.',
+      'In the small head above, “Bob” receives the larger weight because it is the subject. A frontier transformer uses many heads and many dimensions, yet this one visible set of weights shows the key move.',
+  ],
+  "how-position-and-attention-make-language-models-grammatical::Generate a grammatical sentence": [
+      'Generation is still a loop. The model predicts a subject, then a verb, then an object, and finally a period. Position and attention keep those choices in their sentence roles.',
+      'Greedy generation takes the largest chance every time. Sampling draws from the chances. A higher temperature spreads the choices out, so you can see a less common sentence while the subject, verb, object shape stays in place.',
+  ],
   "bayesian-statistics::Beliefs as numbers": [
       'Bayesian statistics starts from one idea: a probability is a degree of belief, and evidence should move it. You begin with a prior (what you believed before the new evidence) and end with a posterior (what you believe after). The rule for getting from one to the other is Bayes\' theorem, published in Thomas Bayes\' posthumous 1763 essay and in use ever since, from spam filters to medical screening to language models.',
       'The classic setup is a medical test. Suppose 1% of people have an illness, the test catches 90% of the people who have it, and it also flags 10% of the people who don\'t. You test positive. How worried should you be? Most people guess "about 90%". The real answer is 1 in 12, and the tree below shows exactly why.',
