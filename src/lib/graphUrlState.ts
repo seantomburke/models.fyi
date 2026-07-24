@@ -62,15 +62,6 @@ export const graphPresets: GraphPreset[] = [
     xId: 'price-output',
     yId: 'hle',
   },
-  // Demoted to last: still shareable and linkable, but the cost-of-task
-  // questions above are what most visitors actually come to answer.
-  {
-    id: 'context-quality',
-    label: 'Context vs quality',
-    question: 'Which models handle the most text without giving up accuracy?',
-    xId: 'context',
-    yId: 'swe-bench-verified',
-  },
 ]
 
 export type { GraphConnections }

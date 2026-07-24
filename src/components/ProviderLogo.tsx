@@ -37,10 +37,12 @@ export function ProviderLogo({
   providerId,
   size = 14,
   className,
+  style,
 }: {
   providerId: ProviderId
   size?: number
   className?: string
+  style?: React.CSSProperties
 }) {
   const d = paths[providerId]
   return (
@@ -52,6 +54,7 @@ export function ProviderLogo({
       aria-hidden="true"
       focusable="false"
       className={className}
+      style={style}
     >
       {d !== null ? (
         <path d={d} />

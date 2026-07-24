@@ -14,7 +14,7 @@ import {
 } from '../lib/quiz.ts'
 import type { Budget, CompanyPref, Role, Task } from '../lib/quiz.ts'
 import { models, providerById } from '../data/index.ts'
-import type { Model } from '../data/index.ts'
+import type { Model, ProviderId } from '../data/index.ts'
 import { captureQuizStepAnswered, captureQuizCompleted, captureQuizReset } from '../lib/posthog-events.ts'
 import { ProviderLogo } from '../components/ProviderLogo.tsx'
 import { Breadcrumb } from '../components/Breadcrumb.tsx'
@@ -330,11 +330,24 @@ export function Quiz() {
             <section className="space-y-3">
               <StepHeading step={4}>Any company preference?</StepHeading>
               <div className="flex flex-wrap gap-1.5">
-                {companyPrefs.map((c) => (
-                  <Chip key={c.id} selected={pref === c.id} onClick={() => handlePrefSelect(c)}>
-                    {c.label}
-                  </Chip>
-                ))}
+                {companyPrefs.map((c) => {
+                  const provider = providerById.get(c.id as ProviderId)
+                  return (
+                    <Chip key={c.id} selected={pref === c.id} onClick={() => handlePrefSelect(c)}>
+                      <span className="flex items-center gap-1.5">
+                        {provider && (
+                          <ProviderLogo
+                            providerId={provider.id}
+                            size={14}
+                            className="shrink-0"
+                            style={pref === c.id ? undefined : { color: provider.color }}
+                          />
+                        )}
+                        {c.label}
+                      </span>
+                    </Chip>
+                  )
+                })}
               </div>
             </section>
           )}
