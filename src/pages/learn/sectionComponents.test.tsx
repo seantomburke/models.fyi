@@ -53,3 +53,16 @@ test('the open and closed source page mounts the tradeoff choice map', () => {
   expect(screen.getByRole('heading', { level: 3, name: 'Start with the constraint that matters most' })).toBeInTheDocument()
   expect(screen.getByRole('radio', { name: /keep the model and data under your control/i })).toBeChecked()
 })
+
+test('the web search page mounts the current-information decision guide', () => {
+  render(
+    <MemoryRouter initialEntries={['/learn/web-search-models']}>
+      <Routes>
+        <Route path="/learn/:slug" element={<LearnTopic />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+
+  expect(screen.getByRole('heading', { level: 3, name: 'Match the answer path to the question' })).toBeInTheDocument()
+  expect(screen.getByRole('radio', { name: /today's weather/i })).toBeChecked()
+})

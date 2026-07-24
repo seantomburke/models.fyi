@@ -28,6 +28,7 @@ import { EmbeddingExplorer } from '../../components/learn/EmbeddingExplorer'
 import { VisionCapabilityDemo } from '../../components/learn/VisionCapabilityDemo'
 import { FineTuningDemo } from '../../components/learn/FineTuningDemo'
 import { OpenClosedTradeoffGuide } from './components/OpenClosedTradeoffGuide'
+import { WebSearchTradeoffGuide } from './components/WebSearchTradeoffGuide'
 
 export const sectionComponents: Record<string, ComponentType> = {
   'bayesian-statistics::Walk the tree': BayesTreeExplorer,
@@ -46,4 +47,5 @@ export const sectionComponents: Record<string, ComponentType> = {
   'vision-models::What they can do': VisionCapabilityDemo,
   'fine-tuning-models::When to fine-tune': FineTuningDemo,
   'open-source-vs-closed-source::The practical question': OpenClosedTradeoffGuide,
+  'web-search-models::What uses web search': WebSearchTradeoffGuide,
 }
