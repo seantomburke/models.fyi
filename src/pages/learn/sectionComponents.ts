@@ -29,6 +29,7 @@ import { VisionCapabilityDemo } from '../../components/learn/VisionCapabilityDem
 import { FineTuningDemo } from '../../components/learn/FineTuningDemo'
 import { OpenClosedTradeoffGuide } from './components/OpenClosedTradeoffGuide'
 import { WebSearchTradeoffGuide } from './components/WebSearchTradeoffGuide'
+import { PromptRewriteDemo } from './components/PromptRewriteDemo'
 
 export const sectionComponents: Record<string, ComponentType> = {
   'bayesian-statistics::Walk the tree': BayesTreeExplorer,
@@ -48,4 +49,5 @@ export const sectionComponents: Record<string, ComponentType> = {
   'fine-tuning-models::When to fine-tune': FineTuningDemo,
   'open-source-vs-closed-source::The practical question': OpenClosedTradeoffGuide,
   'web-search-models::What uses web search': WebSearchTradeoffGuide,
+  'prompt-engineering-basics::Context and examples': PromptRewriteDemo,
 }
