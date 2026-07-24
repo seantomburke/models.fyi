@@ -6,6 +6,7 @@ import {
   EXTRA_WORDS,
   VOCAB,
   START,
+  END,
   nextWords,
   parameterCount,
   candidatesAt,
@@ -39,13 +40,21 @@ describe('Parrot-2D scene model', () => {
     expect(words).toHaveLength(6)
   })
 
-  it('predicts an unfriendly verb most often after the unfriendly person', () => {
-    const [top] = nextWords(STARTER_MODEL, 'Bob')
-    expect(top.word).toBe('ignores')
-    // "greets" is possible but rarer; the person names are not offered.
-    const words = nextWords(STARTER_MODEL, 'Bob').map((n) => n.word)
-    expect(words).toContain('greets')
+  it('among the verbs after the unfriendly person, the unfriendly verb wins', () => {
+    // Bob also ends sentences, so the period is a candidate too. Among the
+    // verbs, though, the unfriendly verb "ignores" beats the friendly one.
+    const preds = nextWords(STARTER_MODEL, 'Bob')
+    const verbs = preds.filter((n) => n.word === 'greets' || n.word === 'ignores')
+    expect(verbs[0].word).toBe('ignores')
+    expect(verbs.map((v) => v.word)).toContain('greets')
+    // A person never directly follows a person.
+    const words = preds.map((n) => n.word)
     expect(words).not.toContain('Alice')
+  })
+
+  it('offers the period as a next word once a word has ended a sentence', () => {
+    // Bob is the last word of several training sentences, so END can follow it.
+    expect(nextWords(STARTER_MODEL, 'Bob').map((n) => n.word)).toContain(END)
   })
 
   it('every prediction is a probability distribution that sums to 1', () => {

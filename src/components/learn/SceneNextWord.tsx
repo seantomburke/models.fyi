@@ -4,11 +4,24 @@ import {
   FULL_MODEL,
   DIMENSIONS,
   START,
+  END,
   nextWords,
   candidatesAt,
   rechooseWordAt,
 } from './sceneModel'
 import type { Model, NextWord, WordInfo } from './sceneModel'
+
+/**
+ * This map demo teaches word-to-word meaning, so it hides the sentence-ending
+ * period and rescales the rest to add back to 100%. The period lives in the
+ * network diagram further down the page, where generation needs it.
+ */
+function wordsOnly(candidates: NextWord[]): NextWord[] {
+  const kept = candidates.filter((c) => c.word !== END)
+  const total = kept.reduce((sum, c) => sum + c.prob, 0)
+  if (total === 0) return kept
+  return kept.map((c) => ({ ...c, prob: c.prob / total }))
+}
 
 /** Matches the green "chosen word" highlight used across the lab demos: readable in both themes. */
 const CHOSEN_STYLE = { backgroundColor: '#BBF7D0', color: '#1f2937' }
@@ -276,20 +289,20 @@ export function SceneNextWord() {
   const model: Model = expanded ? FULL_MODEL : STARTER_MODEL
 
   const prev = words.length === 0 ? START : words[words.length - 1]
-  const predictions = done ? [] : nextWords(model, prev)
+  const predictions = done ? [] : wordsOnly(nextWords(model, prev))
   const activeWord = done || words.length === 0 ? null : prev
 
   const pick = (word: string) => {
     const next = [...words, word]
     setWords(next)
-    if (next.length >= MAX_WORDS || nextWords(model, word).length === 0) setDone(true)
+    if (next.length >= MAX_WORDS || wordsOnly(nextWords(model, word)).length === 0) setDone(true)
   }
 
   const rechoose = (index: number, word: string) => {
     if (word === words[index]) return
     const rebuilt = rechooseWordAt(words, index, word)
     setWords(rebuilt)
-    setDone(rebuilt.length >= MAX_WORDS || nextWords(model, word).length === 0)
+    setDone(rebuilt.length >= MAX_WORDS || wordsOnly(nextWords(model, word)).length === 0)
   }
 
   const reset = () => {
@@ -337,7 +350,7 @@ export function SceneNextWord() {
               {words.map((word, wi) => (
                 <WordDropdown
                   key={wi}
-                  candidates={candidatesAt(model, words, wi)}
+                  candidates={wordsOnly(candidatesAt(model, words, wi))}
                   value={word}
                   slotLabel={`word ${wi + 1}`}
                   onChoose={(w) => rechoose(wi, w)}

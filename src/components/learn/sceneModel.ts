@@ -27,6 +27,18 @@
  * to see through.
  */
 
+/** Sentinel for the empty sentence, so the model can predict a first word. */
+export const START = '<start>'
+/** Sentinel for "the sentence ends here". It shows on screen as a period. */
+export const END = '<end>'
+/** How the END token reads on screen: a period, the mark that ends a sentence. */
+export const END_LABEL = '.'
+
+/** Display form of any token, mapping the END sentinel to a period. */
+export function tokenLabel(word: string): string {
+  return word === END ? END_LABEL : word
+}
+
 /** A word's two learned numbers: where it sits on the meaning map. */
 export interface Embedding {
   /** -1 unfriendly ... +1 friendly. 0 is neutral. */
@@ -54,6 +66,14 @@ export const VOCAB: Record<string, Embedding> = {
   greets: { friendliness: 1, role: 1 }, // a friendly verb
   ignores: { friendliness: -1, role: 1 }, // an unfriendly verb
   sees: { friendliness: 0, role: 1 }, // a verb that is neither
+  // The period that ends a sentence. It is neither friendly nor a verb, so it
+  // sits dead center on the map, its own kind of token.
+  [END]: { friendliness: 0, role: 0 },
+}
+
+/** The map position of any token, including the END period. */
+export function embeddingOf(word: string): Embedding {
+  return VOCAB[word]
 }
 
 /** The starter words that keep the model at four words. */
@@ -62,31 +82,62 @@ export const STARTER_WORDS = ['Alice', 'Bob', 'greets', 'ignores'] as const
 export const EXTRA_WORDS = ['Charlie', 'sees'] as const
 
 /**
- * The training sentences. The first block is the four-word starter corpus from
- * the issue: mostly "Alice greets Bob" and "Bob ignores Alice", with a few odd
- * ones mixed in so the model learns tendencies instead of hard rules. The
- * second block adds the neutral words.
+ * The training sentences.
+ *
+ * The first block is the four-word starter corpus. It is built around the two
+ * sentences from the issue, "Alice greets Bob" and "Bob ignores Alice", so the
+ * model learns the tendency that a friendly person greets and an unfriendly
+ * person ignores. A smaller number of pattern-breakers ("Bob greets Alice",
+ * "Alice ignores Bob") keep it a tendency, not a hard rule, so the second-place
+ * word still gets real probability.
+ *
+ * More sentences make the probabilities smoother. With only a handful, one odd
+ * sentence swings the odds hard. With a few dozen, the friendly-greets and
+ * unfriendly-ignores pattern reads clearly while the exceptions stay visible.
  */
 export const STARTER_CORPUS: string[] = [
+  // Alice (friendly) usually greets.
   'Alice greets Bob',
   'Alice greets Bob',
-  'Bob greets Alice',
-  'Bob ignores Alice',
-  'Bob ignores Alice',
+  'Alice greets Bob',
+  'Alice greets Bob',
+  'Alice greets Bob',
+  'Alice greets Alice',
+  // Alice ignores now and then, the friendly exception.
   'Alice ignores Bob',
+  'Alice ignores Bob',
+  // Bob (unfriendly) usually ignores.
+  'Bob ignores Alice',
+  'Bob ignores Alice',
+  'Bob ignores Alice',
+  'Bob ignores Alice',
+  'Bob ignores Alice',
+  'Bob ignores Bob',
+  // Bob greets now and then, the unfriendly exception.
+  'Bob greets Alice',
+  'Bob greets Alice',
 ]
 
+/**
+ * Charlie is neither friendly nor unfriendly, so his verb is a coin flip:
+ * roughly as many greets as ignores. "sees" is the neutral verb, used by both
+ * people so it sits in the middle of the map.
+ */
 export const EXTRA_CORPUS: string[] = [
+  // Charlie splits evenly between the two verbs.
+  'Charlie greets Bob',
+  'Charlie greets Alice',
   'Charlie greets Bob',
   'Charlie ignores Alice',
-  'Charlie greets Alice',
   'Charlie ignores Bob',
+  'Charlie ignores Alice',
+  // The neutral verb "sees", from everyone.
   'Alice sees Bob',
   'Bob sees Alice',
+  'Charlie sees Bob',
+  'Alice sees Charlie',
 ]
 
-/** Sentinel for the empty sentence, so the model can predict a first word. */
-export const START = '<start>'
 
 export interface NextWord {
   word: string
@@ -117,8 +168,8 @@ export interface Model {
   counts: Map<string, Map<string, number>>
 }
 
-/** Stable display order: people first (Alice, Bob, Charlie), then verbs. */
-export const DISPLAY_ORDER = ['Alice', 'Bob', 'Charlie', 'greets', 'ignores', 'sees']
+/** Stable display order: people first (Alice, Bob, Charlie), then verbs, then the period. */
+export const DISPLAY_ORDER = ['Alice', 'Bob', 'Charlie', 'greets', 'ignores', 'sees', END]
 
 function orderWords(words: string[]): string[] {
   return [...words].sort((a, b) => DISPLAY_ORDER.indexOf(a) - DISPLAY_ORDER.indexOf(b))
@@ -142,6 +193,8 @@ export function train(corpus: string[]): Model {
     bump(START, words[0])
     for (const w of words) seen.add(w)
     for (let i = 0; i < words.length - 1; i++) bump(words[i], words[i + 1])
+    // The period after the last word: the model learns how sentences stop.
+    bump(words[words.length - 1], END)
   }
   const vocab: WordInfo[] = orderWords([...seen]).map((word) => ({
     word,

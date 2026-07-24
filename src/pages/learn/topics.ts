@@ -775,11 +775,11 @@ const authored: Topic[] = [
     interactive: SceneNextWord,
     modelSpec: {
       name: 'Parrot-2D',
-      type: 'Embedding next-word predictor, a first step from a lookup table toward a transformer',
-      parameters: '8: two learned numbers for each of the four words (friendliness and role)',
-      layers: '1 embedding map, where each word becomes a point on a two-axis grid',
-      inputs: '1 word: the last word of the sentence so far, looked up as its two numbers',
-      outputs: 'A probability for every word that could come next, summing to 100%',
+      type: 'Three-layer neural network, a first step from a lookup table toward a transformer',
+      parameters: 'Two numbers per word: friendliness and role. Those two numbers are the whole model.',
+      layers: '3 (one input node per word, 2 hidden nodes for the two meanings, one output node per next word)',
+      inputs: '1 word: the last word of the sentence so far, switched on as a single input node',
+      outputs: 'A probability for every word that could come next, plus a period to end the sentence, summing to 100%',
       scale: 'Frontier transformers give every word thousands of numbers instead of two, and nobody labels what each one means. Parrot-2D uses two numbers you can name, so you can watch the meaning drive the prediction.',
     },
     sections: [
@@ -791,6 +791,9 @@ const authored: Topic[] = [
       },
       {
         heading: 'Meaning drives the prediction',
+      },
+      {
+        heading: 'The network behind the map',
       },
       {
         heading: 'Filling in the middle of the map',

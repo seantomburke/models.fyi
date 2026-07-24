@@ -30,8 +30,10 @@ import { FineTuningDemo } from '../../components/learn/FineTuningDemo'
 import { OpenClosedTradeoffGuide } from './components/OpenClosedTradeoffGuide'
 import { WebSearchTradeoffGuide } from './components/WebSearchTradeoffGuide'
 import { PromptRewriteDemo } from './components/PromptRewriteDemo'
+import { SceneNetworkDiagram } from '../../components/learn/SceneNetworkDiagram'
 
 export const sectionComponents: Record<string, ComponentType> = {
+  'how-word-embeddings-predict-the-next-word::The network behind the map': SceneNetworkDiagram,
   'bayesian-statistics::Walk the tree': BayesTreeExplorer,
   'bayesian-statistics::The same math predicts the next word': BayesNextWord,
   'how-do-neural-network-weights-work::How they work: the multiplication': WeightedSumEquation,
