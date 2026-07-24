@@ -5,8 +5,6 @@ const requiredAdapters = {
   'GEMINI.md': 'AGENTS.md',
   '.cursor/rules/project.mdc': 'AGENTS.md',
   '.github/copilot-instructions.md': 'AGENTS.md',
-  '.claude/agents/copywriter.md': '.agents/agents/copywriter.md',
-  '.codex/agents/copywriter.toml': '.agents/agents/copywriter.md',
 }
 
 const guidanceFiles = [
@@ -85,7 +83,7 @@ const dashCheckFiles = [
   'CLAUDE.md',
   'GEMINI.md',
   'README.md',
-  '.agents/agents/copywriter.md',
+  '.agents/skills/copywriter/SKILL.md',
 ]
 for (const ruleFile of await readdir('.agents/rules')) {
   if (ruleFile.endsWith('.md')) dashCheckFiles.push(`.agents/rules/${ruleFile}`)

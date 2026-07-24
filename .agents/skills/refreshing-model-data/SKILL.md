@@ -40,7 +40,7 @@ Work through these in order; `src/data/types.ts` is the schema reference.
 1. **`providers.ts`**: add any new provider. Every provider entry requires a `blurb` (used by `/providers/:id` pages).
 2. **`benchmarks.ts`**: add a benchmark only when at least one model has a score for it. Keep the ELI5 description in the site voice (`.agents/rules/writing-style.md`).
 3. **`models.ts`**: add or update models. Set `releaseDate` (ISO date) when reliably known. Fill `scores` only from this run's sources. Add `scoreProvenance` entries for every independent score and every provider score with a known diverging independent run. Set capability flags (`vision`, `imageGeneration`, `reasoning`) from first-party modality tables; explicit `false` needs a provider card that positively establishes the absence. Every capability filter must match at least one real model (a guard test enforces this).
-4. **`releases.ts`**: every new model needs a What's New entry (`type: 'new'`, with `modelId`, a dated entry, and a `link` to the announcement when one exists). Notable price changes and feature updates get entries too. Copy here is user-facing: follow the copywriter role and writing-style rule.
+4. **`releases.ts`**: every new model needs a What's New entry (`type: 'new'`, with `modelId`, a dated entry, and a `link` to the announcement when one exists). Notable price changes and feature updates get entries too. Copy here is user-facing: follow the copywriter skill and writing-style rule.
 5. **`index.ts`**: bump `dataSourcedAt` to today.
 
 ### 4. Record the pass

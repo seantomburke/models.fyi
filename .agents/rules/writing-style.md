@@ -1,6 +1,6 @@
 # Writing Style
 
-Canonical rules for all user-facing copy on models.wtf. The site explains complex AI topics to normal people. Every sentence should read like a patient teacher talking to a bright 10-year-old. The copywriter role (`.agents/agents/copywriter.md`) applies these rules; this file is the source of truth.
+Canonical rules for all user-facing copy on models.wtf. The site explains complex AI topics to normal people. Every sentence should read like a patient teacher talking to a bright 10-year-old. The copywriter skill (`.agents/skills/copywriter/SKILL.md`) applies these rules; this file is the source of truth.
 
 ## Voice
 

@@ -32,8 +32,7 @@ This repo is agent-agnostic. Guidance lives in `AGENTS.md` files, never in any o
 
 - This file holds repo-wide guidance. Nested `AGENTS.md` files add area rules: `src/AGENTS.md` (frontend), `src/data/AGENTS.md` (data refresh), `src/lib/AGENTS.md` (routeMeta, search, URL state), `src/pages/learn/AGENTS.md` (Learn content), `scripts/AGENTS.md` (build pipeline). Read the nearest one for the files you touch.
 - Cross-cutting rules live in `.agents/rules/`. Read the matching rule before working in its area (table below).
-- Reusable skills live in `.agents/skills/<name>/SKILL.md`. When a task matches a skill listed below, read its `SKILL.md` and follow it.
-- Reusable agent roles live in `.agents/agents/`. Vendor-specific definitions must be thin adapters that point to these canonical instructions rather than copying them.
+- Reusable skills live in `.agents/skills/<name>/SKILL.md`. When a task matches a skill listed below, read its `SKILL.md` and follow it. Skills are the vendor-agnostic home for reusable roles and workflows, so prefer a skill over any one agent's config format.
 - Agent-specific discovery, permissions, and plugin config stays in that agent's folder. Don't put project guidance there.
 - Describe required capabilities (read, edit, search, run, monitor) instead of naming vendor-specific tools in shared guidance.
 - Run `npm run check:agents` after changing agent guidance, skills, rules, or adapters.
@@ -63,10 +62,11 @@ The repo IS the persistent memory for every agent. When you learn a durable, non
 | `.agents/skills/systematic-debugging/` | Investigating bugs, errors, unexpected behavior |
 | `.agents/skills/design/` | Building data-heavy or dashboard-style UI |
 | `.agents/skills/refreshing-model-data/` | Refreshing model/benchmark data, adding new model releases |
+| `.agents/skills/copywriter/` | Writing or editing any user-facing copy, or reviewing copy for style |
 
 ## Copy
 
-Any task that writes or edits user-facing copy MUST follow the copywriter role (`.agents/agents/copywriter.md`) and `.agents/rules/writing-style.md`. Highlights: patient-teacher ELI5 voice, no em dashes anywhere in the repo, no "X, not Y" contrast framing, prefer visuals and animations over paragraphs, math through the KaTeX `MathBlock` component. `src/lib/copy-style.test.ts` enforces the bans.
+Any task that writes or edits user-facing copy MUST follow the copywriter skill (`.agents/skills/copywriter/SKILL.md`) and `.agents/rules/writing-style.md`. Highlights: patient-teacher ELI5 voice, no em dashes anywhere in the repo, no "X, not Y" contrast framing, prefer visuals and animations over paragraphs, math through the KaTeX `MathBlock` component. `src/lib/copy-style.test.ts` enforces the bans.
 
 ## Debugging
 
