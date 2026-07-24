@@ -131,6 +131,25 @@ a:hover,
   transition: all 150ms ease-in-out;
 }
 
+/* Pointer cursor on all interactive controls. Tailwind v4's Preflight resets
+   buttons to `cursor: default`, so opt back in globally instead of per-element. */
+button,
+[role="button"],
+[role="tab"],
+label[for],
+summary,
+select {
+  cursor: pointer;
+}
+
+/* Disabled controls should signal non-interactivity, not invite a click. */
+button:disabled,
+button[aria-disabled="true"],
+[role="button"][aria-disabled="true"],
+select:disabled {
+  cursor: not-allowed;
+}
+
 /* Prevent horizontal scroll on body and html */
 html {
   overflow-x: hidden;
