@@ -11,8 +11,9 @@ Extends the root `AGENTS.md` and `src/AGENTS.md`. The Learn section teaches AI c
 
 ## Lab models
 
-- The lab lineup (Doodle-64/525/918, Parrot-43) is named in the hardcoded lab level blurb in `topics.ts`. Adding a lab model means updating that blurb.
-- Changing Parrot's training corpus means renaming Parrot (the number encodes the corpus).
+- The lab lineup (Doodle-64/525/918, Parrot-43, Parrot-2D) is named in the hardcoded lab level blurb in `topics.ts`. Adding a lab model means updating that blurb.
+- Changing Parrot-43's training corpus means renaming it (the 43 counts its word pairs). Parrot-2D is named for its two readable embedding dimensions, not a parameter count, so its corpus can grow (it does, four words to six, inside the demo).
+- `embeddingModel.ts` is the advanced embedding-search demo (the meaning-space map for `embedding-models`). The Parrot-2D next-word model lives in `sceneModel.ts` + `SceneNextWord.tsx`. Do not conflate the two.
 
 ## Adding a topic
 
