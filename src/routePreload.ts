@@ -5,16 +5,75 @@ type RouteModule = Record<string, unknown>
 export type RetryableRouteLoader<T extends RouteModule = RouteModule> = () => Promise<T>
 type RouteLoader = RetryableRouteLoader
 
+const RELOAD_GUARD_KEY = 'models-wtf:chunk-reload'
+
+/**
+ * A dynamic import() rejects with a stale-chunk error when the deployed
+ * index.html a returning visitor cached points at hashed chunk filenames that a
+ * newer deploy has already removed. The message wording differs by browser, so
+ * match the known signatures rather than a single string.
+ */
+export function isStaleChunkError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? '')
+  return (
+    /Failed to fetch dynamically imported module/i.test(message) ||
+    /Importing a module script failed/i.test(message) ||
+    /error loading dynamically imported module/i.test(message) ||
+    /'?text\/html'? is not a valid JavaScript MIME type/i.test(message)
+  )
+}
+
+/**
+ * Recover from a stale-chunk failure with a single hard reload, which fetches a
+ * fresh index.html pointing at the current chunk names. A sessionStorage guard
+ * stops a genuinely broken deploy from reloading forever; it clears on the next
+ * successful load. Returns true when a reload was scheduled so callers keep the
+ * rejection pending (the page is about to navigate away) instead of surfacing a
+ * dead error screen.
+ */
+function reloadForStaleChunk(error: unknown): boolean {
+  if (typeof window === 'undefined' || !isStaleChunkError(error)) return false
+
+  try {
+    if (window.sessionStorage.getItem(RELOAD_GUARD_KEY)) return false
+    window.sessionStorage.setItem(RELOAD_GUARD_KEY, '1')
+  } catch {
+    // sessionStorage can throw (private mode, disabled). Reload once anyway;
+    // without the guard we accept the small risk over a permanent dead screen.
+  }
+
+  window.location.reload()
+  return true
+}
+
+function clearReloadGuard(): void {
+  if (typeof window === 'undefined') return
+  try {
+    window.sessionStorage.removeItem(RELOAD_GUARD_KEY)
+  } catch {
+    // Ignore: a readable-but-unwritable store just leaves the guard set.
+  }
+}
+
 export function createRetryableRouteLoader<T extends RouteModule>(
   loader: () => Promise<T>,
 ): RetryableRouteLoader<T> {
   let pending: Promise<T> | undefined
 
   const load = () => {
-    pending ??= loader().catch((error: unknown) => {
-      pending = undefined
-      throw error
-    })
+    pending ??= loader()
+      .then((module) => {
+        clearReloadGuard()
+        return module
+      })
+      .catch((error: unknown) => {
+        pending = undefined
+        // A fresh deploy invalidated this chunk. Reload once to pick up the new
+        // index.html; keep the promise pending so React never renders the error
+        // boundary before the page navigates away.
+        if (reloadForStaleChunk(error)) return new Promise<T>(() => {})
+        throw error
+      })
     return pending
   }
 

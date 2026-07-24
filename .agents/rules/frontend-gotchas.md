@@ -23,3 +23,7 @@ Hard-won traps in this codebase. Each entry states the trap and the correct move
 - Interactive cards with links inside buttons are invalid HTML; render the card as a sibling of the point button.
 - Touch drag input retargets pointer events; `pointerup` precedes `click` (see `PixelGrid`).
 - `ScrollToTop` keys on pathname; new route families inherit it.
+
+## Lazy chunks and deploys
+
+- Every Pages deploy removes the previous build's hash-named chunks. A returning visitor whose tab still holds the old `index.html` requests a chunk that no longer exists, so the lazy `import()` rejects with "Failed to fetch dynamically imported module" / "Importing a module script failed" and lands on the error boundary. This was the top error-boundary source in production (17 of 19 crashes over 60 days, mostly on `/learn`). `createRetryableRouteLoader` (`src/routePreload.ts`) detects that signature via `isStaleChunkError` and triggers one hard reload to fetch the fresh `index.html`, guarded by a `models-wtf:chunk-reload` sessionStorage flag so a genuinely broken deploy can't reload-loop; the guard clears on the next successful load. Do not "simplify" the loader's catch back to a plain re-throw.
