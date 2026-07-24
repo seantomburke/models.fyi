@@ -28,6 +28,18 @@ export const START = '<start>'
 /** Sentinel for "the sentence ends here". */
 export const END = '<end>'
 
+/**
+ * How the END token reads on screen: a literal period, the punctuation that
+ * ends a sentence. The model still stores END internally; this is only its
+ * face. Everything else renders as its own word.
+ */
+export const END_LABEL = '.'
+
+/** Display form of any token, mapping the END sentinel to a period. */
+export function tokenLabel(word: string): string {
+  return word === END ? END_LABEL : word
+}
+
 export interface NextWord {
   word: string
   /** How many times this word followed the previous word in the corpus. */

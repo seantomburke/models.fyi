@@ -2,6 +2,8 @@ import {
   CORPUS,
   START,
   END,
+  END_LABEL,
+  tokenLabel,
   bigramCounts,
   nextWords,
   parameterCount,
@@ -64,6 +66,13 @@ test('rechooseWordAt keeps the prefix, applies the new word, and drops the rest'
 
 test('rechooseWordAt with END truncates without appending: the sentence stops there', () => {
   expect(rechooseWordAt(['the', 'cat', 'sat'], 2, END)).toEqual(['the', 'cat'])
+})
+
+test('the END token reads as a period; every other token reads as itself', () => {
+  expect(END_LABEL).toBe('.')
+  expect(tokenLabel(END)).toBe('.')
+  expect(tokenLabel('cat')).toBe('cat')
+  expect(tokenLabel(START)).toBe(START)
 })
 
 test('the parameter count matches the name Parrot-43 used across the learn content', () => {
