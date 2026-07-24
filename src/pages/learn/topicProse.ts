@@ -317,6 +317,29 @@ export const topicProse: Record<string, string[]> = {
   "understand-image-classification::Try it yourself": [
       'Below, draw on the pixel grid or use the example buttons. You\'re seeing how a tiny network makes a prediction. The confidence score tells you how sure the classifier is. When you draw something ambiguous, halfway between 3 and E, watch the confidence drop, just like a real model.',
   ],
+  "how-ai-models-generate-images::Meet Doodle-64R": [
+      'Doodle-64R is the classifier from the last lab turned around. Doodle-64 reads a drawing and names the letter. Doodle-64R takes the letter and produces a drawing. The R stands for reverse, because it runs the very same 64 weights the other direction.',
+      'This is the first model in our lab that generates instead of recognizing, which makes it the vision cousin of Parrot-43. A classifier answers a question about an image you gave it. A generator answers with an image it made. Below you can pick a target and watch the model build one for you.',
+  ],
+  "how-ai-models-generate-images::A generator is a classifier in reverse": [
+      'Here is the whole idea. A classifier takes 64 pixels and produces one answer. A generator takes one answer and produces 64 pixels. Both readings use the same weights, so you can walk them in either direction.',
+      'Doodle-64 learned that a pixel on the right curve votes for a 3 and a pixel on the left edge votes for an E. Doodle-64R reads those same votes as instructions. If you ask for a 3, every pixel that votes for a 3 fills in, and every pixel that votes for an E stays blank. The bars both letters share fill in either way, which is why a generated 3 and a generated E have the same top, middle, and bottom.',
+  ],
+  "how-ai-models-generate-images::Every pixel is a coin flip": [
+      'The model never stored a picture of a 3 to copy. It holds one probability of ink for each of the 64 pixels, and it flips a weighted coin for every one. A pixel that belongs to the shape you asked for comes up ink almost every time. A pixel that belongs to the other letter comes up blank almost every time.',
+      'The probability grid in the demo shows those 64 coins before they are flipped. Bright pixels are nearly certain to fill in. Faint pixels are nearly certain to stay empty. The drawing above it is one roll of all 64 at once.',
+  ],
+  "how-ai-models-generate-images::Why the same drawing is never quite the same": [
+      'Because each pixel is a separate coin flip, the same request gives a slightly different drawing every time. You can press generate again and watch the shape shift while staying a clear 3. That variety is the point of a generator. One prompt can produce many pictures.',
+      'The creativity slider is the dial behind that variety. At low creativity the coins are heavily loaded, so the model draws the same clean shape again and again. As you raise it, every coin drifts toward a fair 50/50, the drawing picks up noise, and the letter gets harder to read. Real image generators call this same dial the temperature.',
+  ],
+  "how-ai-models-generate-images::This is how real image models work": [
+      'A tool like DALL-E, Midjourney, or Stable Diffusion is this demo grown enormous. It turns your prompt into a probability for millions of pixels, then samples them into a picture nobody has drawn before. The weights are learned from billions of images instead of set by two reference shapes, and the sampling runs in many careful steps instead of one. The core move is the same: a probability per pixel, then a roll of the dice.',
+      'You can prove the two directions share one brain right in the demo. Whatever Doodle-64R draws, feed it back and Doodle-64 reads it as the same letter. The model that writes and the model that reads are one set of weights, pointed two ways.',
+  ],
+  "how-ai-models-generate-images::Try it yourself": [
+      'Choose a 3 or an E and press generate again a few times to see how much one letter can vary. Then push the creativity slider up and watch the drawing dissolve into noise as every pixel loses its certainty. Keep an eye on the read-back panel, where the classifier names each drawing the generator makes.',
+  ],
   "how-neural-networks-recognize-digits::Meet Doodle-525": [
       'Doodle-525 is the second model in our lab, and its model card shows what one extra layer costs and buys. It reads the same 64-pixel grid as Doodle-64, but instead of mapping pixels straight to an answer, it spends 448 weights (plus 7 biases) turning pixels into 7 stroke detections, then 70 more weights turning strokes into 10 digit scores. Total: 525 parameters for a 10-way choice, where Doodle-64 needed 64 for a 2-way choice.',
       'That budget is the whole story of neural network design: more possible answers and subtler distinctions demand more parameters, and layering lets the parameters share work. The 7 stroke detectors are reused by all 10 digits, the way an LLM\'s early layers are reused by every sentence it will ever read.',

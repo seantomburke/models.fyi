@@ -46,6 +46,7 @@ export const TOPIC_MOTIFS: Record<string, Motif> = {
   // The model lab: each card mirrors its own interactive pane.
   'how-do-neural-network-weights-work': 'weights',
   'understand-image-classification': 'pixels',
+  'how-ai-models-generate-images': 'pixels',
   'how-neural-networks-recognize-digits': 'digits',
   'what-is-gradient-descent': 'descent',
   'train-a-neural-network': 'training',

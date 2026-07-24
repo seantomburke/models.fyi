@@ -12,6 +12,7 @@
 import type { ComponentType } from 'react'
 import { WeightsExplainer } from './components/WeightsExplainer'
 import { PixelClassifier } from '../../components/learn/PixelClassifier'
+import { PixelGenerator } from '../../components/learn/PixelGenerator'
 import { DigitClassifier } from '../../components/learn/DigitClassifier'
 import { DeepDigitClassifier } from '../../components/learn/DeepDigitClassifier'
 import { MultiLayerNetwork } from '../../components/learn/MultiLayerNetwork'
@@ -49,7 +50,7 @@ export const levels: Array<{ id: TopicLevel; title: string; blurb: string }> = [
   {
     id: 'lab',
     title: 'The model lab',
-    blurb: 'Tiny models small enough to see through, running in your browser. Meet Doodle-64, Doodle-525, Doodle-918, Parrot-43, Parrot-2D, and Finch-4, then scale the same ideas up to billion-parameter LLMs.',
+    blurb: 'Tiny models small enough to see through, running in your browser. Meet Doodle-64, Doodle-64R, Doodle-525, Doodle-918, Parrot-43, Parrot-2D, and Finch-4, then scale the same ideas up to billion-parameter LLMs.',
   },
 ]
 
@@ -635,6 +636,45 @@ const authored: Topic[] = [
       },
       {
         heading: 'Why this matters for real models',
+      },
+      {
+        heading: 'Try it yourself',
+      },
+    ],
+  },
+  {
+    slug: 'how-ai-models-generate-images',
+    level: 'lab',
+    question: 'How do AI models generate images?',
+    metaTitle: 'How AI models generate images - Interactive generator demo | Models.wtf',
+    metaDescription:
+      'See how an image generator works by running a classifier backward. Ask a 64-weight model to draw a 3 or an E and watch it build the picture pixel by pixel.',
+    hook: 'Meet Doodle-64R. You can ask it to draw a 3 or an E, and it builds the picture by running the classifier backward.',
+    interactive: PixelGenerator,
+    modelSpec: {
+      name: 'Doodle-64R',
+      type: 'Single-layer image generator (the Doodle-64 classifier run in reverse)',
+      parameters: '64: the same one weight per pixel that Doodle-64 learned',
+      layers: '1 (1 target choice → 64 pixel probabilities)',
+      inputs: '1 choice: draw a "3" or draw an "E"',
+      outputs: '64 pixels, each sampled from its own ink probability',
+      scale: 'Frontier image generators turn a prompt into a probability for millions of pixels and sample a picture. Doodle-64R does the same trick with 64 pixels and two prompts.',
+    },
+    sections: [
+      {
+        heading: 'Meet Doodle-64R',
+      },
+      {
+        heading: 'A generator is a classifier in reverse',
+      },
+      {
+        heading: 'Every pixel is a coin flip',
+      },
+      {
+        heading: 'Why the same drawing is never quite the same',
+      },
+      {
+        heading: 'This is how real image models work',
       },
       {
         heading: 'Try it yourself',

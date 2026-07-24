@@ -23,8 +23,12 @@ const BUDGET_KB = {
    * Raised 60 → 64 on 2026-07-23 for the 10 /providers/:id routes (their
    * titles, blurbs, and schema builders live in routeMeta like the model
    * pages' do); measured 60.5 kB after the change.
+   * Raised 64 → 67 on 2026-07-24 for the how-ai-models-generate-images lab
+   * (Doodle-64R): its model card, six section headings, and route meta ship
+   * on every route the way the other lab topics' do. Prose stays lazy in
+   * topicProse.ts. Measured 65.7 kB after the change.
    */
-  meta: 64,
+  meta: 67,
 }
 
 const html = 'dist/index.html'
