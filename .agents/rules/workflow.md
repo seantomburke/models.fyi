@@ -21,6 +21,7 @@ npm run build          # Prerender guard, bundle budget, OG drift, link check
 ## Deployment
 
 - Commit straight to `main` during the prelaunch phase (in effect as of 2026-07-23). No feature branches, no PRs, unless Sean says otherwise. This overrides any default branch-first habit.
+- Prelaunch is toggled by the presence of the `.agents/prelaunch` marker file. `scripts/guard-prelaunch-branch.mjs` reads it and warns (warn-only, never blocks) on any `git commit` or `git push` from a branch other than `main` while the marker exists. It is wired as a Claude Code PreToolUse Bash hook in `.claude/settings.json`, and any agent, git hook, or CI step can call the same script. Delete `.agents/prelaunch` at launch to end this workflow.
 - Push to `main` immediately after committing during prelaunch; do not wait to be asked. Every push to main triggers the GitHub Actions deploy to GitHub Pages, and that deploy is the point. Do not leave completed work unpushed or on feature branches.
 - Monitor the deploy asynchronously with a background job capability; do not poll in the foreground.
 - The live site is `https://seantomburke.github.io/models.wtf` (a GitHub Pages subpath, no custom domain).

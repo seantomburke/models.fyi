@@ -22,5 +22,18 @@
   },
   "enabledPlugins": {
     "posthog@claude-plugins-official": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/guard-prelaunch-branch.mjs"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,0 +1,7 @@
+prelaunch phase active as of 2026-07-23.
+
+While this file exists, work commits and deploys straight to `main` (see
+.agents/rules/workflow.md). The branch guard (scripts/guard-prelaunch-branch.mjs)
+warns on git commit/push from any branch other than `main` while this file is
+present. Delete this file at launch to end the prelaunch workflow and silence
+the guard.
